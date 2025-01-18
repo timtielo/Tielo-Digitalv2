@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of images
+Allow: /logo/
+Allow: /images/
+Allow: /*.svg$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+
+# Disallow business card page
+Disallow: /visitekaartje
+
+# Sitemap
+Sitemap: https://www.tielo-digital.nl/sitemap.xml
