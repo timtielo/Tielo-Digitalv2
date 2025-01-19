@@ -120,7 +120,7 @@ export function AutomationAnalysisForm() {
                 </label>
                 <input
                   type="text"
-                  placeholder="bijv. www.example.nl"
+                  placeholder="www.example.nl"
                   value={formData.website}
                   onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -134,7 +134,7 @@ export function AutomationAnalysisForm() {
               </label>
               <textarea
                 rows={4}
-                placeholder="bijv. 'Ik heb een online winkel en wil deze mensen graag automatisch opvolgen.'"
+                placeholder="Ik wil een analyse inplannen."
                 value={formData.mainQuestion}
                 onChange={(e) => setFormData(prev => ({ ...prev, mainQuestion: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -147,7 +147,7 @@ export function AutomationAnalysisForm() {
               </label>
               <textarea
                 rows={4}
-                 placeholder="bijv. 'Ik heb grote data exports die ik wil filteren, kan je mij helpen?'"
+                 placeholder="Ik heb grote data exports die ik wil filteren, kan je mij helpen?"
                 value={formData.automationTasks}
                 onChange={(e) => setFormData(prev => ({ ...prev, automationTasks: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -160,6 +160,7 @@ export function AutomationAnalysisForm() {
               </label>
               <textarea
                 rows={4}
+                 placeholder="7 uur per maand."
                 value={formData.timeSpent}
                 onChange={(e) => setFormData(prev => ({ ...prev, timeSpent: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -172,6 +173,7 @@ export function AutomationAnalysisForm() {
               </label>
               <textarea
                 rows={4}
+                 placeholder="Google, Instagram"
                 value={formData.foundUs}
                 onChange={(e) => setFormData(prev => ({ ...prev, foundUs: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
