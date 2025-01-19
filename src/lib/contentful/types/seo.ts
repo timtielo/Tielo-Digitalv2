@@ -9,5 +9,6 @@ export interface ContentfulSEO {
     nofollow: boolean;
     noindex: boolean;
     shareImages?: ContentfulImage[];
+    keywords?: string[];
   };
 }

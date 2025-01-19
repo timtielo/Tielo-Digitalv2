@@ -1,6 +1,7 @@
 import React from 'react';
 import { useBlogPost } from '../hooks/useBlogPost';
 import { Loader } from 'lucide-react';
+import { BlogSEO } from '../components/SEO/BlogSEO';
 import { RichTextRenderer } from '../components/blog/RichTextRenderer';
 import { Author } from '../components/blog/Author';
 import { RelatedPosts } from '../components/blog/RelatedPosts';
@@ -12,56 +13,6 @@ interface BlogPostProps {
 
 export function BlogPost({ slug }: BlogPostProps) {
   const { post, isLoading, error } = useBlogPost(slug);
-
-  // Update meta tags when post data changes
-  React.useEffect(() => {
-    if (!post) return;
-
-    const seoFields = post.fields.seoFields?.fields;
-    const featuredImage = post.fields.featuredImage?.fields.file.url;
-    const imageUrl = featuredImage ? `https:${featuredImage}` : 'https://tielo-digital.nl/social/og-image.png';
-
-    // Primary Meta Tags
-    document.title = seoFields?.pageTitle || post.fields.title;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', seoFields?.pageDescription || '');
-    
-    // Open Graph / Facebook / WhatsApp
-    document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'article');
-    document.querySelector('meta[property="og:title"]')?.setAttribute('content', seoFields?.pageTitle || post.fields.title);
-    document.querySelector('meta[property="og:description"]')?.setAttribute('content', seoFields?.pageDescription || '');
-    document.querySelector('meta[property="og:image"]')?.setAttribute('content', imageUrl);
-    document.querySelector('meta[property="og:url"]')?.setAttribute('content', `https://tielo-digital.nl/blog/${post.fields.slug}`);
-    
-    // Twitter
-    document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
-    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', seoFields?.pageTitle || post.fields.title);
-    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', seoFields?.pageDescription || '');
-    document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', imageUrl);
-
-    // Canonical URL
-    let canonicalLink = document.querySelector('link[rel="canonical"]');
-    if (!canonicalLink) {
-      canonicalLink = document.createElement('link');
-      canonicalLink.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalLink);
-    }
-    canonicalLink.setAttribute('href', `https://tielo-digital.nl/blog/${post.fields.slug}`);
-
-    // Cleanup function
-    return () => {
-      // Reset meta tags to default values when component unmounts
-      document.title = 'Tielo Digital - AI & Automatisering';
-      document.querySelector('meta[name="description"]')?.setAttribute('content', 'Verbeter jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie.');
-      document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
-      document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'Tielo Digital - AI & Automatisering');
-      document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'Verbeter jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie.');
-      document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://tielo-digital.nl/social/og-image.png');
-      document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://tielo-digital.nl');
-      if (canonicalLink) {
-        canonicalLink.remove();
-      }
-    };
-  }, [post]);
 
   if (isLoading) {
     return (
@@ -83,6 +34,8 @@ export function BlogPost({ slug }: BlogPostProps) {
 
   return (
     <article className="min-h-screen">
+      <BlogSEO post={post} />
+      
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">

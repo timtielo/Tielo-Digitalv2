@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOplossing } from '../hooks/useOplossing';
 import { Loader } from 'lucide-react';
+import { OplossingsSEO } from '../components/SEO/OplossingsSEO';
 import { OplossingContent } from '../components/Oplossingen/OplossingContent';
 import { OplossingenCTA } from '../components/Oplossingen/OplossingenCTA';
 
@@ -31,6 +32,7 @@ export function OplossingPage({ slug }: OplossingPageProps) {
 
   return (
     <div className="min-h-screen">
+      <OplossingsSEO oplossing={oplossing} />
       <OplossingContent oplossing={oplossing} />
       <OplossingenCTA />
     </div>
