@@ -1,9 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 import { Link } from './Link';
 import { ConsultButton } from './common/ConsultButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Mobile menu structure
+const mobileMenuItems = [
+  {
+    name: 'Diensten',
+    submenu: [
+      { name: 'Websites', path: '/diensten/websites' },
+      { name: 'Klantenservice', path: '/diensten/customer-service' },
+      { name: 'Alle diensten', path: '/diensten' },
+    ]
+  },
+  { name: 'Oplossingen', path: '/oplossingen' },
+  { name: 'Succesverhalen', path: '/succesverhalen' },
+  { name: 'Blog', path: '/blog' },
+  { name: 'Contact', path: '/contact' }
+];
+
+// Desktop menu structure
 const diensten = [
   { name: 'Alle diensten', path: '/diensten' },
   { name: 'Websites', path: '/diensten/websites' },
@@ -18,6 +35,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [activeMobileSubmenu, setActiveMobileSubmenu] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,6 +46,7 @@ export function Header() {
     const handleNavigation = () => {
       setIsMenuOpen(false);
       setIsDropdownOpen(false);
+      setActiveMobileSubmenu(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -53,6 +72,7 @@ export function Header() {
   const handleLinkClick = () => {
     setIsMenuOpen(false);
     setIsDropdownOpen(false);
+    setActiveMobileSubmenu(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -74,12 +94,11 @@ export function Header() {
               <span className="text-xl font-bold text-gray-900 font-rubik transition-colors duration-300 group-hover:text-primary">
                 Tielo Digital
               </span>
-            
             </div>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {/* Diensten Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 className="flex items-center gap-1 hover:text-primary transition-colors duration-200"
@@ -122,6 +141,7 @@ export function Header() {
             </ConsultButton>
           </nav>
 
+          {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -138,28 +158,55 @@ export function Header() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-lg py-4 overflow-hidden"
+              className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-lg overflow-hidden"
             >
-              <nav className="flex flex-col space-y-1 px-4">
-                {diensten.map((dienst) => (
-                  <Link
-                    key={dienst.path}
-                    href={dienst.path}
-                    className="py-2 hover:text-primary transition-colors"
-                    onClick={handleLinkClick}
-                  >
-                    {dienst.name}
-                  </Link>
+              <nav className="flex flex-col divide-y divide-gray-100">
+                {mobileMenuItems.map((item) => (
+                  <div key={item.name} className="py-2 px-4">
+                    {item.submenu ? (
+                      <>
+                        <button
+                          onClick={() => setActiveMobileSubmenu(activeMobileSubmenu === item.name ? null : item.name)}
+                          className="flex items-center justify-between w-full py-2 hover:text-primary transition-colors"
+                        >
+                          {item.name}
+                          <ChevronRight className={`w-5 h-5 transition-transform duration-200 ${
+                            activeMobileSubmenu === item.name ? 'rotate-90' : ''
+                          }`} />
+                        </button>
+                        <AnimatePresence>
+                          {activeMobileSubmenu === item.name && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="pl-4 space-y-2"
+                            >
+                              {item.submenu.map((subItem) => (
+                                <Link
+                                  key={subItem.path}
+                                  href={subItem.path}
+                                  className="block py-2 text-gray-600 hover:text-primary transition-colors"
+                                  onClick={handleLinkClick}
+                                >
+                                  {subItem.name}
+                                </Link>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <Link
+                        href={item.path}
+                        className="block py-2 hover:text-primary transition-colors"
+                        onClick={handleLinkClick}
+                      >
+                        {item.name}
+                      </Link>
+                    )}
+                  </div>
                 ))}
-                <div className="border-t border-gray-100 my-2" />
-                <Link href="/oplossingen" onClick={handleLinkClick}>Oplossingen</Link>
-                <Link href="/succesverhalen" onClick={handleLinkClick}>Succesverhalen</Link>
-                <Link href="/blog" onClick={handleLinkClick}>Blog</Link>
-                <div className="pt-2">
-                  <ConsultButton onClick={handleLinkClick} className="w-full justify-center">
-                    Contact
-                  </ConsultButton>
-                </div>
               </nav>
             </motion.div>
           )}
