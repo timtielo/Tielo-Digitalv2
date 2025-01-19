@@ -24,6 +24,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="facebook-domain-verification" content="7iqy96n6qk6k1v9q9kqnjfhs9po3t7" />
     
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Tielo Digital - AI & Automatisering" />
+    <meta name="description" content="Verbeter jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie." />
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.tielo-digital.nl" />
+    <meta property="og:title" content="Tielo Digital - AI & Automatisering" />
+    <meta property="og:description" content="Verbeter jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie." />
+    <meta property="og:image" content="https://www.tielo-digital.nl/social/og-image.png" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1000" />
+    <meta property="og:image:alt" content="Tielo Digital - AI & Automatisering" />
+    <meta property="og:site_name" content="Tielo Digital" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.tielo-digital.nl" />
+    <meta name="twitter:title" content="Tielo Digital - AI & Automatisering" />
+    <meta name="twitter:description" content="Transformeer jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie." />
+    <meta name="twitter:image" content="https://www.tielo-digital.nl/social/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Tielo Digital - AI & Automatisering" />
+    
     <!-- Favicon Configuration -->
     <link rel="icon" type="image/png" href="/public/logo/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/public/logo/favicon.svg" />
@@ -31,13 +54,6 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/public/logo/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Tielo Digital" />
     <link rel="manifest" href="/public/logo/site.webmanifest" />
-    
-    <!-- SEO Meta Tags -->
-    <meta name="image" content="/logo/android-chrome-512x512.png" />
-    <meta property="og:image" content="https://www.tielo-digital.nl/logo/android-chrome-512x512.png" />
-    <meta property="og:image:alt" content="Tielo Digital Logo" />
-    <meta name="twitter:image" content="https://www.tielo-digital.nl/logo/android-chrome-512x512.png" />
-    <meta name="twitter:image:alt" content="Tielo Digital Logo" />
     
     <title>Tielo Digital - AI & Automatisering</title>
   </head>
@@ -64,5 +80,22 @@ src="https://www.facebook.com/tr?id=1227693548357372&ev=PageView&noscript=1"
 <!-- End Facebook Pixel Code -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Voiceflow Chat Widget -->
+    <script type="text/javascript">
+      (function(d, t) {
+        var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+        v.onload = function() {
+          window.voiceflow.chat.load({
+            verify: { projectID: '674d9b91083c81389079bb36' },
+            url: 'https://general-runtime.voiceflow.com',
+            versionID: 'production'
+          });
+        }
+        v.src = "https://cdn.voiceflow.com/widget/bundle.mjs"; 
+        v.type = "text/javascript"; 
+        s.parentNode.insertBefore(v, s);
+      })(document, 'script');
+    </script>
   </body>
 </html>

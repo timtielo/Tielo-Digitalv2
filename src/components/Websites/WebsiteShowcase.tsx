@@ -5,11 +5,31 @@ const websites = [
   {
     name: 'Meer Impact Marketing',
     url: 'https://meerimpactmarketing.tielo-digital.nl',
-    logo: '/logo/MIM 169 svg trans.svg'
+    primaryLogo: 'https://meerimpactmarketing.tielo-digital.nl/Meer%20Impact%20Marketing%20logo%20horizontal.png',
+    fallbackLogo: '/src/components/Websites/MeerImpactMarketinglogohorizontal.webp',
+    svgLogo: '/src/components/Websites/MIM.svg'
   }
 ];
 
 export function WebsiteShowcase() {
+  const [logoErrors, setLogoErrors] = React.useState<Record<string, boolean>>({});
+
+  const handleImageError = (siteName: string) => {
+    setLogoErrors(prev => ({ ...prev, [siteName]: true }));
+  };
+
+  const getLogoSource = (site: typeof websites[0]) => {
+    if (!logoErrors[site.name]) {
+      return site.primaryLogo;
+    }
+    // Try SVG first as fallback
+    if (site.svgLogo) {
+      return site.svgLogo;
+    }
+    // Finally use webp
+    return site.fallbackLogo;
+  };
+
   return (
     <section className="py-20 bg-white overflow-hidden">
       <div className="container mx-auto px-4 text-center">
@@ -26,7 +46,7 @@ export function WebsiteShowcase() {
           <div className="overflow-hidden whitespace-nowrap py-8">
             <motion.div
               animate={{
-                x: [-100, -800], // Adjusted for single logo
+                x: [-100, -800],
               }}
               transition={{
                 duration: 20,
@@ -45,9 +65,10 @@ export function WebsiteShowcase() {
                 >
                   <div className="h-24 flex items-center justify-center">
                     <img 
-                      src={site.logo} 
+                      src={getLogoSource(site)}
                       alt={site.name}
                       className="h-full w-auto object-contain"
+                      onError={() => handleImageError(site.name)}
                     />
                   </div>
                 </a>
@@ -57,7 +78,7 @@ export function WebsiteShowcase() {
             {/* Duplicate for seamless loop */}
             <motion.div
               animate={{
-                x: [800, 100], // Adjusted for single logo
+                x: [800, 100],
               }}
               transition={{
                 duration: 20,
@@ -76,9 +97,10 @@ export function WebsiteShowcase() {
                 >
                   <div className="h-24 flex items-center justify-center">
                     <img 
-                      src={site.logo} 
+                      src={getLogoSource(site)}
                       alt={site.name}
                       className="h-full w-auto object-contain"
+                      onError={() => handleImageError(site.name)}
                     />
                   </div>
                 </a>
