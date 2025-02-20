@@ -15,3 +15,25 @@ export const defaultSEO = {
   twitterCreator: '@TieloDigital',
   twitterSite: '@TieloDigital'
 };
+
+interface SEOProps {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  ogImage?: string;
+  canonical?: string;
+}
+
+export function generateSEO(props: SEOProps) {
+  return {
+    title: props.title || defaultSEO.title,
+    description: props.description || defaultSEO.description,
+    keywords: props.keywords || defaultSEO.keywords,
+    ogImage: props.ogImage || defaultSEO.ogImage,
+    ogType: defaultSEO.ogType,
+    twitterCard: defaultSEO.twitterCard,
+    twitterCreator: defaultSEO.twitterCreator,
+    twitterSite: defaultSEO.twitterSite,
+    canonical: props.canonical
+  };
+}
