@@ -1,39 +1,6 @@
 import { useState, useEffect } from 'react';
-
-export interface DashboardMetric {
-  metric_key: string;
-  value: string;
-  title: string;
-  subtitle: string;
-}
-
-// Default metrics as fallback
-const DEFAULT_METRICS: DashboardMetric[] = [
-  {
-    metric_key: 'satisfied_clients',
-    value: '3',
-    title: 'Tevreden Klanten',
-    subtitle: 'Succesvolle samenwerkingen'
-  },
-  {
-    metric_key: 'average_roi',
-    value: '300%',
-    title: 'Gemiddelde ROI',
-    subtitle: 'Return on Investment'
-  },
-  {
-    metric_key: 'extra_revenue',
-    value: '€15000+',
-    title: 'Extra Omzet',
-    subtitle: 'Voor onze klanten in 2024'
-  },
-  {
-    metric_key: 'hours_saved',
-    value: '100+',
-    title: 'Uren Bespaard',
-    subtitle: 'Door blijvende automatisatie'
-  }
-];
+import { DEFAULT_METRICS } from '../utils/metrics';
+import type { DashboardMetric } from '../utils/metrics';
 
 declare global {
   interface Window {
@@ -42,11 +9,23 @@ declare global {
 }
 
 export function useDashboardMetrics() {
+  // Initialize with either injected metrics or defaults
   const [metrics, setMetrics] = useState<DashboardMetric[]>(() => 
     window.__INITIAL_METRICS__ || DEFAULT_METRICS
   );
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If we have injected metrics, no need to load
+    if (window.__INITIAL_METRICS__) {
+      return;
+    }
+
+    // Otherwise show loading state
+    setIsLoading(true);
+  }, []);
 
   return { metrics, isLoading, error };
 }
