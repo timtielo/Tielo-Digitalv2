@@ -5,7 +5,7 @@ const websites = [
   {
     name: 'Meer Impact Marketing',
     url: 'https://meerimpactmarketing.tielo-digital.nl',
-    logo: '/Assets/Meerimpactmarketinglogo.png'
+    logo: '/assets/Meerimpactmarketinglogo.png'
   }
 ];
 
