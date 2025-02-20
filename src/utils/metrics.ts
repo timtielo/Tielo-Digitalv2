@@ -35,6 +35,10 @@ export const DEFAULT_METRICS: DashboardMetric[] = [
 ];
 
 export async function fetchMetrics(): Promise<DashboardMetric[]> {
+  if (typeof window === 'undefined') {
+    return DEFAULT_METRICS;
+  }
+
   try {
     const { data, error } = await supabase
       .from('dashboard_metrics')
