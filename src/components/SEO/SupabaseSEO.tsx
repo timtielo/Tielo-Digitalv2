@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSupabaseSEO } from '../../hooks/useSupabaseSEO';
+import { defaultSEO } from '../../utils/seo';
 
 interface SupabaseSEOProps {
   internalName: string;
@@ -13,13 +14,22 @@ export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
   const { seo, isLoading, error } = useSupabaseSEO(internalName);
 
   if (isLoading) {
-    return null;
+    return (
+      <>
+        <title>{defaultSEO.title}</title>
+        <meta name="description" content={defaultSEO.description} />
+      </>
+    );
   }
 
   if (error || !seo) {
     if (!fallback) {
-      console.error('SEO Error:', error);
-      return null;
+      return (
+        <>
+          <title>{defaultSEO.title}</title>
+          <meta name="description" content={defaultSEO.description} />
+        </>
+      );
     }
 
     return (
