@@ -1,21 +1,27 @@
 import React from 'react';
 import { Header } from '../Header';
 import { Footer } from '../Footer';
-import { SEO, SEOProps } from '../SEO';
+import { SupabaseSEO } from '../SEO/SupabaseSEO';
 
 interface LayoutProps {
   children: React.ReactNode;
-  seo?: SEOProps;
+  seoInternalName?: string;
 }
 
-export function Layout({ children, seo }: LayoutProps) {
+export function Layout({ children, seoInternalName = 'Home page SEO' }: LayoutProps) {
   // Get current route to determine if we should show the chatbot
   const isBlogOrOplossing = window.location.pathname.includes('/blog') || 
                            window.location.pathname.includes('/oplossingen');
 
   return (
     <div className="min-h-screen flex flex-col">
-      {seo && <SEO {...seo} />}
+      <SupabaseSEO 
+        internalName={seoInternalName}
+        fallback={{
+          title: "Tielo Digital - AI & Automatisering",
+          description: "Transformeer jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie."
+        }}
+      />
       <Header />
       <main className="flex-grow">
         {children}

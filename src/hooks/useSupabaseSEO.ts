@@ -11,16 +11,48 @@ export interface SEOSettings {
   share_image_url: string | null;
 }
 
+// Cache key for localStorage
+const SEO_CACHE_KEY = 'seo_settings_cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+function getCachedSEO(internalName: string): { seo: SEOSettings | null; timestamp: number } | null {
+  const cached = localStorage.getItem(`${SEO_CACHE_KEY}_${internalName}`);
+  return cached ? JSON.parse(cached) : null;
+}
+
+function setCachedSEO(internalName: string, seo: SEOSettings) {
+  localStorage.setItem(
+    `${SEO_CACHE_KEY}_${internalName}`,
+    JSON.stringify({
+      seo,
+      timestamp: Date.now()
+    })
+  );
+}
+
 export function useSupabaseSEO(internalName: string) {
-  const [seo, setSEO] = useState<SEOSettings | null>(null);
+  const [seo, setSEO] = useState<SEOSettings | null>(() => {
+    const cached = getCachedSEO(internalName);
+    return cached && Date.now() - cached.timestamp < CACHE_DURATION ? cached.seo : null;
+  });
+  
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchSEO() {
       try {
-        setIsLoading(true);
-        setError(null);
+        // Check cache first
+        const cached = getCachedSEO(internalName);
+        if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+          if (isMounted) {
+            setSEO(cached.seo);
+            setIsLoading(false);
+            return;
+          }
+        }
 
         const { data, error: supabaseError } = await supabase
           .from('seo_settings')
@@ -28,22 +60,37 @@ export function useSupabaseSEO(internalName: string) {
           .eq('internal_name', internalName)
           .single();
 
-        if (supabaseError) {
-          throw supabaseError;
-        }
+        if (supabaseError) throw supabaseError;
 
-        setSEO(data);
+        if (isMounted && data) {
+          setSEO(data);
+          setCachedSEO(internalName, data);
+          setError(null);
+        }
       } catch (err) {
         console.error('Error fetching SEO settings:', err);
-        setError('Failed to load SEO settings');
+        if (isMounted) {
+          // On error, try to use cached data if available
+          const cached = getCachedSEO(internalName);
+          if (cached) {
+            setSEO(cached.seo);
+            setError('Using cached SEO data');
+          } else {
+            setError('Failed to load SEO settings');
+          }
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    if (internalName) {
-      fetchSEO();
-    }
+    fetchSEO();
+
+    return () => {
+      isMounted = false;
+    };
   }, [internalName]);
 
   return { seo, isLoading, error };

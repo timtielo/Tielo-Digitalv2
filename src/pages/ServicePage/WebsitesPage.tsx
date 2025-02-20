@@ -3,7 +3,6 @@ import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
 import { WebsitesHero } from './WebsitesPage/components/WebsitesHero';
 import { WebsitesBenefits } from './WebsitesPage/components/WebsitesBenefits';
 import { WebsitesFeatures } from './WebsitesPage/components/WebsitesFeatures';
-import { WebsitesTechnologies } from './WebsitesPage/components/WebsitesTechnologies';
 import { WebsitesExtras } from './WebsitesPage/components/WebsitesExtras';
 import { WebsitesShowcase } from './WebsitesPage/components/WebsitesShowcase';
 import { WebsitesPortfolio } from './WebsitesPage/components/WebsitesPortfolio';
@@ -22,7 +21,6 @@ export function WebsitesPage() {
       <WebsitesHero />
       <WebsitesBenefits />
       <WebsitesFeatures />
-      <WebsitesTechnologies />
       <WebsitesExtras />
       <WebsitesShowcase />
       <WebsitesPortfolio />

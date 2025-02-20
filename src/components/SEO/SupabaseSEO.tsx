@@ -24,7 +24,7 @@ export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
 
     return (
       <>
-        <title>{fallback.title} | Tielo Digital</title>
+        <title>{fallback.title}</title>
         <meta name="description" content={fallback.description} />
       </>
     );
@@ -32,7 +32,7 @@ export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
 
   return (
     <>
-      <title>{seo.page_title} | Tielo Digital</title>
+      <title>{seo.page_title}</title>
       {seo.page_description && (
         <meta name="description" content={seo.page_description} />
       )}

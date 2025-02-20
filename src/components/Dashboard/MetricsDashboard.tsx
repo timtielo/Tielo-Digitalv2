@@ -23,19 +23,15 @@ export function MetricsDashboard() {
     );
   }
 
-  if (error) {
-    return (
-      <section className="py-20 bg-gray-50/50">
-        <div className="container mx-auto px-4 text-center text-red-600">
-          {error}
-        </div>
-      </section>
-    );
-  }
-
+  // Even if there's an error, we still show the metrics since we have fallbacks
   return (
     <section className="py-20 bg-gray-50/50">
       <div className="container mx-auto px-4">
+        {error && (
+          <div className="text-center text-gray-600 mb-8 text-sm">
+            {error}
+          </div>
+        )}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {metrics.map((metric, index) => (
             <MetricCard
