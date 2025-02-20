@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader, Users, TrendingUp, Clock, Award } from 'lucide-react';
+import { Users, TrendingUp, Clock, Award, Loader } from 'lucide-react';
 import { MetricCard } from './MetricCard';
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
 
@@ -8,10 +8,10 @@ const metricIcons = {
   average_roi: TrendingUp,
   extra_revenue: Clock,
   hours_saved: Award
-} as const;
+};
 
 export function MetricsDashboard() {
-  const { metrics, isLoading } = useDashboardMetrics();
+  const { metrics, isLoading, error } = useDashboardMetrics();
 
   if (isLoading) {
     return (
@@ -23,14 +23,20 @@ export function MetricsDashboard() {
     );
   }
 
+  // Even if there's an error, we still show the metrics since we have fallbacks
   return (
     <section className="py-20 bg-gray-50/50">
       <div className="container mx-auto px-4">
+        {error && (
+          <div className="text-center text-gray-600 mb-8 text-sm">
+            {error}
+          </div>
+        )}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {metrics.map((metric, index) => (
             <MetricCard
               key={metric.metric_key}
-              icon={metricIcons[metric.metric_key as keyof typeof metricIcons] || Users}
+              icon={metricIcons[metric.metric_key as keyof typeof metricIcons]}
               value={metric.value}
               title={metric.title}
               subtitle={metric.subtitle}

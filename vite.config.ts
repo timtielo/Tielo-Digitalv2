@@ -5,12 +5,15 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'dist',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html')
+        main: resolve(__dirname, 'index.html'),
+        'entry-server': resolve(__dirname, 'src/entry-server.tsx')
       }
     }
+  },
+  ssr: {
+    noExternal: ['lucide-react', 'framer-motion']
   },
   preview: {
     port: 4173,
