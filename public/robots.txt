@@ -10,6 +10,7 @@ Allow: /*.jpg$
 Allow: /*.jpeg$
 Allow: /*.gif$
 Allow: /social/
+Allow: https://www.tielo-digital.nl/social/og-image.jpg
 
 # Disallow business card page
 Disallow: /visitekaartje
