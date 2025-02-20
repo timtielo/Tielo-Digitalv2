@@ -9,6 +9,7 @@ Allow: /*.png$
 Allow: /*.jpg$
 Allow: /*.jpeg$
 Allow: /*.gif$
+Allow: /social/
 
 # Disallow business card page
 Disallow: /visitekaartje
