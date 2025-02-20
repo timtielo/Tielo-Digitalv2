@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase/client';
 
 export interface DashboardMetric {
   metric_key: string;
@@ -7,8 +7,7 @@ export interface DashboardMetric {
   subtitle: string;
 }
 
-// Default metrics as fallback
-const DEFAULT_METRICS: DashboardMetric[] = [
+export const DEFAULT_METRICS: DashboardMetric[] = [
   {
     metric_key: 'satisfied_clients',
     value: '3',
@@ -35,18 +34,17 @@ const DEFAULT_METRICS: DashboardMetric[] = [
   }
 ];
 
-declare global {
-  interface Window {
-    __INITIAL_METRICS__?: DashboardMetric[];
+export async function fetchMetrics(): Promise<DashboardMetric[]> {
+  try {
+    const { data, error } = await supabase
+      .from('dashboard_metrics')
+      .select('*')
+      .order('metric_key');
+
+    if (error) throw error;
+    return data || DEFAULT_METRICS;
+  } catch (err) {
+    console.error('Error fetching metrics:', err);
+    return DEFAULT_METRICS;
   }
-}
-
-export function useDashboardMetrics() {
-  const [metrics, setMetrics] = useState<DashboardMetric[]>(() => 
-    window.__INITIAL_METRICS__ || DEFAULT_METRICS
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  return { metrics, isLoading, error };
 }

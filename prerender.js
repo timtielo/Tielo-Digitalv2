@@ -4,14 +4,42 @@ import { fileURLToPath } from 'url';
 import { render } from './dist/server/entry-server.js';
 import { routes } from './src/router/routes.js';
 import { generateSitemap } from './src/utils/sitemap.js';
+import { createClient } from '@supabase/supabase-js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Create Supabase client
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY
+);
+
+async function fetchMetrics() {
+  try {
+    const { data, error } = await supabase
+      .from('dashboard_metrics')
+      .select('*')
+      .order('metric_key');
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Error fetching metrics during build:', err);
+    return null;
+  }
+}
 
 async function prerender() {
   const template = await fs.readFile(path.resolve(__dirname, 'dist/client/index.html'), 'utf-8');
   const routesToPrerender = routes.filter(route => !route.redirect);
 
   await fs.mkdir(path.resolve(__dirname, 'dist/client'), { recursive: true });
+
+  // Fetch metrics during build
+  const metrics = await fetchMetrics();
+  
+  // Create metrics script to inject into HTML
+  const metricsScript = `<script>window.__INITIAL_METRICS__ = ${JSON.stringify(metrics)}</script>`;
 
   for (const route of routesToPrerender) {
     const url = route.path;
@@ -44,7 +72,8 @@ async function prerender() {
         
         <!-- Canonical -->
         ${seo.canonical ? `<link rel="canonical" href="${seo.canonical}">` : ''}
-      `);
+      `)
+      .replace('</head>', `${metricsScript}</head>`);
 
     const filePath = path.join(
       __dirname,
