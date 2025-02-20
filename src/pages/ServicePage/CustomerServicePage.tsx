@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, ArrowRight, Clock, MessageSquare, Brain, BarChart, Check } from 'lucide-react';
+import { Bot, ArrowRight, Brain, Clock, MessageSquare, BarChart, Check } from 'lucide-react';
 import { Link } from '../../components/Link';
-import { SEO } from '../../components/SEO';
+import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
 
 const features = [
   {
@@ -37,19 +37,12 @@ const benefits = [
 export function CustomerServicePage() {
   return (
     <div className="min-h-screen">
-      <SEO 
-        title="AI Klantenservice | Chatbot & Support Automatisering"
-        description="Verbeter je klantenservice met AI-gedreven oplossingen. 24/7 beschikbaar voor je klanten met intelligente chatbots en geautomatiseerde support."
-        keywords={[
-          'AI Klantenservice',
-          'Chatbot',
-          'Customer Support',
-          'Support Automatisering',
-          'Helpdesk AI',
-          '24/7 Service'
-        ]}
-        ogType="website"
-        canonical="https://tielo-digital.nl/diensten/customer-service"
+      <ContentfulSEO 
+        internalName="AI Klantenservice SEO"
+        fallback={{
+          title: "AI Klantenservice | Chatbot & Support Automatisering",
+          description: "Verbeter je klantenservice met AI-gedreven oplossingen. 24/7 beschikbaar voor je klanten met intelligente chatbots en geautomatiseerde support."
+        }}
       />
 
       {/* Hero Section */}

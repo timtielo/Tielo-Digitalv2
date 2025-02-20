@@ -7,19 +7,78 @@ import path from 'node:path';
 const baseUrl = 'https://www.tielo-digital.nl';
 const currentDate = new Date().toISOString().split('T')[0];
 
-async function generateBlogSitemap() {
+export async function generateSitemap() {
   try {
-    const response = await contentfulClient.getEntries<ContentfulBlogPost>({
-      content_type: 'blog',
+    // Fetch all blog posts
+    const blogResponse = await contentfulClient.getEntries<ContentfulBlogPost>({
+      content_type: 'pageBlogPost',
       limit: 1000,
       include: 2,
       order: '-sys.createdAt'
     });
 
-    const blogPosts = response.items;
+    // Fetch all solutions
+    const oplossingenResponse = await contentfulClient.getEntries<ContentfulOplossing>({
+      content_type: 'pageOplossingen',
+      limit: 1000,
+      include: 2,
+      order: '-sys.createdAt'
+    });
 
-    let blogSitemap = `<?xml version="1.0" encoding="UTF-8"?>
+    // Start building the sitemap
+    let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/succesverhalen</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/oplossingen</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/contact</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/gratis-guide</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/privacy</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/terms</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/cookies</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Blog Pages -->
   <url>
     <loc>${baseUrl}/blog</loc>
     <lastmod>${currentDate}</lastmod>
@@ -27,10 +86,11 @@ async function generateBlogSitemap() {
     <priority>0.8</priority>
   </url>`;
 
-    for (const post of blogPosts) {
+    // Add all blog posts
+    for (const post of blogResponse.items) {
       if (post.fields?.slug) {
         const lastmod = post.sys.updatedAt.split('T')[0];
-        blogSitemap += `
+        sitemap += `
   <url>
     <loc>${baseUrl}/blog/${post.fields.slug}</loc>
     <lastmod>${lastmod}</lastmod>
@@ -40,106 +100,90 @@ async function generateBlogSitemap() {
       }
     }
 
-    blogSitemap += '\n</urlset>';
-
-    await fs.writeFile(
-      path.resolve(process.cwd(), 'public/blog-sitemap.xml'),
-      blogSitemap
-    );
-
-    return blogPosts.length;
-  } catch (error) {
-    console.error('Error generating blog sitemap:', error);
-    throw error;
-  }
-}
-
-async function generateOplossingenSitemap() {
-  try {
-    const response = await contentfulClient.getEntries<ContentfulOplossing>({
-      content_type: 'oplossing',
-      limit: 1000,
-      include: 2,
-      order: '-sys.createdAt'
-    });
-
-    const oplossingen = response.items;
-
-    let oplossingenSitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${baseUrl}/oplossingen</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-
-    for (const oplossing of oplossingen) {
+    // Add all solutions
+    for (const oplossing of oplossingenResponse.items) {
       if (oplossing.fields?.slug) {
         const lastmod = oplossing.sys.updatedAt.split('T')[0];
-        oplossingenSitemap += `
+        sitemap += `
   <url>
     <loc>${baseUrl}/oplossingen/${oplossing.fields.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>`;
       }
     }
 
-    oplossingenSitemap += '\n</urlset>';
-
-    await fs.writeFile(
-      path.resolve(process.cwd(), 'public/oplossingen-sitemap.xml'),
-      oplossingenSitemap
-    );
-
-    return oplossingen.length;
-  } catch (error) {
-    console.error('Error generating oplossingen sitemap:', error);
-    throw error;
-  }
-}
-
-export async function generateSitemap() {
-  try {
-    const [blogPostCount, oplossingenCount] = await Promise.all([
-      generateBlogSitemap(),
-      generateOplossingenSitemap()
-    ]);
-
-    const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${baseUrl}/pages-sitemap.xml</loc>
+    // Add service pages
+    sitemap += `
+  <!-- Services Pages -->
+  <url>
+    <loc>${baseUrl}/diensten</loc>
     <lastmod>${currentDate}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${baseUrl}/blog-sitemap.xml</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/workflow</loc>
     <lastmod>${currentDate}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${baseUrl}/oplossingen-sitemap.xml</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/outreach</loc>
     <lastmod>${currentDate}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${baseUrl}/diensten-sitemap.xml</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/email-handling</loc>
     <lastmod>${currentDate}</lastmod>
-  </sitemap>
-</sitemapindex>`;
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/customer-service</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/content-creation</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/custom</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/websites</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
 
+    // Close the sitemap
+    sitemap += '\n</urlset>';
+
+    // Write the sitemap file
     await fs.writeFile(
       path.resolve(process.cwd(), 'public/sitemap.xml'),
-      sitemapIndex
+      sitemap
     );
 
     return {
       success: true,
-      blogPostsCount: blogPostCount,
-      oplossingenCount: oplossingenCount
+      blogPostsCount: blogResponse.items.length,
+      oplossingenCount: oplossingenResponse.items.length,
+      servicesCount: 8,
+      mainPagesCount: 8
     };
   } catch (error) {
-    console.error('Error generating sitemaps:', error);
+    console.error('Error generating sitemap:', error);
     throw error;
   }
 }

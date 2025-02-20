@@ -1,41 +1,37 @@
 import { FormData } from '../types/forms';
 import { FORM_CONFIG } from '../config/forms';
+import { supabase } from '../lib/supabase/client';
+import { submitToWebhook } from './webhooks';
 
-export async function submitToGoogleSheets(formData: FormData): Promise<boolean> {
+export async function submitForm(formData: FormData): Promise<boolean> {
   try {
-    // Format data based on form type
-    const payload = {
-      // Common fields for all forms
-      timestamp: formData.submittedAt,
-      firstName: formData.firstName,
-      email: formData.email,
-      formType: formData.formType,
-
-      // Add analysis-specific fields only if it's an analysis form
-      ...(formData.formType === 'analysis' && {
-        lastName: formData.lastName || '',
-        phone: formData.phone || '',
-        company: formData.company || '',
-        website: formData.website || '',
-        mainQuestion: formData.mainQuestion || '',
-        automationTasks: formData.automationTasks || '',
-        timeSpent: formData.timeSpent || '',
-        foundUs: formData.foundUs || ''
+    // Submit to both webhook and Supabase in parallel
+    const [webhookResult, { error: supabaseError }] = await Promise.all([
+      submitToWebhook(formData),
+      supabase.from('form_submissions').insert({
+        form_type: formData.formType,
+        first_name: formData.firstName,
+        email: formData.email,
+        submitted_at: formData.submittedAt,
+        ...(formData.formType === 'analysis' && {
+          last_name: formData.lastName,
+          phone: formData.phone,
+          company: formData.company,
+          website: formData.website,
+          main_question: formData.mainQuestion,
+          automation_tasks: formData.automationTasks,
+          time_spent: formData.timeSpent,
+          found_us: formData.foundUs
+        })
       })
-    };
+    ]);
 
-    const response = await fetch(FORM_CONFIG.WEBHOOK_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Required for Google Scripts
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });
+    if (supabaseError) {
+      console.error('Supabase error:', supabaseError);
+      return false;
+    }
 
-    // Since we're using no-cors mode, we can't read the response
-    // We'll consider it successful if we get here without an error
-    return true;
+    return webhookResult;
   } catch (error) {
     console.error('Error submitting form:', error);
     return false;

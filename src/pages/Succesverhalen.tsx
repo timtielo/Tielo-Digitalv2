@@ -4,7 +4,7 @@ import { CaseStudy } from '../components/Succesverhalen/CaseStudy';
 import { SuccesverhalenCTA } from '../components/Succesverhalen/SuccesverhalenCTA';
 import { MetricsDashboard } from '../components/Dashboard';
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
-import { SEO } from '../components/SEO';
+import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
 
 const succesverhalen = [
   {
@@ -78,18 +78,12 @@ const succesverhalen = [
 export function Succesverhalen() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <SEO 
-        title="Succesverhalen - Tielo Digital Cases"
-        description="Ontdek hoe andere bedrijven succesvol zijn geworden met onze AI en automatisering oplossingen. Concrete resultaten en ervaringen van klanten."
-        keywords={[
-          'Succesverhalen',
-          'Case Studies',
-          'Klantresultaten',
-          'AI Implementatie',
-          'Automatisering Cases'
-        ]}
-        ogType="website"
-        canonical="https://tielo-digital.nl/succesverhalen"
+      <ContentfulSEO 
+        internalName="Succesverhalen SEO"
+        fallback={{
+          title: "Succesverhalen - Tielo Digital Cases",
+          description: "Ontdek hoe andere bedrijven succesvol zijn geworden met onze AI en automatisering oplossingen. Concrete resultaten en ervaringen van klanten."
+        }}
       />
       
       <SuccesverhalenHero />

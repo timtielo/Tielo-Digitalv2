@@ -1,7 +1,8 @@
 import React from 'react';
-import { Clock, Building2, AlertCircle } from 'lucide-react';
+import { Clock, Building2, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from './Card';
+import { Link } from '../Link';
 
 const options = [
   {
@@ -39,6 +40,23 @@ export function ProblemSolveSection() {
             <Card key={index} {...option} index={index} />
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-12 text-center"
+        >
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg 
+                     font-semibold text-lg hover:bg-primary/90 transition-all duration-300
+                     hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Plan een gratis analyse
+            <ArrowRight className="w-6 h-6" />
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

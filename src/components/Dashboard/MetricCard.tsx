@@ -1,5 +1,5 @@
-import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { DivideIcon as LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface MetricCardProps {
@@ -11,6 +11,44 @@ interface MetricCardProps {
 }
 
 export function MetricCard({ icon: Icon, value, title, subtitle, delay = 0 }: MetricCardProps) {
+  const [displayValue, setDisplayValue] = useState('0');
+  
+  useEffect(() => {
+    // Extract numeric part and suffix
+    const numericMatch = value.match(/^[€]?(\d+)([%+]|\+)?/);
+    if (!numericMatch) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const targetNumber = parseInt(numericMatch[1], 10);
+    const prefix = value.startsWith('€') ? '€' : '';
+    const suffix = numericMatch[2] || '';
+    
+    // Animate the number
+    let start = 0;
+    const steps = 500; // Number of steps in animation
+    const increment = targetNumber / steps;
+    const duration = 5000; // Total animation duration in ms
+    const stepDuration = duration / steps;
+
+    const timer = setTimeout(() => {
+      const interval = setInterval(() => {
+        start += increment;
+        if (start >= targetNumber) {
+          setDisplayValue(value);
+          clearInterval(interval);
+        } else {
+          setDisplayValue(`${prefix}${Math.floor(start)}${suffix}`);
+        }
+      }, stepDuration);
+
+      return () => clearInterval(interval);
+    }, delay * 1000);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -28,7 +66,7 @@ export function MetricCard({ icon: Icon, value, title, subtitle, delay = 0 }: Me
           <Icon className="w-6 h-6 text-blue-600" />
         </div>
         <div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">{value}</div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">{displayValue}</div>
           <div className="text-base font-medium text-gray-800 mb-0.5">{title}</div>
           <div className="text-sm text-gray-500">{subtitle}</div>
         </div>

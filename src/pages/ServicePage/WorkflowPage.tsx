@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Workflow, ArrowRight, Database, Zap, Shield, Clock, Check } from 'lucide-react';
 import { Link } from '../../components/Link';
-import { SEO } from '../../components/SEO';
+import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
 
 const features = [
   {
@@ -37,19 +37,12 @@ const benefits = [
 export function WorkflowPage() {
   return (
     <div className="min-h-screen">
-      <SEO 
-        title="Workflow Automatisering | Systeem Integratie & Procesoptimalisatie"
-        description="Optimaliseer jouw bedrijfsprocessen met professionele workflow automatisering. Verbind systemen, elimineer handmatig werk en verhoog efficiency."
-        keywords={[
-          'Workflow Automatisering',
-          'Systeem Integratie',
-          'Procesoptimalisatie',
-          'Bedrijfsautomatisering',
-          'API Koppelingen',
-          'Dataverwerking'
-        ]}
-        ogType="website"
-        canonical="https://tielo-digital.nl/diensten/workflow"
+      <ContentfulSEO 
+        internalName="Diensten Workflow"
+        fallback={{
+          title: "Workflow Automatisering | Systeem Integratie & Procesoptimalisatie",
+          description: "Optimaliseer jouw bedrijfsprocessen met professionele workflow automatisering. Verbind systemen, elimineer handmatig werk en verhoog efficiency."
+        }}
       />
 
       {/* Hero Section */}
