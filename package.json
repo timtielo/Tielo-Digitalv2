@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "@contentful/rich-text-react-renderer": "^15.19.4",
+    "@contentful/rich-text-react-renderer": "^16.0.1",
     "@contentful/rich-text-types": "^16.3.4",
     "@supabase/supabase-js": "^2.39.3",
     "contentful": "^10.6.21",
