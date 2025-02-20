@@ -11,6 +11,8 @@ Allow: /*.jpeg$
 Allow: /*.gif$
 Allow: /social/
 Allow: https://www.tielo-digital.nl/social/og-image.jpg
+Allow: /public/assets/
+Allow: /public/logo/
 
 # Disallow business card page
 Disallow: /visitekaartje
