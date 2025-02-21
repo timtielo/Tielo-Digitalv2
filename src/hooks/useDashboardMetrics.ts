@@ -9,10 +9,10 @@ export interface DashboardMetric {
 
 const DASHBOARD_METRICS: DashboardMetric[] = [
   {
-    metric_key: 'satisfied_clients',
-    value: '3',
-    title: 'Tevreden Klanten',
-    subtitle: 'Succesvolle samenwerkingen'
+    metric_key: 'extra_revenue',
+    value: '€35803',
+    title: 'Extra Omzet',
+    subtitle: 'Voor onze klanten'
   },
   {
     metric_key: 'hours_saved',
@@ -27,10 +27,10 @@ const DASHBOARD_METRICS: DashboardMetric[] = [
     subtitle: 'Return on Investment'
   },
   {
-    metric_key: 'extra_revenue',
-    value: '€35803',
-    title: 'Extra Omzet',
-    subtitle: 'Voor onze klanten'
+    metric_key: 'satisfied_clients',
+    value: '3',
+    title: 'Tevreden Klanten',
+    subtitle: 'Succesvolle samenwerkingen'
   }
 ];
 
