@@ -12,30 +12,58 @@ interface SupabaseSEOProps {
 
 export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
   const { seo, isLoading, error } = useSupabaseSEO(internalName);
+  const baseUrl = 'https://www.tielo-digital.nl';
 
   useEffect(() => {
     // Function to update meta tags
     const updateMetaTags = (title: string, description: string, image?: string, canonical?: string) => {
+      // Default image if none provided
+      const ogImage = image || `${baseUrl}/logo/og-image.jpg`;
+      const canonicalUrl = canonical || `${baseUrl}${window.location.pathname}`;
+
       // Update title
       document.title = title;
       
-      // Update meta description
-      let metaDescription = document.querySelector('meta[name="description"]');
-      if (!metaDescription) {
-        metaDescription = document.createElement('meta');
-        metaDescription.setAttribute('name', 'description');
-        document.head.appendChild(metaDescription);
-      }
-      metaDescription.setAttribute('content', description);
+      // Basic meta tags
+      const metaTags = {
+        'description': description,
+        'robots': seo?.noindex || seo?.nofollow ? 
+          `${seo.noindex ? 'noindex' : 'index'}, ${seo.nofollow ? 'nofollow' : 'follow'}` : 
+          'index, follow'
+      };
 
-      // Update Open Graph tags
+      // Open Graph tags
       const ogTags = {
         'og:title': title,
         'og:description': description,
-        'og:image': image || 'https://www.tielo-digital.nl/logo/og-image.jpg',
-        'og:url': canonical || window.location.href
+        'og:image': ogImage,
+        'og:url': canonicalUrl,
+        'og:type': 'website',
+        'og:site_name': 'Tielo Digital'
       };
 
+      // Twitter Card tags
+      const twitterTags = {
+        'twitter:card': 'summary_large_image',
+        'twitter:site': '@TieloDigital',
+        'twitter:title': title,
+        'twitter:description': description,
+        'twitter:image': ogImage,
+        'twitter:url': canonicalUrl
+      };
+
+      // Update meta tags
+      Object.entries(metaTags).forEach(([name, content]) => {
+        let tag = document.querySelector(`meta[name="${name}"]`);
+        if (!tag) {
+          tag = document.createElement('meta');
+          tag.setAttribute('name', name);
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      });
+
+      // Update OG tags
       Object.entries(ogTags).forEach(([property, content]) => {
         let tag = document.querySelector(`meta[property="${property}"]`);
         if (!tag) {
@@ -47,13 +75,6 @@ export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
       });
 
       // Update Twitter tags
-      const twitterTags = {
-        'twitter:title': title,
-        'twitter:description': description,
-        'twitter:image': image || 'https://www.tielo-digital.nl/logo/og-image.jpg',
-        'twitter:url': canonical || window.location.href
-      };
-
       Object.entries(twitterTags).forEach(([name, content]) => {
         let tag = document.querySelector(`meta[name="${name}"]`);
         if (!tag) {
@@ -71,29 +92,14 @@ export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
         canonicalTag.setAttribute('rel', 'canonical');
         document.head.appendChild(canonicalTag);
       }
-      canonicalTag.setAttribute('href', canonical || window.location.href);
-
-      // Update robots meta tag if needed
-      if (seo?.noindex || seo?.nofollow) {
-        let robotsTag = document.querySelector('meta[name="robots"]');
-        if (!robotsTag) {
-          robotsTag = document.createElement('meta');
-          robotsTag.setAttribute('name', 'robots');
-          document.head.appendChild(robotsTag);
-        }
-        const robotsContent = [
-          seo.noindex ? 'noindex' : 'index',
-          seo.nofollow ? 'nofollow' : 'follow'
-        ].join(', ');
-        robotsTag.setAttribute('content', robotsContent);
-      }
+      canonicalTag.setAttribute('href', canonicalUrl);
     };
 
     // Determine which data to use
     if (!isLoading && !error && seo) {
       updateMetaTags(
         seo.page_title,
-        seo.page_description || '',
+        seo.page_description || defaultSEO.description,
         seo.share_image_url,
         seo.canonical_url
       );
@@ -105,7 +111,9 @@ export function SupabaseSEO({ internalName, fallback }: SupabaseSEOProps) {
     } else {
       updateMetaTags(
         defaultSEO.title,
-        defaultSEO.description
+        defaultSEO.description,
+        `${baseUrl}/logo/og-image.jpg`,
+        `${baseUrl}${window.location.pathname}`
       );
     }
   }, [seo, isLoading, error, fallback]);

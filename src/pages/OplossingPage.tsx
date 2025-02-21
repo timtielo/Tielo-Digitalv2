@@ -3,6 +3,7 @@ import { useOplossing } from '../hooks/useOplossing';
 import { Loader } from 'lucide-react';
 import { OplossingContent } from '../components/Oplossingen/OplossingContent';
 import { OplossingenCTA } from '../components/Oplossingen/OplossingenCTA';
+import { SolutionSEO } from '../components/SEO/SolutionSEO';
 
 interface OplossingPageProps {
   slug: string;
@@ -31,6 +32,9 @@ export function OplossingPage({ slug }: OplossingPageProps) {
 
   return (
     <div className="min-h-screen">
+      {/* Use SolutionSEO for Contentful-based SEO */}
+      <SolutionSEO solution={oplossing} />
+      
       <OplossingContent oplossing={oplossing} />
       <OplossingenCTA />
     </div>

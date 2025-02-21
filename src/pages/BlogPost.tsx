@@ -34,6 +34,7 @@ export function BlogPost({ slug }: BlogPostProps) {
 
   return (
     <>
+      {/* Use BlogSEO for Contentful-based SEO */}
       <BlogSEO post={post} />
 
       <article className="min-h-screen">
@@ -68,7 +69,7 @@ export function BlogPost({ slug }: BlogPostProps) {
               {post.fields.featuredImage && (
                 <div className="mb-12">
                   <img
-                    src={post.fields.featuredImage.fields.file.url}
+                    src={`https:${post.fields.featuredImage.fields.file.url}`}
                     alt={post.fields.featuredImage.fields.title}
                     className="w-full rounded-xl"
                   />
