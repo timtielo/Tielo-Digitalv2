@@ -16,27 +16,18 @@ const SEO_CACHE_KEY = 'seo_settings_cache';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 function getCachedSEO(internalName: string): { seo: SEOSettings | null; timestamp: number } | null {
-  try {
-    const cached = localStorage.getItem(`${SEO_CACHE_KEY}_${internalName}`);
-    return cached ? JSON.parse(cached) : null;
-  } catch (err) {
-    console.error('Error reading from cache:', err);
-    return null;
-  }
+  const cached = localStorage.getItem(`${SEO_CACHE_KEY}_${internalName}`);
+  return cached ? JSON.parse(cached) : null;
 }
 
 function setCachedSEO(internalName: string, seo: SEOSettings) {
-  try {
-    localStorage.setItem(
-      `${SEO_CACHE_KEY}_${internalName}`,
-      JSON.stringify({
-        seo,
-        timestamp: Date.now()
-      })
-    );
-  } catch (err) {
-    console.error('Error writing to cache:', err);
-  }
+  localStorage.setItem(
+    `${SEO_CACHE_KEY}_${internalName}`,
+    JSON.stringify({
+      seo,
+      timestamp: Date.now()
+    })
+  );
 }
 
 export function useSupabaseSEO(internalName: string) {
@@ -63,38 +54,18 @@ export function useSupabaseSEO(internalName: string) {
           }
         }
 
-        // Fetch from Supabase with retry logic
-        let attempts = 0;
-        const maxAttempts = 3;
-        let lastError: any;
+        const { data, error: supabaseError } = await supabase
+          .from('seo_settings')
+          .select('*')
+          .eq('internal_name', internalName)
+          .single();
 
-        while (attempts < maxAttempts) {
-          try {
-            const { data, error: supabaseError } = await supabase
-              .from('seo_settings')
-              .select('*')
-              .eq('internal_name', internalName)
-              .single();
+        if (supabaseError) throw supabaseError;
 
-            if (supabaseError) throw supabaseError;
-
-            if (isMounted && data) {
-              setSEO(data);
-              setCachedSEO(internalName, data);
-              setError(null);
-              break;
-            }
-          } catch (err) {
-            lastError = err;
-            attempts++;
-            if (attempts < maxAttempts) {
-              await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
-            }
-          }
-        }
-
-        if (attempts === maxAttempts) {
-          throw lastError;
+        if (isMounted && data) {
+          setSEO(data);
+          setCachedSEO(internalName, data);
+          setError(null);
         }
       } catch (err) {
         console.error('Error fetching SEO settings:', err);
