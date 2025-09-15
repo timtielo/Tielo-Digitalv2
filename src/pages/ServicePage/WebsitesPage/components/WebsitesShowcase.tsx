@@ -14,7 +14,7 @@ const websites = [
   },
   {
     name: 'Praktijk Tielo',
-    url: 'https://praktijktielo.tielo-digital.nl',
+    url: 'https://praktijk-tielo.nl/',
     logo: '/assets/Praktijk Tielo 169.svg'
   }
 ];
