@@ -11,6 +11,11 @@ const websites = [
     name: 'TG Ilde Gevelwerken',
     url: 'https://tgildegevelwerken.tielo-digital.nl/',
     logo: '/logo/tgildegevelwerkenlogo-transparant.svg'
+  },
+  {
+    name: 'Praktijk Tielo',
+    url: 'https://praktijktielo.tielo-digital.nl',
+    logo: '/assets/Praktijk Tielo 169.svg'
   }
 ];
 
@@ -31,10 +36,10 @@ export function WebsiteShowcase() {
           <div className="overflow-hidden whitespace-nowrap py-8">
             <motion.div
               animate={{
-                x: [-100, -1200], // Adjusted for two logos
+                x: [-100, -1800], // Adjusted for three logos
               }}
               transition={{
-                duration: 20,
+                duration: 30,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -62,10 +67,10 @@ export function WebsiteShowcase() {
             {/* Duplicate for seamless loop */}
             <motion.div
               animate={{
-                x: [1200, 100], // Adjusted for two logos
+                x: [1800, 100], // Adjusted for three logos
               }}
               transition={{
-                duration: 20,
+                duration: 30,
                 repeat: Infinity,
                 ease: "linear"
               }}
