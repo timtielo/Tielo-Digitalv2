@@ -36,7 +36,7 @@ export function WebsiteShowcase() {
           <div className="overflow-hidden whitespace-nowrap py-8">
             <motion.div
               animate={{
-                x: [-100, -1800], // Adjusted for three logos
+                x: [-100, -1800],
               }}
               transition={{
                 duration: 30,
@@ -62,23 +62,10 @@ export function WebsiteShowcase() {
                   </div>
                 </a>
               ))}
-            </motion.div>
-            
-            {/* Duplicate for seamless loop */}
-            <motion.div
-              animate={{
-                x: [1800, 100], // Adjusted for three logos
-              }}
-              transition={{
-                duration: 30,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="inline-block"
-            >
+              {/* Duplicate for seamless loop */}
               {websites.map((site, index) => (
                 <a
-                  key={index}
+                  key={`duplicate-${index}`}
                   href={site.url}
                   target="_blank"
                   rel="noopener noreferrer"
