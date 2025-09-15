@@ -28,7 +28,7 @@ const DASHBOARD_METRICS: DashboardMetric[] = [
   },
   {
     metric_key: 'satisfied_clients',
-    value: '3',
+    value: '5',
     title: 'Tevreden Klanten',
     subtitle: 'Succesvolle samenwerkingen'
   }
