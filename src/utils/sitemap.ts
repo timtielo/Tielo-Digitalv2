@@ -116,12 +116,19 @@ export async function generateSitemap() {
 
     // Add service pages
     sitemap += `
+
   <!-- Services Pages -->
   <url>
     <loc>${baseUrl}/diensten</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/diensten/websites</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>${baseUrl}/diensten/workflow</loc>
@@ -159,15 +166,7 @@ export async function generateSitemap() {
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>${baseUrl}/diensten/websites</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-
-    // Close the sitemap
-    sitemap += '\n</urlset>';
+</urlset>`;
 
     // Write the sitemap file
     await fs.writeFile(
