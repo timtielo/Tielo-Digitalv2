@@ -8,35 +8,80 @@ interface MetselaarTemplateProps {
 
 export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
   const services = [
-    'Gevelmetselwerk',
-    'Restauratie & Renovatie',
-    'Schoorsteenbouw',
-    'Tuinmuren & Siermetselwerk',
-    'Voegwerk & Onderhoud',
-    'Nieuwbouw Metselwerk',
+    {
+      title: 'Gevelmetselwerk',
+      description: 'Vakkundig metselwerk voor nieuwbouw en renovatie. Van moderne gevels tot klassieke baksteen.',
+    },
+    {
+      title: 'Restauratie & Voegwerk',
+      description: 'Herstel van historische gebouwen en professioneel voegwerk dat generaties meegaat.',
+    },
+    {
+      title: 'Schoorsteenbouw',
+      description: 'Bouwen en herstellen van schoorstenen volgens traditionele ambachtelijke methoden.',
+    },
+    {
+      title: 'Tuinmuren & Erfafscheidingen',
+      description: 'Duurzame tuinmuren en siermetselen die uw buitenruimte compleet maken.',
+    },
+    {
+      title: 'Natuursteen & Klinkers',
+      description: 'Bestraten met natuursteen, klinkers en sierstenen voor een tijdloos resultaat.',
+    },
+    {
+      title: 'Speciaalbouw',
+      description: 'Barbecues, pizza-ovens en maatwerk metselconstructies voor binnen en buiten.',
+    },
   ];
 
   const benefits = [
-    { icon: Award, title: 'Vakmanschap', description: 'Hoogwaardige kwaliteit door ervaren vakmensen' },
-    { icon: Shield, title: 'Garantie', description: 'Uitgebreide garantie op al ons werk' },
-    { icon: Clock, title: 'Op Tijd', description: 'Altijd binnen de afgesproken planning' },
+    {
+      icon: Award,
+      title: 'Erkend Vakmanschap',
+      description: '20+ jaar ervaring met traditioneel en modern metselwerk'
+    },
+    {
+      icon: Shield,
+      title: 'Volledige Garantie',
+      description: 'Uitgebreide garantie op materiaal en vakkundig uitgevoerd werk'
+    },
+    {
+      icon: Clock,
+      title: 'Betrouwbaar & Netjes',
+      description: 'Op tijd, volgens planning en met oog voor detail en netheid op locatie'
+    },
   ];
 
   const projects = [
     {
-      image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop',
-      title: 'Woning Renovatie',
-      description: 'Compleet gevelmetselwerk',
+      image: 'https://images.pexels.com/photos/1106386/pexels-photo-1106386.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+      title: 'Gevelrenovatie Woonhuis',
+      description: 'Complete gevelrenovatie met handvorm bakstenen in halfsteensverband',
     },
     {
-      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop',
-      title: 'Nieuwbouw Project',
-      description: 'Traditioneel metselwerk',
+      image: 'https://images.pexels.com/photos/259958/pexels-photo-259958.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+      title: 'Nieuwbouw Luxe Villa',
+      description: 'Hoogwaardig metselwerk met speciale voegafwerking',
     },
     {
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
-      title: 'Siermetselwerk',
-      description: 'Handgemaakte tuinmuur',
+      image: 'https://images.pexels.com/photos/164522/pexels-photo-164522.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+      title: 'Historische Restauratie',
+      description: 'Herstel monumentaal pand met originele materialen',
+    },
+    {
+      image: 'https://images.pexels.com/photos/271667/pexels-photo-271667.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+      title: 'Tuinmuur met Sierboog',
+      description: 'Traditionele tuinmuur met decoratieve boogconstructie',
+    },
+    {
+      image: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+      title: 'Schoorsteen Nieuwbouw',
+      description: 'Massieve schoorsteen met klassieke detaillering',
+    },
+    {
+      image: 'https://images.pexels.com/photos/1838640/pexels-photo-1838640.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+      title: 'Bestrating Natuursteen',
+      description: 'Oprit en terras in grijze natuursteen met accenten',
     },
   ];
 
@@ -46,12 +91,12 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&h=1080&fit=crop)',
+            backgroundImage: 'url(https://images.pexels.com/photos/1106386/pexels-photo-1106386.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-900/95 to-stone-900/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-red-900/90 via-orange-900/85 to-amber-900/90" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -65,7 +110,7 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
               <img
                 src={company.logoUrl}
                 alt={`${company.businessName} logo`}
-                className="h-24 w-auto mx-auto"
+                className="h-28 w-auto mx-auto drop-shadow-2xl"
               />
             </motion.div>
           )}
@@ -74,7 +119,7 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6"
+            className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg"
           >
             {company.businessName}
           </motion.h1>
@@ -83,9 +128,18 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-amber-100 mb-8 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-orange-100 mb-4 max-w-3xl mx-auto font-medium"
           >
-            Hallo, ik ben {company.firstName}. Vakkundig metselwerk met oog voor detail en duurzaamheid.
+            Vakkundig metselwerk sinds 2003
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-lg md:text-xl text-orange-200/90 mb-10 max-w-2xl mx-auto"
+          >
+            Hallo, ik ben {company.firstName}. Met mijn team lever ik hoogwaardig metselwerk voor particulieren en bedrijven. Van gevelmetselwerk tot complete restauraties.
           </motion.p>
 
           <motion.div
@@ -96,13 +150,16 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
           >
             <a
               href="#contact"
-              className="px-8 py-4 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors shadow-xl"
+              className="group px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all shadow-2xl hover:shadow-orange-500/50 hover:scale-105"
             >
-              Direct Contact
+              <span className="flex items-center justify-center gap-2">
+                Gratis Offerte Aanvragen
+                <Phone className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+              </span>
             </a>
             <a
               href="#portfolio"
-              className="px-8 py-4 bg-white text-amber-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-xl"
+              className="px-8 py-4 bg-white/95 backdrop-blur text-orange-900 font-semibold rounded-lg hover:bg-white transition-all shadow-2xl hover:scale-105"
             >
               Bekijk Ons Werk
             </a>
@@ -110,39 +167,69 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Onze Diensten</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Van traditioneel metselwerk tot moderne geveloplossingen
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Onze Specialisaties</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Van traditioneel ambacht tot moderne technieken - compleet metselwerk onder één dak
+              </p>
+            </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, index) => (
               <motion.div
-                key={service}
+                key={service.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-200 hover:-translate-y-1"
               >
-                <CheckCircle2 className="h-10 w-10 text-amber-600 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{service}</h3>
-                <p className="text-gray-600">
-                  Professioneel en met jarenlange ervaring uitgevoerd
-                </p>
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-50 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-100 transition-colors">
+                      <CheckCircle2 className="h-6 w-6 text-orange-600" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-orange-900 transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-gradient-to-b from-orange-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Waarom Kiezen Voor Ons?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Kwaliteit, betrouwbaarheid en vakmanschap staan bij ons voorop
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
               return (
@@ -152,13 +239,13 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  className="text-center"
+                  className="text-center group"
                 >
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-6">
-                    <Icon className="h-8 w-8 text-amber-600" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl mb-6 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                  <p className="text-gray-600">{benefit.description}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{benefit.title}</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">{benefit.description}</p>
                 </motion.div>
               );
             })}
@@ -166,77 +253,152 @@ export const MetselaarTemplate = ({ company }: MetselaarTemplateProps) => {
         </div>
       </section>
 
-      <section id="portfolio" className="py-20 bg-gray-50">
+      <section id="portfolio" className="py-24 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Onze Projecten</h2>
-            <p className="text-xl text-gray-600">
-              Bekijk enkele van onze recent afgeronde projecten
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Recent Afgeronde Projecten</h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Een selectie van ons vakwerk - van nieuwbouw tot restauratie
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project, index) => (
               <motion.div
                 key={project.title}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+                className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-orange-500/20 transition-all duration-500"
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                  <div className="p-6 text-white">
-                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                    <p className="text-gray-200">{project.description}</p>
+                <div className="aspect-[4/3] overflow-hidden bg-gray-800">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                <div className="absolute inset-0 flex flex-col justify-end p-6">
+                  <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 className="text-xl font-bold text-white mb-2">{project.title}</h3>
+                    <p className="text-gray-200 text-sm leading-relaxed opacity-90">{project.description}</p>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
+          >
+            <p className="text-gray-400 text-lg">
+              Wilt u ook zo'n mooi resultaat? Neem contact op voor de mogelijkheden
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      <section id="contact" className="py-20 bg-amber-900 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold mb-6">Neem Contact Op</h2>
-          <p className="text-xl text-amber-100 mb-12">
-            Wilt u meer weten over onze diensten? {company.firstName} helpt u graag verder!
-          </p>
+      <section id="contact" className="py-24 bg-gradient-to-br from-orange-600 via-red-600 to-red-700 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1106386/pexels-photo-1106386.jpeg?auto=compress&cs=tinysrgb&w=1920')] opacity-10 bg-cover bg-center" />
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Vraag Een Gratis Offerte Aan</h2>
+            <p className="text-xl text-orange-100 mb-4 max-w-2xl mx-auto leading-relaxed">
+              Heeft u een metselproject? {company.firstName} komt graag vrijblijvend bij u langs voor een persoonlijk advies en een scherpe offerte.
+            </p>
+            <p className="text-lg text-orange-200/90">
+              Bel, mail of WhatsApp voor een snelle reactie
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto"
+          >
             <a
-              href="tel:+31612345678"
-              className="flex items-center justify-center gap-3 bg-white text-amber-900 px-6 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              href={`tel:${company.phoneNumber || '+31612345678'}`}
+              className="group flex items-center justify-center gap-3 bg-white text-orange-900 px-8 py-5 rounded-xl font-bold hover:bg-orange-50 transition-all shadow-2xl hover:scale-105 hover:shadow-white/20"
             >
-              <Phone className="h-5 w-5" />
-              Bel Direct
+              <Phone className="h-6 w-6 group-hover:rotate-12 transition-transform" />
+              <span>Bel Direct</span>
             </a>
             <a
-              href="mailto:info@example.com"
-              className="flex items-center justify-center gap-3 bg-amber-800 text-white px-6 py-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors"
+              href={`mailto:${company.email || 'info@example.com'}`}
+              className="flex items-center justify-center gap-3 bg-orange-700 text-white px-8 py-5 rounded-xl font-bold hover:bg-orange-800 transition-all shadow-2xl hover:scale-105"
             >
-              <Mail className="h-5 w-5" />
-              Stuur Email
+              <Mail className="h-6 w-6" />
+              <span>Stuur Email</span>
             </a>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="mt-12 text-center"
+          >
+            <p className="text-orange-100 text-sm">
+              ✓ Gratis advies & offerte  ✓ Snelle reactietijd  ✓ Geen verrassingen achteraf
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <footer className="bg-gray-950 text-gray-400 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            {company.logoUrl && (
+              <img
+                src={company.logoUrl}
+                alt={`${company.businessName} logo`}
+                className="h-16 w-auto mx-auto mb-6 opacity-80"
+              />
+            )}
+            <h3 className="text-2xl font-bold text-white mb-2">{company.businessName}</h3>
+            <p className="text-gray-400 mb-8">
+              Professioneel metselwerk door {company.firstName} en zijn ervaren team
+            </p>
+
+            <div className="border-t border-gray-800 pt-8">
+              <p className="text-sm text-gray-500">
+                © {new Date().getFullYear()} {company.businessName}. Alle rechten voorbehouden.
+              </p>
+              <p className="text-sm text-gray-600 mt-3">
+                Website ontwikkeld door{' '}
+                <a
+                  href="https://tielodigital.nl"
+                  className="text-orange-500 hover:text-orange-400 font-medium transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Tielo Digital
+                </a>
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <footer className="bg-gray-900 text-gray-300 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="mb-2">{company.businessName}</p>
-          <p className="text-sm text-gray-500">
-            Professioneel metselwerk door {company.firstName} en zijn team
-          </p>
-          <p className="text-sm text-gray-500 mt-4">
-            Website ontwikkeld door <a href="/" className="text-amber-500 hover:text-amber-400">Tielo Digital</a>
-          </p>
         </div>
       </footer>
     </div>
