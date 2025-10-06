@@ -23,6 +23,7 @@ import { Cookies } from '../pages/Cookies';
 import { Succesverhalen } from '../pages/Succesverhalen';
 import { Oplossingen } from '../pages/Oplossingen';
 import { OplossingPage } from '../pages/OplossingPage';
+import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
 
 export interface Route {
   path: string;
@@ -45,6 +46,8 @@ export const routes: Route[] = [
   { path: '/diensten/customer-service', component: CustomerServicePage },
   { path: '/diensten/content-creation', component: ContentCreationPage },
   { path: '/diensten/custom', component: CustomPage },
+  // Showcase company routes - must come before generic service route
+  { path: '/diensten/websites/:businessType/:slug', component: ShowcaseCompanyPage, params: ['businessType', 'slug'] },
   // Generic service route should come after specific routes
   { path: '/diensten/:serviceId', component: ServicePage, params: ['serviceId'] },
   { path: '/contact', component: Contact },
