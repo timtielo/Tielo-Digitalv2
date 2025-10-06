@@ -19,6 +19,8 @@ export interface AirtableCompanyRecord {
     'Business type'?: string;
     Bedrijfsnaam?: string;
     Logo?: AirtableAttachment[];
+    Telefoonnummer?: string;
+    Email?: string;
   };
   createdTime: string;
 }
@@ -30,6 +32,8 @@ export interface Company {
   businessType: string;
   businessName: string;
   logoUrl?: string;
+  phoneNumber?: string;
+  email?: string;
   createdTime: string;
 }
 

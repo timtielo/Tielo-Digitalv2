@@ -10,6 +10,8 @@ const transformRecord = (record: any): Company => {
     businessType: fields['Business type'] || '',
     businessName: fields.Bedrijfsnaam || '',
     logoUrl: fields.Logo?.[0]?.url,
+    phoneNumber: fields.Telefoonnummer || '',
+    email: fields.Email || '',
     createdTime: record._rawJson?.createdTime || new Date().toISOString(),
   };
 };
