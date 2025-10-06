@@ -24,6 +24,7 @@ import { Succesverhalen } from '../pages/Succesverhalen';
 import { Oplossingen } from '../pages/Oplossingen';
 import { OplossingPage } from '../pages/OplossingPage';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
+import { MetselaarShowcase } from '../pages/MetselaarShowcase';
 
 export interface Route {
   path: string;
@@ -40,6 +41,7 @@ export const routes: Route[] = [
   { path: '/diensten', component: Services },
   // Specific service routes
   { path: '/diensten/websites', component: WebsitesPage },
+  { path: '/diensten/websites/metselaar', component: MetselaarShowcase },
   { path: '/diensten/workflow', component: WorkflowPage },
   { path: '/diensten/outreach', component: OutreachPage },
   { path: '/diensten/email-handling', component: EmailHandlingPage },

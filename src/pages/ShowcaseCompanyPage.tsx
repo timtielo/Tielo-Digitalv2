@@ -105,6 +105,7 @@ export const ShowcaseCompanyPage = ({ slug }: ShowcaseCompanyPageProps) => {
           'Nederland',
         ]}
         canonical={`https://tielodigital.nl/diensten/websites/${company.businessType.toLowerCase()}/${company.slug}`}
+        noindex={true}
       />
       <TemplateSelector company={company} />
     </>
