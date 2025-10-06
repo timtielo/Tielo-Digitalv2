@@ -45,6 +45,7 @@ export const getCompanyBySlug = async (slug: string): Promise<Company | null> =>
       .firstPage();
 
     if (records.length === 0) {
+      console.log('No records found for slug:', slug);
       return null;
     }
 
@@ -52,8 +53,13 @@ export const getCompanyBySlug = async (slug: string): Promise<Company | null> =>
     setCachedData(cacheKey, company);
     return company;
   } catch (error) {
-    console.error('Error fetching company by slug:', error);
-    throw new Error('Failed to fetch company data from Airtable');
+    console.error('Error fetching company by slug:', slug, error);
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    throw error;
   }
 };
 
