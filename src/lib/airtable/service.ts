@@ -1,4 +1,4 @@
-import { companiesTable } from './client';
+import { getCompaniesTable } from './client';
 import type { AirtableCompanyRecord, Company, BusinessType } from '../../types/airtable';
 
 const transformRecord = (record: any): Company => {
@@ -36,6 +36,7 @@ export const getCompanyBySlug = async (slug: string): Promise<Company | null> =>
   if (cached) return cached;
 
   try {
+    const companiesTable = getCompaniesTable();
     const records = await companiesTable
       .select({
         filterByFormula: `{Slug} = '${slug}'`,
@@ -60,6 +61,7 @@ export const getCompaniesByBusinessType = async (businessType: BusinessType): Pr
   const cacheKey = `businessType:${businessType}`;
 
   try {
+    const companiesTable = getCompaniesTable();
     const records = await companiesTable
       .select({
         filterByFormula: `{Business type} = '${businessType}'`,
@@ -75,6 +77,7 @@ export const getCompaniesByBusinessType = async (businessType: BusinessType): Pr
 
 export const getAllCompanies = async (): Promise<Company[]> => {
   try {
+    const companiesTable = getCompaniesTable();
     const records = await companiesTable.select().firstPage();
     return records.map(transformRecord);
   } catch (error) {
