@@ -26,9 +26,8 @@ const diensten = [
   { name: 'Websites', path: '/diensten/websites' },
   { name: 'Workflow', path: '/diensten/workflow' },
   { name: 'Outreach', path: '/diensten/outreach' },
-  { name: 'Emails beantwoorden', path: '/diensten/email-handling' },
   { name: 'Klantenservice', path: '/diensten/customer-service' },
-  { name: 'Content maken', path: '/diensten/content-creation' }
+  { name: 'Maatwerk', path: '/diensten/custom' }
 ];
 
 export function Header() {

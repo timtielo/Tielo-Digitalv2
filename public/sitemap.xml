@@ -84,26 +84,14 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.tielo-digital.nl/diensten/email-handling</loc>
-    <lastmod>2025-01-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.tielo-digital.nl/diensten/customer-service</loc>
-    <lastmod>2025-01-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.tielo-digital.nl/diensten/content-creation</loc>
-    <lastmod>2025-01-21</lastmod>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.tielo-digital.nl/diensten/custom</loc>
-    <lastmod>2025-01-21</lastmod>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

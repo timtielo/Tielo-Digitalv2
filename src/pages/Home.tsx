@@ -4,7 +4,7 @@ import { MetricsDashboard } from '../components/Dashboard';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
 import { Benefits } from '../components/Home/Benefits';
 import { Services } from '../components/Services';
-import { CaseStudyTestimonial } from '../components/CaseStudyTestimonial';
+import { Testimonials } from '../components/Testimonials';
 import { CTASection } from '../components/CTASection';
 import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
 
@@ -23,7 +23,7 @@ export function Home() {
       <ProblemSolveSection />
       <Benefits />
       <Services />
-      <CaseStudyTestimonial />
+      <Testimonials />
       <CTASection />
     </>
   );

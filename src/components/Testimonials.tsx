@@ -3,31 +3,24 @@ import { Star } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Job 't Gilde',
-    role: ''t Gilde Gevelwerken',
+    name: "Job 't Gilde",
+    role: "Eigenaar bij 't Gilde Gevelwerken",
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150',
     quote: 'Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en enkele aanpassingen waren snel gedaan. Ik kan zelf makkelijk mijn portfolio bijwerken. Daarnaast heeft hij mij geholpen met de DNS instellingen en het logo. De prijs was ook prima. Kortom, snelle en zorgeloze ervaring, dikke aanrader.',
     rating: 5
   },
   {
-    name: 'Lisa van der Berg',
-    role: 'CEO, TechFlow BV',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150',
-    quote: 'Dankzij Tielo Digital hebben we onze klantenservice volledig kunnen automatiseren. De chatbot werkt perfect en onze klanten zijn zeer tevreden.',
-    rating: 5
-  },
-  {
-    name: 'Mark de Vries',
-    role: 'Operations Manager, InnovateCo',
+    name: 'Lars van der Meer',
+    role: 'Eigenaar bij Meer Impact Marketing',
     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150',
-    quote: 'De AI-oplossingen van Tielo Digital hebben onze productiviteit met 40% verhoogd. Een geweldige investering voor ons bedrijf.',
+    quote: 'Tim heeft een geweldige website voor mij gebouwd! Professioneel, supersnel en helemaal naar wens. Dingen waar ik normaal mee worstel, zoals DNS-settings en beveiliging, werden volledig geregeld. De integraties werken perfect, en dankzij het dashboard heb ik eindelijk inzicht in mijn bezoekersaantallen en populairste pagina\'s. Binnen een paar dagen was alles geregeld, van ons eerste contact tot het online-gaan van de site. Het contact verliep soepel, en aanpassingen werden direct doorgevoerd. Ik ben enorm tevreden en heb Tim al aan meerdere mensen in mijn netwerk aanbevolen. Als je een professionele, snelle, en goed presterende website wilt, ben je hier aan het juiste adres!',
     rating: 5
   },
   {
-    name: 'Sophie Jansen',
-    role: 'CTO, DataPro Solutions',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&h=150',
-    quote: 'Professioneel team met uitstekende kennis van AI en automatisering. Ze denken echt mee met je bedrijf.',
+    name: 'Quinten Grundmeijer',
+    role: 'Eigenaar bij Terrasboot',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150',
+    quote: 'Tim is een all-round IT & finance professional waarmee je snel kan schakelen. Van advies tot implementatie: Tim zorgt ervoor dat doelen snel bereikt worden. Voor Terrasboot heeft hij onder andere een koppeling ontwikkeld en geïmplementeerd om betalingen automatisch te factureren en in te boeken. Dit bespaart ons uren tijd en hiermee heeft Tim zich dubbel en dwars terugverdiend. Wij zullen Tim vaker benaderen voor complexe vraagstukken.',
     rating: 5
   }
 ];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Workflow, Send, Mail, Bot, MessageSquare, Brain, ArrowRight } from 'lucide-react';
+import { Workflow, Send, Bot, Brain, ArrowRight } from 'lucide-react';
 import { ServiceCard } from './ServiceCard';
 import { motion } from 'framer-motion';
 import { Link } from './Link';
@@ -31,18 +31,6 @@ export const services = [
     ]
   },
   {
-    id: 'email-handling',
-    icon: Mail,
-    title: 'Emails beantwoorden',
-    description: 'Een AI die jouw emails schrijft zodat jij deze alleen nog maar hoeft te controleren.',
-    features: [
-      'Automatische email verwerking',
-      'Persoonlijke schrijfstijl',
-      'Snelle responstijd',
-      'Kwaliteitscontrole'
-    ]
-  },
-  {
     id: 'customer-service',
     icon: Bot,
     title: 'Klantenservice',
@@ -52,18 +40,6 @@ export const services = [
       'Snelle antwoorden',
       'Leadgeneratie',
       'Klanttevredenheid verhogen'
-    ]
-  },
-  {
-    id: 'content-creation',
-    icon: MessageSquare,
-    title: 'Content maken',
-    description: 'Blogs schrijven, LinkedIn post maken, Instagram en Facebook content, AI kan het allemaal.',
-    features: [
-      'Blog artikelen',
-      'Social media posts',
-      'SEO-optimalisatie',
-      'Consistente merkstijl'
     ]
   },
   {

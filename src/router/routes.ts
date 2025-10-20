@@ -7,9 +7,7 @@ import { ServicePage } from '../pages/ServicePage';
 import { WebsitesPage } from '../pages/ServicePage/WebsitesPage';
 import { WorkflowPage } from '../pages/ServicePage/WorkflowPage';
 import { OutreachPage } from '../pages/ServicePage/OutreachPage';
-import { EmailHandlingPage } from '../pages/ServicePage/EmailHandlingPage';
 import { CustomerServicePage } from '../pages/ServicePage/CustomerServicePage';
-import { ContentCreationPage } from '../pages/ServicePage/ContentCreationPage';
 import { CustomPage } from '../pages/ServicePage/CustomPage';
 import { Contact } from '../pages/Contact';
 import { GratisGuide } from '../pages/GratisGuide';
@@ -44,9 +42,7 @@ export const routes: Route[] = [
   { path: '/diensten/websites/metselaar', component: MetselaarShowcase },
   { path: '/diensten/workflow', component: WorkflowPage },
   { path: '/diensten/outreach', component: OutreachPage },
-  { path: '/diensten/email-handling', component: EmailHandlingPage },
   { path: '/diensten/customer-service', component: CustomerServicePage },
-  { path: '/diensten/content-creation', component: ContentCreationPage },
   { path: '/diensten/custom', component: CustomPage },
   // Showcase company routes - must come before generic service route (no layout)
   { path: '/diensten/websites/:businessType/:slug', component: ShowcaseCompanyPage, params: ['businessType', 'slug'], layout: false },

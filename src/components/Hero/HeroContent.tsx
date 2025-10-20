@@ -11,13 +11,13 @@ export function HeroContent() {
       className="max-w-2xl"
     >
       <h1 className="text-5xl md:text-6xl font-bold mb-6 font-rubik leading-tight">
-        Automatiseer je bedrijf en{' '}
-        <span className="text-blue-600">bespaar tijd</span> met slimme oplossingen
+        Professionele websites en{' '}
+        <span className="text-blue-600">slimme automatisering</span> voor jouw bedrijf
       </h1>
-      
+
       <p className="text-xl text-gray-600 mb-8">
-        Verbeter bedrijfsprocessen met op maat gemaakte systemen. 
-        Verhoog efficiency, verminder kosten en blijf voorop in innovatie. 
+        Van een moderne website tot AI-gedreven automatisering.
+        Wij helpen jouw bedrijf groeien met technologie die werkt.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4">
