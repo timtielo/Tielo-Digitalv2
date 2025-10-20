@@ -3,6 +3,13 @@ import { Star } from 'lucide-react';
 
 const testimonials = [
   {
+    name: 'Job 't Gilde',
+    role: ''t Gilde Gevelwerken',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150',
+    quote: 'Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en enkele aanpassingen waren snel gedaan. Ik kan zelf makkelijk mijn portfolio bijwerken. Daarnaast heeft hij mij geholpen met de DNS instellingen en het logo. De prijs was ook prima. Kortom, snelle en zorgeloze ervaring, dikke aanrader.',
+    rating: 5
+  },
+  {
     name: 'Lisa van der Berg',
     role: 'CEO, TechFlow BV',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150',
