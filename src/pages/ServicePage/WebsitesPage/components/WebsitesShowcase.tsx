@@ -16,6 +16,11 @@ const websites = [
     name: 'Praktijk Tielo',
     url: 'https://praktijk-tielo.nl/',
     logo: '/assets/Praktijk Tielo 169.svg'
+  },
+  {
+    name: 'Her Horizon',
+    url: 'https://herhorizonv4.tielo-digital.nl',
+    logo: 'https://herhorizonv4.tielo-digital.nl/images/Logofulltrans.svg'
   }
 ];
 
@@ -36,10 +41,10 @@ export function WebsitesShowcase() {
           <div className="overflow-hidden whitespace-nowrap py-8">
             <motion.div
               animate={{
-                x: [-100, -1800],
+                x: [-100, -2200],
               }}
               transition={{
-                duration: 30,
+                duration: 40,
                 repeat: Infinity,
                 ease: "linear"
               }}

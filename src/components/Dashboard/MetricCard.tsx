@@ -14,39 +14,50 @@ export function MetricCard({ icon: Icon, value, title, subtitle, delay = 0 }: Me
   const [displayValue, setDisplayValue] = useState('0');
   
   useEffect(() => {
-    // Extract numeric part and suffix
-    const numericMatch = value.match(/^[€]?(\d+)([%+]|\+)?/);
+    const numericMatch = value.match(/^[€]?(\d+(?:\.\d+)?)([%+]|\+)?/);
     if (!numericMatch) {
       setDisplayValue(value);
       return;
     }
 
-    const targetNumber = parseInt(numericMatch[1], 10);
+    const targetNumber = parseInt(numericMatch[1].replace(/\./g, ''), 10);
     const prefix = value.startsWith('€') ? '€' : '';
     const suffix = numericMatch[2] || '';
-    
-    // Animate the number
+
     let start = 0;
-    const steps = 500; // Number of steps in animation
-    const increment = targetNumber / steps;
-    const duration = 5000; // Total animation duration in ms
-    const stepDuration = duration / steps;
+    const duration = 2000;
+    const startTime = Date.now() + (delay * 1000);
 
-    const timer = setTimeout(() => {
-      const interval = setInterval(() => {
-        start += increment;
-        if (start >= targetNumber) {
-          setDisplayValue(value);
-          clearInterval(interval);
+    const animate = () => {
+      const now = Date.now();
+      const elapsed = now - startTime;
+
+      if (elapsed < 0) {
+        requestAnimationFrame(animate);
+        return;
+      }
+
+      if (elapsed < duration) {
+        const progress = elapsed / duration;
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(easeProgress * targetNumber);
+
+        if (targetNumber >= 1000) {
+          setDisplayValue(`${prefix}${current.toLocaleString('nl-NL')}${suffix}`);
         } else {
-          setDisplayValue(`${prefix}${Math.floor(start)}${suffix}`);
+          setDisplayValue(`${prefix}${current}${suffix}`);
         }
-      }, stepDuration);
+        requestAnimationFrame(animate);
+      } else {
+        if (targetNumber >= 1000) {
+          setDisplayValue(`${prefix}${targetNumber.toLocaleString('nl-NL')}${suffix}`);
+        } else {
+          setDisplayValue(`${prefix}${targetNumber}${suffix}`);
+        }
+      }
+    };
 
-      return () => clearInterval(interval);
-    }, delay * 1000);
-
-    return () => clearTimeout(timer);
+    requestAnimationFrame(animate);
   }, [value, delay]);
 
   return (
