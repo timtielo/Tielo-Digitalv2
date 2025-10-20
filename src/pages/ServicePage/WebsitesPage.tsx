@@ -1,30 +1,28 @@
 import React from 'react';
 import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
 import { WebsitesHero } from './WebsitesPage/components/WebsitesHero';
-import { WebsitesBenefits } from './WebsitesPage/components/WebsitesBenefits';
-import { WebsitesFeatures } from './WebsitesPage/components/WebsitesFeatures';
-import { WebsitesExtras } from './WebsitesPage/components/WebsitesExtras';
-import { WebsitesShowcase } from './WebsitesPage/components/WebsitesShowcase';
+import { WebsitesValue } from './WebsitesPage/components/WebsitesValue';
+import { WebsitesOffer } from './WebsitesPage/components/WebsitesOffer';
 import { WebsitesPortfolio } from './WebsitesPage/components/WebsitesPortfolio';
-import { WebsitesCTA } from './WebsitesPage/components/WebsitesCTA';
+import { WebsitesProcess } from './WebsitesPage/components/WebsitesProcess';
+import { WebsitesForm } from './WebsitesPage/components/WebsitesForm';
 
 export function WebsitesPage() {
   return (
     <div className="min-h-screen">
-      <ContentfulSEO 
+      <ContentfulSEO
         internalName="Website Development SEO"
         fallback={{
-          title: "Website Development | Professionele Websites",
-          description: "Laat jouw bedrijf online groeien met een professionele website. Modern design, snelle performance en optimale conversie - wij bouwen websites die resultaat leveren."
+          title: "Gratis eerste websiteversie – Website laten maken door Tielo Digital",
+          description: "Laat gratis een eerste versie van je website bouwen door Tielo Digital. Bevalt het resultaat? Dan plannen we een korte call om te lanceren. Geen risico, geen verplichtingen."
         }}
       />
       <WebsitesHero />
-      <WebsitesBenefits />
-      <WebsitesFeatures />
-      <WebsitesExtras />
-      <WebsitesShowcase />
+      <WebsitesValue />
+      <WebsitesOffer />
       <WebsitesPortfolio />
-      <WebsitesCTA />
+      <WebsitesProcess />
+      <WebsitesForm />
     </div>
   );
 }
