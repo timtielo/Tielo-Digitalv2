@@ -7,15 +7,22 @@ import { Services } from '../components/Services';
 import { Testimonials } from '../components/Testimonials';
 import { CTASection } from '../components/CTASection';
 import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
+import { LocalBusinessSchema } from '../components/SEO/LocalBusinessSchema';
 
 export function Home() {
   return (
     <>
-      <ContentfulSEO 
+      <ContentfulSEO
         internalName="Home page SEO"
         fallback={{
-          title: "AI & Automatisering voor Bedrijven",
-          description: "Transformeer jouw bedrijf met AI-gedreven oplossingen en automatisering. Verhoog efficiency, verminder kosten en blijf voorop in innovatie."
+          title: "AI & Automatisering voor Bedrijven in Utrecht | Tielo Digital",
+          description: "Tielo Digital - AI-gedreven automatisering en digitale oplossingen voor bedrijven in Utrecht en heel Nederland. Verhoog efficiency, verminder kosten met slimme workflow automation. ✓ 1189% ROI ✓ 200+ uren bespaard."
+        }}
+      />
+      <LocalBusinessSchema
+        aggregateRating={{
+          ratingValue: 5,
+          reviewCount: 6
         }}
       />
       <Hero />
