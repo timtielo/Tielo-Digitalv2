@@ -36,8 +36,8 @@ export function WebsitesHero() {
             </p>
 
             <p className="text-lg text-gray-500 mb-10 max-w-2xl mx-auto">
-              We bouwen een eerste versie van je website — volledig gratis. Bevalt het?
-              Dan plannen we een korte call om alles af te ronden en te lanceren.
+              We bouwen een eerste versie van je website — volledig gratis. Zo zie je wat mogelijk is.
+              Bevalt het? Dan plannen we een call om jouw wensen door te nemen en alles werkend te maken.
               Niet tevreden? Geen probleem, geen kosten.
             </p>
 
@@ -53,7 +53,7 @@ export function WebsitesHero() {
             </motion.button>
 
             <p className="text-sm text-gray-500 mt-4">
-              ✓ Geen betaling vooraf  ✓ Geen verplichtingen  ✓ Binnen enkele dagen online
+              ✓ Geen betaling vooraf  ✓ Geen verplichtingen  ✓ Eerst zien, dan beslissen
             </p>
           </motion.div>
         </div>

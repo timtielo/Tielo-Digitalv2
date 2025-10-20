@@ -39,7 +39,7 @@ export function WebsitesForm() {
               </div>
               <h2 className="text-3xl font-bold mb-4 font-rubik">Aanvraag ontvangen!</h2>
               <p className="text-xl text-gray-600 mb-6">
-                Bedankt voor je vertrouwen. We gaan snel aan de slag en nemen binnen 24 uur contact met je op.
+                Bedankt voor je vertrouwen. We gaan aan de slag met een preview en nemen binnen 24 uur contact met je op.
               </p>
               <p className="text-gray-500">
                 Check je inbox — je krijgt een bevestigingsmail met de volgende stappen.
@@ -62,10 +62,10 @@ export function WebsitesForm() {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold mb-4 font-rubik">
-              Klaar om jouw website te zien?
+              Klaar om te zien wat mogelijk is?
             </h2>
             <p className="text-xl text-gray-600">
-              Vul het formulier in en we gaan aan de slag met jouw gratis eerste versie
+              Vul het formulier in en we bouwen een gratis preview van jouw website
             </p>
           </motion.div>
 

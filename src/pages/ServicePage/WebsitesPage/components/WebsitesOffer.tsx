@@ -6,17 +6,17 @@ const offerPoints = [
   {
     icon: Gift,
     title: 'Gratis eerste versie',
-    description: 'Geen betaling, geen verplichtingen. We bouwen een werkende versie om te laten zien wat mogelijk is.'
+    description: 'Geen betaling, geen verplichtingen. We bouwen een eerste versie om te laten zien wat mogelijk is — design, opzet en potentieel.'
   },
   {
     icon: Eye,
     title: 'Preview binnen enkele dagen',
-    description: 'Snel resultaat. Je ziet binnen korte tijd hoe jouw website eruit komt te zien.'
+    description: 'Snel resultaat. Je ziet binnen korte tijd hoe jouw website eruit komt te zien en wat we voor je kunnen betekenen.'
   },
   {
     icon: ThumbsUp,
-    title: 'Alleen doorgaan als je tevreden bent',
-    description: 'Bevalt het niet? Geen probleem. Je betaalt alleen als je 100% tevreden bent met het resultaat.'
+    title: 'Daarna plannen we een call',
+    description: 'Bevalt het? We bespreken jouw wensen en maken alles werkend volgens jouw eisen en onze expertise. Niet tevreden? Geen kosten.'
   }
 ];
 

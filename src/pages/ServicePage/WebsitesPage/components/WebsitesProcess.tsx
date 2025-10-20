@@ -12,20 +12,20 @@ const steps = [
   {
     number: '2',
     icon: Hammer,
-    title: 'Wij bouwen jouw eerste websiteversie',
-    description: 'Binnen enkele dagen gaan we aan de slag. Zonder betaling vooraf, zonder gedoe.'
+    title: 'Wij bouwen een eerste versie',
+    description: 'Binnen enkele dagen bouwen we een preview om te laten zien wat mogelijk is. Zonder betaling vooraf, zonder gedoe.'
   },
   {
     number: '3',
     icon: Eye,
-    title: 'Jij bekijkt het resultaat',
-    description: 'Je ontvangt een preview-link. Bekijk de website rustig en beoordeel of het bij je past.'
+    title: 'Jij bekijkt de preview',
+    description: 'Je ontvangt een preview-link. Bekijk het design en de opzet rustig en beoordeel of het bij je past.'
   },
   {
     number: '4',
     icon: Rocket,
-    title: 'Tevreden? Dan lanceren we',
-    description: 'We plannen een korte call om laatste details af te stemmen en de site live te zetten. Simpel.'
+    title: 'Tevreden? Dan maken we het af',
+    description: 'We plannen een call om jouw wensen door te nemen. Daarna maken we alles werkend en lanceren we de site.'
   }
 ];
 
