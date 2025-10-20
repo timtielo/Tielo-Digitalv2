@@ -10,7 +10,7 @@ export interface DashboardMetric {
 const DASHBOARD_METRICS: DashboardMetric[] = [
   {
     metric_key: 'extra_revenue',
-    value: '€50k+',
+    value: '€50000+',
     title: 'Extra Omzet',
     subtitle: 'Voor onze klanten'
   },
