@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from '../Header';
 import { Footer } from '../Footer';
 import { SupabaseSEO } from '../SEO/SupabaseSEO';
+import { ContactWidget } from '../common/ContactWidget';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,13 +10,11 @@ interface LayoutProps {
 }
 
 export function Layout({ children, seoInternalName = 'Home page SEO' }: LayoutProps) {
-  // Get current route to determine if we should show the chatbot
-  const isBlogOrOplossing = window.location.pathname.includes('/blog') || 
-                           window.location.pathname.includes('/oplossingen');
+  const showChatbot = false;
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SupabaseSEO 
+      <SupabaseSEO
         internalName={seoInternalName}
         fallback={{
           title: "Tielo Digital - AI & Automatisering",
@@ -27,9 +26,11 @@ export function Layout({ children, seoInternalName = 'Home page SEO' }: LayoutPr
         {children}
       </main>
       <Footer />
-      
-      {/* Voiceflow Chatbot Script - Only on main pages */}
-      {!isBlogOrOplossing && (
+
+      <ContactWidget />
+
+      {/* Voiceflow Chatbot Script - Disabled */}
+      {showChatbot && (
         <script
           type="text/javascript"
           dangerouslySetInnerHTML={{
@@ -43,8 +44,8 @@ export function Layout({ children, seoInternalName = 'Home page SEO' }: LayoutPr
                     versionID: 'production'
                   });
                 }
-                v.src = "https://cdn.voiceflow.com/widget/bundle.mjs"; 
-                v.type = "text/javascript"; 
+                v.src = "https://cdn.voiceflow.com/widget/bundle.mjs";
+                v.type = "text/javascript";
                 s.parentNode.insertBefore(v, s);
               })(document, 'script');
             `
