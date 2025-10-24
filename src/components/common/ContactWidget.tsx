@@ -26,7 +26,7 @@ export function ContactWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -34,7 +34,7 @@ export function ContactWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-20 right-0 bg-white rounded-2xl shadow-2xl p-6 w-80 border border-gray-100"
+            className="bg-white rounded-2xl shadow-2xl p-6 w-80 border border-gray-100"
           >
             <button
               onClick={handleClose}
@@ -79,6 +79,12 @@ export function ContactWidget() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="bg-white rounded-lg shadow-lg px-4 py-2 border border-gray-100">
+        <p className="text-sm text-gray-700 font-medium whitespace-nowrap">
+          Neem contact op:
+        </p>
+      </div>
 
       <Link
         href="/contact"
