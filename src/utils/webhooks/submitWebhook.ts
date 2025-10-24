@@ -4,8 +4,8 @@ import { formatWebhookPayload } from './formatPayload';
 
 export async function submitWebhook(formData: FormData): Promise<boolean> {
   try {
-    const webhookUrl = formData.formType === 'analysis' 
-      ? WEBHOOK_URLS.ANALYSIS 
+    const webhookUrl = (formData.formType === 'analysis' || formData.formType === 'websites')
+      ? WEBHOOK_URLS.ANALYSIS
       : WEBHOOK_URLS.GUIDE;
 
     const payload = formatWebhookPayload(formData);

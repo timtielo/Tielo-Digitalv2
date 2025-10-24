@@ -3,7 +3,7 @@ export interface BaseFormData {
   firstName: string;
   email: string;
   submittedAt: string;
-  formType: 'analysis' | 'guide';
+  formType: 'analysis' | 'guide' | 'websites';
 }
 
 // Guide form - simple form with just name and email
@@ -24,4 +24,16 @@ export interface AnalysisFormData extends BaseFormData {
   foundUs?: string;
 }
 
-export type FormData = GuideFormData | AnalysisFormData;
+// Websites form - contact form for website requests
+export interface WebsitesFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  company: string;
+  website?: string;
+  message: string;
+  submittedAt: string;
+  formType: 'websites';
+}
+
+export type FormData = GuideFormData | AnalysisFormData | WebsitesFormData;
