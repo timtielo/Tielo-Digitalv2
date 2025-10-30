@@ -21,6 +21,12 @@ const websites = [
     name: 'Her Horizon',
     url: 'https://herhorizonv4.tielo-digital.nl',
     logo: 'https://herhorizonv4.tielo-digital.nl/images/Logofulltrans.svg'
+  },
+  {
+    name: 'MrClogged',
+    url: 'https://www.mrclogged247.nl',
+    logo: '/assets/mrclogged.jpg',
+    nofollow: true
   }
 ];
 
@@ -55,12 +61,12 @@ export function WebsitesShowcase() {
                   key={index}
                   href={site.url}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
                   className="inline-block mx-12 hover:opacity-75 transition-all duration-300"
                 >
                   <div className="h-24 flex items-center justify-center">
-                    <img 
-                      src={site.logo} 
+                    <img
+                      src={site.logo}
                       alt={site.name}
                       className="h-full w-auto object-contain"
                     />
@@ -73,12 +79,12 @@ export function WebsitesShowcase() {
                   key={`duplicate-${index}`}
                   href={site.url}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
                   className="inline-block mx-12 hover:opacity-75 transition-all duration-300"
                 >
                   <div className="h-24 flex items-center justify-center">
-                    <img 
-                      src={site.logo} 
+                    <img
+                      src={site.logo}
                       alt={site.name}
                       className="h-full w-auto object-contain"
                     />
