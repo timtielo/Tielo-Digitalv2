@@ -62,7 +62,7 @@ export function WebsitesShowcase() {
                   href={site.url}
                   target="_blank"
                   rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
-                  className="inline-block mx-12 hover:opacity-75 transition-all duration-300"
+                  className="inline-block mx-6 hover:opacity-75 transition-all duration-300"
                 >
                   <div className="h-24 flex items-center justify-center">
                     <img
@@ -80,7 +80,7 @@ export function WebsitesShowcase() {
                   href={site.url}
                   target="_blank"
                   rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
-                  className="inline-block mx-12 hover:opacity-75 transition-all duration-300"
+                  className="inline-block mx-6 hover:opacity-75 transition-all duration-300"
                 >
                   <div className="h-24 flex items-center justify-center">
                     <img
