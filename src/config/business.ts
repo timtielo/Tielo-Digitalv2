@@ -3,7 +3,7 @@ export const BUSINESS_INFO = {
   legalName: 'Tielo Digital B.V.',
   description: 'AI-gestuurde automatisering en digitale oplossingen voor bedrijven in Nederland. Gespecialiseerd in workflow automation, AI assistenten, website ontwikkeling en procesoptimalisatie.',
   email: 'info@tielo-digital.nl',
-  phone: '+31 6 12345678',
+  phone: '+31 6 20948502',
   address: {
     streetAddress: 'Voorstraat 123',
     addressLocality: 'Utrecht',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { UserPlus, MessageCircle, Calendar, Linkedin } from 'lucide-react';
+import { BUSINESS_INFO } from '../../config/business';
 
 interface SocialButtonProps {
   icon: React.ReactNode;
@@ -44,6 +45,8 @@ export function SocialButtons() {
     document.body.removeChild(link);
   };
 
+  const whatsappNumber = BUSINESS_INFO.phone.replace(/\s+/g, '');
+
   return (
     <div className="space-y-4 max-w-sm mx-auto">
       <SocialButton
@@ -54,22 +57,28 @@ export function SocialButtons() {
         delay={0.1}
       />
       <SocialButton
+        icon={<MessageCircle className="w-5 h-5 text-[#25D366]" />}
+        label="WhatsApp"
+        href={`https://wa.me/${whatsappNumber}`}
+        delay={0.2}
+      />
+      <SocialButton
         icon={<MessageCircle className="w-5 h-5 text-[#0088cc]" />}
         label="Telegram"
         href="https://t.me/Talismantim"
-        delay={0.2}
+        delay={0.3}
       />
       <SocialButton
         icon={<Calendar className="w-5 h-5 text-green-600" />}
         label="Plan een gesprek"
         href="https://calendar.app.google/zq9PDJBdFE3rBy7fA"
-        delay={0.3}
+        delay={0.4}
       />
       <SocialButton
         icon={<Linkedin className="w-5 h-5 text-[#0077b5]" />}
         label="LinkedIn"
         href="https://www.linkedin.com/in/tim-tielkemeijer/"
-        delay={0.4}
+        delay={0.5}
       />
     </div>
   );
