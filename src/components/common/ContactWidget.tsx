@@ -14,7 +14,7 @@ export function ContactWidget() {
       </div>
 
       <a
-        href="https://wa.me/31611223766?text=Hey%20Tim,"
+        href="https://wa.me/31620948502?text=Hey%20Tim,"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg
