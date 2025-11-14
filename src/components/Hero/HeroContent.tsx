@@ -11,12 +11,12 @@ export function HeroContent() {
       transition={{ duration: 0.6 }}
       className="max-w-2xl"
     >
-      <h1 className="text-5xl md:text-6xl font-bold mb-6 font-rubik leading-tight text-gray-900">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 font-rubik leading-tight text-gray-900">
         Word zichtbaar voor klanten{' '}
         <span className="text-blue-600">zonder gedoe</span>
       </h1>
 
-      <p className="text-xl text-gray-600 mb-8">
+      <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 md:mb-8">
         Geen gedoe met Werkspot of DNS settings. Ik maak een gratis website-opzetje voor jouw bouwbedrijf en regel alle techniek, jij hoeft alleen je werk te doen.
       </p>
 

@@ -16,8 +16,8 @@ export function ServicesButton({ className = '', children }: ServicesButtonProps
   return (
     <button
       onClick={scrollToVoorbeelden}
-      className={`bg-gray-50 hover:bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold
-                 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${className}`}
+      className={`bg-gray-50 hover:bg-gray-100 text-gray-900 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold
+                 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base ${className}`}
     >
       {children || 'Voorbeelden bekijken'}
     </button>

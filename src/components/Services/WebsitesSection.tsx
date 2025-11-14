@@ -4,25 +4,25 @@ import { Link } from '../Link';
 
 export function WebsitesSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 font-rubik">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 font-rubik">
               Websites voor Bouwbedrijven
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
               Geen gedoe met Werkspot of DNS settings. Ik regel alles voor je
             </p>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-8 md:p-12">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="bg-gray-50 rounded-xl p-6 md:p-8 lg:p-12">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center">
               <div>
-                <h3 className="text-2xl font-bold mb-4">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 md:mb-4">
                   Jij doet jouw werk gewoon, ik regel de rest
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-sm sm:text-base text-gray-600 mb-4 md:mb-6">
                   Ik maak een gratis website-opzetje voor jouw bouwbedrijf. Geen gedoe, geen technische rompslomp.
                   Jij hoeft alleen te vertellen wat je doet, de rest regel ik.
                 </p>
