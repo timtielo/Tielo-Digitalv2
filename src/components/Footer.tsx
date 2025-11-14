@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from './Link';
-import { Linkedin, Instagram, Facebook, Mail } from 'lucide-react';
+import { Mail, MessageCircle } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -14,34 +14,18 @@ export function Footer() {
             </p>
             <div className="flex space-x-4 mt-4">
               <a
-                href="https://www.linkedin.com/in/tim-tielkemeijer/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/70 hover:text-white transition-colors"
-              >
-                <Linkedin className="w-6 h-6" />
-              </a>
-              <a
-                href="https://www.instagram.com/tielodigital/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/70 hover:text-white transition-colors"
-              >
-                <Instagram className="w-6 h-6" />
-              </a>
-              <a
-                href="https://www.facebook.com/tielodigital/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/70 hover:text-white transition-colors"
-              >
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a
                 href="mailto:info@tielo-digital.nl"
                 className="text-white/70 hover:text-white transition-colors"
               >
                 <Mail className="w-6 h-6" />
+              </a>
+              <a
+                href="https://wa.me/31612345678"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                <MessageCircle className="w-6 h-6" />
               </a>
             </div>
           </div>
