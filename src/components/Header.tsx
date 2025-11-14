@@ -5,7 +5,7 @@ import { ConsultButton } from './common/ConsultButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const mobileMenuItems = [
-  { name: 'Diensten', path: '/diensten/websites' },
+  { name: 'Website', path: '/diensten/websites' },
   { name: 'Oplossingen', path: '/oplossingen' },
   { name: 'Contact', path: '/contact' }
 ];
@@ -63,7 +63,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/diensten/websites">Diensten</Link>
+            <Link href="/diensten/websites">Website</Link>
             <Link href="/oplossingen">Oplossingen</Link>
             <Link href="/contact">Contact</Link>
             <ConsultButton>
