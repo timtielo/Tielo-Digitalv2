@@ -3,6 +3,7 @@ import { Hero } from '../components/Hero';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
 import { OplossingSection } from '../components/Home/OplossingSection';
 import { Benefits } from '../components/Home/Benefits';
+import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
 import { Testimonials } from '../components/Testimonials';
 import { CTASection } from '../components/CTASection';
 import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
@@ -28,6 +29,9 @@ export function Home() {
       <ProblemSolveSection />
       <OplossingSection />
       <Benefits />
+      <div id="voorbeelden">
+        <WebsiteShowcase />
+      </div>
       <Testimonials />
       <CTASection />
     </>

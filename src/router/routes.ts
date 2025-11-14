@@ -18,7 +18,6 @@ import { BusinessCard } from '../pages/BusinessCard';
 import { Privacy } from '../pages/Privacy';
 import { Terms } from '../pages/Terms';
 import { Cookies } from '../pages/Cookies';
-import { Succesverhalen } from '../pages/Succesverhalen';
 import { Oplossingen } from '../pages/Oplossingen';
 import { OplossingPage } from '../pages/OplossingPage';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
@@ -57,8 +56,6 @@ export const routes: Route[] = [
   { path: '/privacy', component: Privacy },
   { path: '/terms', component: Terms },
   { path: '/cookies', component: Cookies },
-  { path: '/succesverhalen', component: Succesverhalen },
   { path: '/oplossingen', component: Oplossingen },
-  { path: '/oplossingen/:slug', component: OplossingPage, params: ['slug'] },
-  { path: '/projecten', redirect: '/succesverhalen', component: Succesverhalen }
+  { path: '/oplossingen/:slug', component: OplossingPage, params: ['slug'] }
 ];

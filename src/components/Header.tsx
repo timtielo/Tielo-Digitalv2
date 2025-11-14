@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 const mobileMenuItems = [
   { name: 'Diensten', path: '/diensten/websites' },
   { name: 'Oplossingen', path: '/oplossingen' },
-  { name: 'Succesverhalen', path: '/succesverhalen' },
   { name: 'Contact', path: '/contact' }
 ];
 
@@ -66,7 +65,6 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link href="/diensten/websites">Diensten</Link>
             <Link href="/oplossingen">Oplossingen</Link>
-            <Link href="/succesverhalen">Succesverhalen</Link>
             <Link href="/contact">Contact</Link>
             <ConsultButton>
               Gratis opzetje

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gift, Zap, Globe, MapPin, MessageCircle, Server } from 'lucide-react';
+import { Gift, FileText, Globe, MapPin, MessageCircle, Server } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BenefitCard } from './BenefitCard';
 
@@ -7,12 +7,12 @@ const features = [
   {
     icon: Gift,
     title: 'Gratis website-opzetje',
-    description: 'Voor websites: eerst zie je precies hoe het eruit komt te zien. Helemaal gratis, geen verplichtingen.'
+    description: 'Eerst zie je precies hoe jouw website eruit komt te zien. Helemaal gratis.'
   },
   {
-    icon: Zap,
-    title: 'Automatisering van processen',
-    description: 'Van offertes tot facturatie. Ik kijk wat handmatig werk je kan besparen en automatiseer het.'
+    icon: FileText,
+    title: 'Jij hoeft geen teksten te schrijven',
+    description: 'Ik schrijf alle teksten voor je. Jij hoeft alleen te controleren of het klopt.'
   },
   {
     icon: Globe,
@@ -26,12 +26,12 @@ const features = [
   },
   {
     icon: MessageCircle,
-    title: 'WhatsApp & communicatie-integraties',
-    description: 'Klanten kunnen je direct bereiken, en ik kan automatische antwoorden inrichten.'
+    title: 'WhatsApp integratie',
+    description: 'Klanten kunnen je direct via WhatsApp bereiken met één klik op je website.'
   },
   {
     icon: Server,
-    title: 'Hosting & onderhoud',
+    title: 'Hosting & onderhoud geregeld',
     description: 'Snelle, veilige hosting en doorlopend onderhoud zonder omkijken.'
   }
 ];
@@ -47,7 +47,7 @@ export function OplossingSection() {
             viewport={{ once: true }}
             className="text-4xl font-bold mb-4 font-rubik"
           >
-            Ik regel het voor je
+            Een website die jij niet zelf hoeft te bouwen
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -56,7 +56,7 @@ export function OplossingSection() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-600 max-w-2xl mx-auto"
           >
-            Van website tot automatisering. Ik maak een gratis opzetje en regel daarna alle techniek. Jij hoeft niets te doen.
+            Ik maak een gratis opzetje en regel daarna alle techniek. Jij hoeft niets te doen.
           </motion.p>
         </div>
 
