@@ -33,18 +33,19 @@ export function Oplossingen() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SEO 
-        title="Oplossingen - Tielo Digital"
+      <SEO
+        title="Oplossingen"
         description="Bekijk onze succesvolle AI en automatisering oplossingen. Concrete voorbeelden van hoe wij bedrijven helpen groeien en efficiënter werken."
         keywords={[
           'AI Oplossingen',
           'Automatisering Oplossingen',
           'Bedrijfsprocessen',
           'Digitale Transformatie',
-          'Business Solutions'
+          'Business Solutions',
+          'Bouwbedrijf Automatisering'
         ]}
         ogType="website"
-        canonical="https://tielo-digital.nl/oplossingen"
+        canonical="https://www.tielo-digital.nl/oplossingen"
       />
       <OplossingenHero />
       <OplossingenGrid 
