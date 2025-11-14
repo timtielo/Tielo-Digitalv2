@@ -10,7 +10,7 @@ export function Footer() {
           <div>
             <h3 className="text-white text-lg font-bold mb-4">Tielo Digital</h3>
             <p className="text-white/80">
-              Transformeer jouw bedrijf met AI-gedreven oplossingen en automatisering.
+              Word zichtbaar zonder afhankelijk te zijn van platformen.
             </p>
             <div className="flex space-x-4 mt-4">
               <a
