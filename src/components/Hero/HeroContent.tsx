@@ -11,12 +11,12 @@ export function HeroContent() {
       className="max-w-2xl"
     >
       <h1 className="text-5xl md:text-6xl font-bold mb-6 font-rubik leading-tight">
-        Word zichtbaar voor klanten{' '}
-        <span className="text-blue-600">zonder gedoe</span>
+        Van idee naar online{' '}
+        <span className="text-blue-600">in no-time</span>
       </h1>
 
       <p className="text-xl text-gray-600 mb-8">
-        Ik maak een gratis website-opzetje voor jouw bouwbedrijf en regel alle techniek — jij hoeft alleen je werk te doen.
+        Website nodig? Ik maak een gratis opzetje. Bevalt het? Dan regel ik de rest. Voor startende bouwbedrijven én voor automatisering van bedrijfsprocessen.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4">

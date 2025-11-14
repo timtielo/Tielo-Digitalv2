@@ -14,14 +14,14 @@ export function Home() {
       <ContentfulSEO
         internalName="Home page SEO"
         fallback={{
-          title: "Website voor Bouwbedrijven | Gratis Opzetje | Tielo Digital",
-          description: "Word zichtbaar voor klanten zonder gedoe. Gratis website-opzetje voor startende bouwbedrijven. Ik regel alle techniek: DNS, hosting, Google Business, WhatsApp. Jij hoeft alleen je werk te doen."
+          title: "Websites & Automatisering | Van Idee naar Online | Tielo Digital",
+          description: "Van websites voor bouwbedrijven tot automatisering van bedrijfsprocessen. Gratis opzetje, snel resultaat. Ik regel alle techniek: DNS, hosting, Google Business, WhatsApp en meer."
         }}
       />
       <LocalBusinessSchema
         aggregateRating={{
           ratingValue: 5,
-          reviewCount: 6
+          reviewCount: 3
         }}
       />
       <Hero />

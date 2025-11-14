@@ -7,18 +7,18 @@ import { Link } from '../Link';
 const options = [
   {
     icon: Clock,
-    title: 'Klanten zoeken je online maar vinden niets',
-    description: 'Zonder website ben je onzichtbaar voor potentiële klanten die naar jouw diensten zoeken.',
+    title: 'Te weinig tijd voor alles',
+    description: 'Je wilt een website of automatisering, maar je hebt geen tijd om het zelf uit te zoeken.',
   },
   {
     icon: Building2,
-    title: 'Geen professionele uitstraling',
-    description: 'Je wilt serieus overkomen, maar zonder online aanwezigheid loop je opdrachten mis.',
+    title: 'Geen professionele online aanwezigheid',
+    description: 'Je wilt serieus overkomen, maar zonder website of moderne bedrijfsvoering loop je kansen mis.',
   },
   {
     icon: AlertCircle,
-    title: 'Afhankelijk van dure leads',
-    description: 'Je betaalt veel voor onzekere Werkspot-leads, terwijl je eigen website stabielere resultaten oplevert.',
+    title: 'Handmatige taken kosten te veel tijd',
+    description: 'Repetitieve taken zoals offertes maken, facturen versturen of klantcontact kosten onnodige uren.',
   },
 ];
 
@@ -32,7 +32,7 @@ export function ProblemSolveSection() {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-12 font-rubik"
         >
-          Veel bouwbedrijven lopen werk mis zonder website
+          Herken je dit?
         </motion.h2>
         
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">

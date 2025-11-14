@@ -1,6 +1,6 @@
 import React from 'react';
 import { HeroContent } from './HeroContent';
-import { HeroAnimation } from './HeroAnimation';
+import { HeroReviews } from './HeroReviews';
 import { HeroBackground } from './HeroBackground';
 
 export function Hero() {
@@ -11,7 +11,7 @@ export function Hero() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <HeroContent />
           <div className="relative hidden md:block">
-            <HeroAnimation />
+            <HeroReviews />
           </div>
         </div>
       </div>

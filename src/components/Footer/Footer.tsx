@@ -16,7 +16,7 @@ export function Footer() {
           <div>
             <h3 className="text-white text-lg font-bold mb-4">Tielo Digital</h3>
             <p className="text-white/80">
-              Verbeter jouw bedrijf met AI-gedreven oplossingen en automatisering.
+              Van websites voor bouwbedrijven tot automatisering van bedrijfsprocessen. Snel, professioneel en zonder gedoe.
             </p>
             <SocialLinks />
           </div>
