@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { TrendingUp } from 'lucide-react';
 import { ConsultButton } from '../common/ConsultButton';
 import { ServicesButton } from '../common/ServicesButton';
 
@@ -11,9 +12,14 @@ export function HeroContent() {
       transition={{ duration: 0.6 }}
       className="max-w-2xl"
     >
+      <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+        <TrendingUp className="w-4 h-4" />
+        Terugverdiend in een maand
+      </div>
+
       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 font-rubik leading-[1.15] sm:leading-tight text-gray-900">
         Word zichtbaar voor klanten{' '}
-        <span className="text-primary">zonder gedoe</span>
+        <span className="text-blue-600">zonder gedoe</span>
       </h1>
 
       <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-6 md:mb-8 leading-relaxed">
