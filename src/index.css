@@ -84,3 +84,34 @@ button, a {
   user-select: none;
   cursor: pointer;
 }
+
+/* Focus visible styles for accessibility */
+@layer utilities {
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded;
+  }
+
+  /* Touch manipulation for better mobile performance */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+}
+
+/* Improve link and button focus states */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #e96020;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Ensure minimum tap target size on mobile */
+@media (max-width: 640px) {
+  button,
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
