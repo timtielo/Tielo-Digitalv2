@@ -2,17 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ConsultButton } from '../common/ConsultButton';
 import { ServicesButton } from '../common/ServicesButton';
-import { FADE_IN_LEFT } from '../../utils/animations';
 
 export function HeroContent() {
   return (
     <motion.div
-      {...FADE_IN_LEFT}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6 }}
       className="max-w-2xl"
     >
       <h1 className="text-5xl md:text-6xl font-bold mb-6 font-rubik leading-tight text-gray-900">
         Word zichtbaar voor klanten{' '}
-        <span className="text-orange-600">zonder gedoe</span>
+        <span className="text-blue-600">zonder gedoe</span>
       </h1>
 
       <p className="text-xl text-gray-600 mb-8">
