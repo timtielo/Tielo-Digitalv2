@@ -25,27 +25,15 @@ const reviews = [
 
 export function HeroReviews() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) return;
-
+    // Auto-rotate reviews every 5 seconds
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % reviews.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [isMobile]);
+  }, []);
 
   const nextReview = () => {
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
@@ -55,9 +43,10 @@ export function HeroReviews() {
     setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
   };
 
-  if (isMobile) {
-    return (
-      <div className="relative">
+  return (
+    <>
+      {/* Mobile Carousel View */}
+      <div className="relative md:hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -86,7 +75,7 @@ export function HeroReviews() {
         <div className="flex items-center justify-between mt-4">
           <button
             onClick={prevReview}
-            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all active:scale-95"
+            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center"
             aria-label="Previous review"
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
@@ -97,8 +86,8 @@ export function HeroReviews() {
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentIndex ? 'bg-blue-600 w-6' : 'bg-gray-300'
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex ? 'bg-blue-600 w-6' : 'bg-gray-300 w-2'
                 }`}
                 aria-label={`Go to review ${index + 1}`}
               />
@@ -107,39 +96,37 @@ export function HeroReviews() {
 
           <button
             onClick={nextReview}
-            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all active:scale-95"
+            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center"
             aria-label="Next review"
           >
             <ChevronRight className="w-5 h-5 text-gray-700" />
           </button>
         </div>
       </div>
-    );
-  }
 
-  // Desktop view - show all reviews
-  return (
-    <div className="space-y-4">
-      {reviews.map((review, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: index * 0.2 }}
-          className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
-        >
-          <div className="flex items-center gap-1 mb-3">
-            {[...Array(review.rating)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
-            ))}
-          </div>
-          <p className="text-gray-700 mb-4 text-base italic leading-relaxed">"{review.quote}"</p>
-          <div>
-            <p className="font-semibold text-base text-gray-900">{review.name}</p>
-            <p className="text-sm text-gray-500">{review.role}</p>
-          </div>
-        </motion.div>
-      ))}
-    </div>
+      {/* Desktop Stacked View */}
+      <div className="hidden md:block space-y-4">
+        {reviews.map((review, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.2 }}
+            className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            <div className="flex items-center gap-1 mb-3">
+              {[...Array(review.rating)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
+              ))}
+            </div>
+            <p className="text-gray-700 mb-4 text-base italic leading-relaxed">"{review.quote}"</p>
+            <div>
+              <p className="font-semibold text-base text-gray-900">{review.name}</p>
+              <p className="text-sm text-gray-500">{review.role}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </>
   );
 }
