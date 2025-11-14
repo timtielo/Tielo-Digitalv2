@@ -5,7 +5,6 @@ import { AgitateSection } from '../components/Home/AgitateSection';
 import { OplossingSection } from '../components/Home/OplossingSection';
 import { Benefits } from '../components/Home/Benefits';
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
-import { Testimonials } from '../components/Testimonials';
 import { CTASection } from '../components/CTASection';
 import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
 import { LocalBusinessSchema } from '../components/SEO/LocalBusinessSchema';
@@ -34,7 +33,6 @@ export function Home() {
       <div id="voorbeelden">
         <WebsiteShowcase />
       </div>
-      <Testimonials />
       <CTASection />
     </>
   );

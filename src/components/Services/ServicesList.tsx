@@ -24,7 +24,7 @@ export function ServicesList() {
               Maatwerk Oplossingen
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Heeft u specifieke behoeften die standaard oplossingen niet dekken? Wij ontwikkelen custom oplossingen op maat
+              Heb je specifieke behoeften die standaard oplossingen niet dekken? Wij ontwikkelen custom oplossingen op maat
             </p>
           </div>
 
@@ -48,30 +48,35 @@ export function ServicesList() {
                   <Brain className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4">
-                  Custom oplossingen voor uw specifieke behoeften
+                  Custom oplossingen voor jouw specifieke behoeften
                 </h3>
                 <p className="text-gray-600 mb-6">
                   Elk bedrijf is uniek en heeft soms specifieke uitdagingen die standaard software niet kan oplossen.
-                  Wij bedenken en bouwen custom oplossingen die perfect aansluiten bij uw bedrijfsprocessen.
+                  Wij bedenken en bouwen custom oplossingen die perfect aansluiten bij jouw bedrijfsprocessen.
                 </p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Technische analyse van uw situatie</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Op maat gemaakte software oplossingen</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Begeleiding bij implementatie</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Doorlopend onderhoud en support</span>
-                  </li>
-                </ul>
+                <div className="space-y-4 mb-8">
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-2">Voorbeelden van automatiseringen:</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Automatische review verzoeken na een klus</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Facturen automatisch versturen en archiveren</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Facturen automatisch boeken in je administratie</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Offerte-aanvragen direct naar je WhatsApp</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
                 <Link
                   href="/diensten/custom"
                   className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all duration-200"

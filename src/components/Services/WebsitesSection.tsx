@@ -9,10 +9,10 @@ export function WebsitesSection() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 font-rubik">
-              Website Development
+              Websites voor Bouwbedrijven
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Naast AI en automatisering, bouwen wij ook professionele websites die jouw bedrijf online laten groeien
+              Geen gedoe met Werkspot of DNS settings. Wij regelen alles voor je
             </p>
           </div>
 
@@ -20,34 +20,39 @@ export function WebsitesSection() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-2xl font-bold mb-4">
-                  Moderne websites voor jouw bedrijf
+                  Jij doet het werk, wij regelen de rest
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Wij ontwikkelen websites die niet alleen mooi zijn, maar ook resultaten leveren. Met focus op gebruiksvriendelijkheid, 
-                  snelheid en conversie helpen we jouw bedrijf online succesvol te zijn.
+                  Ik maak een gratis website-opzetje voor jouw bouwbedrijf. Geen gedoe, geen technische rompslomp.
+                  Jij hoeft alleen te vertellen wat je doet, de rest regel ik.
                 </p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Modern en professioneel design</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>SEO-geoptimaliseerd voor betere vindbaarheid</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Volledig responsive op alle apparaten</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Snelle laadtijden voor betere conversie</span>
-                  </li>
-                   <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Met ingebouwde koppelingen en integraties</span>
-                  </li>
-                </ul>
+                <div className="space-y-4 mb-8">
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-2">Wat ik voor je regel:</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Domein + hosting volledig geregeld</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Google Business Profiel aanmaken en optimaliseren</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>WhatsApp knop voor directe klantcontact</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Contact formulier dat naar je mail komt</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Klaar om te gebruiken zonder technische kennis</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
                 <Link
                   href="/diensten/websites"
                   className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all duration-200"
