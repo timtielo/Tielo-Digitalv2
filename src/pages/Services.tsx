@@ -9,17 +9,17 @@ import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
 export function Services() {
   return (
     <div className="min-h-screen bg-white">
-      <ContentfulSEO 
+      <ContentfulSEO
         internalName="Diensten SEO"
         fallback={{
-          title: "AI & Automatisering Diensten",
-          description: "Van workflow automatisering tot AI-implementatie. Ontdek onze diensten die jouw bedrijf helpen groeien en efficiënter maken."
+          title: "Websites en Diensten voor Bouwbedrijven | Tielo Digital",
+          description: "Professionele websites, klantenservice automatisering en maatwerk oplossingen voor bouwbedrijven. Snel, professioneel en zonder gedoe."
         }}
       />
       <ServicesHero />
+      <WebsitesSection />
       <ServicesList />
       <ServicesProcess />
-      <WebsitesSection />
       <ServicesCTA />
     </div>
   );

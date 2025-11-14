@@ -17,10 +17,10 @@ export function ServicesHero() {
               <Bot className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 font-rubik">
-              AI & Automatisering Oplossingen
+              Onze Diensten
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Ontdek hoe onze diensten jouw bedrijf kunnen transformeren met slimme AI-oplossingen en efficiënte automatisering
+              Professionele websites en slimme automatisering voor bouwbedrijven
             </p>
           </motion.div>
         </div>

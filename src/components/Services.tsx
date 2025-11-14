@@ -7,30 +7,6 @@ import { WebsitesSection } from './Services/WebsitesSection';
 
 export const services = [
   {
-    id: 'workflow',
-    icon: Workflow,
-    title: 'Workflow',
-    description: 'Data doorsturen van het ene programma naar de andere.',
-    features: [
-      'Systeem integratie',
-      'Automatische dataverwerking',
-      'Foutreductie',
-      'Tijdbesparing'
-    ]
-  },
-  {
-    id: 'outreach',
-    icon: Send,
-    title: 'Outreach',
-    description: 'Meer klanten met geautomatiseerde outreach.',
-    features: [
-      'Gepersonaliseerde campagnes',
-      'Lead nurturing',
-      'A/B testing',
-      'Conversie optimalisatie'
-    ]
-  },
-  {
     id: 'customer-service',
     icon: Bot,
     title: 'Klantenservice',
@@ -63,10 +39,10 @@ export function Services() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 font-rubik">
-              Onze Diensten
+              Aanvullende Diensten
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Ontdek hoe wij jouw bedrijf kunnen helpen groeien met AI-gedreven oplossingen
+              Naast websites bieden we ook automatisering en maatwerk oplossingen voor bouwbedrijven
             </p>
           </div>
 
