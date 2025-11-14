@@ -20,7 +20,7 @@ export function ServicesHero() {
               Onze Diensten
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Professionele websites en slimme automatisering voor bouwbedrijven
+              Professionele websites en maatwerk oplossingen voor bouwbedrijven
             </p>
           </motion.div>
         </div>

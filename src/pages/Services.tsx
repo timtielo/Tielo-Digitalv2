@@ -12,8 +12,8 @@ export function Services() {
       <ContentfulSEO
         internalName="Diensten SEO"
         fallback={{
-          title: "Websites en Diensten voor Bouwbedrijven | Tielo Digital",
-          description: "Professionele websites, klantenservice automatisering en maatwerk oplossingen voor bouwbedrijven. Snel, professioneel en zonder gedoe."
+          title: "Websites en Maatwerk voor Bouwbedrijven | Tielo Digital",
+          description: "Professionele websites en maatwerk oplossingen voor bouwbedrijven. Snel, professioneel en zonder gedoe."
         }}
       />
       <ServicesHero />

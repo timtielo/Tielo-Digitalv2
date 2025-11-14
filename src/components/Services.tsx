@@ -7,18 +7,6 @@ import { WebsitesSection } from './Services/WebsitesSection';
 
 export const services = [
   {
-    id: 'customer-service',
-    icon: Bot,
-    title: 'Klantenservice',
-    description: 'Bespaar tijd en lever betere klantenservice met AI chatbots.',
-    features: [
-      '24/7 beschikbaarheid',
-      'Snelle antwoorden',
-      'Leadgeneratie',
-      'Klanttevredenheid verhogen'
-    ]
-  },
-  {
     id: 'custom',
     icon: Brain,
     title: 'Maatwerk',
@@ -42,7 +30,7 @@ export function Services() {
               Aanvullende Diensten
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Naast websites bieden we ook automatisering en maatwerk oplossingen voor bouwbedrijven
+              Naast websites bieden we ook maatwerk oplossingen voor uw specifieke behoeften
             </p>
           </div>
 
