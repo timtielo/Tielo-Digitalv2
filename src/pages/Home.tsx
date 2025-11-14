@@ -14,8 +14,8 @@ export function Home() {
       <ContentfulSEO
         internalName="Home page SEO"
         fallback={{
-          title: "Websites & Automatisering | Van Idee naar Online | Tielo Digital",
-          description: "Van websites voor bouwbedrijven tot automatisering van bedrijfsprocessen. Gratis opzetje, snel resultaat. Ik regel alle techniek: DNS, hosting, Google Business, WhatsApp en meer."
+          title: "Website voor Bouwbedrijven | Word Zichtbaar Zonder Gedoe | Tielo Digital",
+          description: "Geen gedoe met Werkspot of DNS settings. Gratis website-opzetje voor jouw bouwbedrijf. Ik regel alle techniek: domein, hosting, Google Business, WhatsApp. Jij hoeft alleen je werk te doen."
         }}
       />
       <LocalBusinessSchema
