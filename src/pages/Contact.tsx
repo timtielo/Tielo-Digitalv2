@@ -6,11 +6,11 @@ import { SupabaseSEO } from '../components/SEO/SupabaseSEO';
 export function Contact() {
   return (
     <div className="min-h-screen bg-white">
-      <SupabaseSEO 
+      <SupabaseSEO
         internalName="Contact SEO"
         fallback={{
-          title: "Contact - Gratis AI & Automation Analyse",
-          description: "Plan een gratis analyse en ontdek hoe AI en automatisering jouw bedrijf kan helpen groeien. Direct persoonlijk contact met een expert."
+          title: "Contact - Gratis Website-opzetje voor Bouwbedrijven | Tielo Digital",
+          description: "Vraag hier jouw gratis website-opzetje aan. Ik neem dezelfde dag contact op. Volledig ontzorgd voor startende bouwbedrijven."
         }}
       />
       <ContactHero />

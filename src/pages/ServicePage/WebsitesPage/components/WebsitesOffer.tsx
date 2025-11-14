@@ -5,18 +5,18 @@ import { Gift, Eye, ThumbsUp, ArrowRight } from 'lucide-react';
 const offerPoints = [
   {
     icon: Gift,
-    title: 'Gratis eerste versie',
-    description: 'Geen betaling, geen verplichtingen. We bouwen een eerste versie om te laten zien wat mogelijk is — design, opzet en potentieel.'
+    title: 'Stap 1: Gratis opzetje maken',
+    description: 'Ik maak een eerste versie van je website zodat je ziet hoe het eruit komt te zien. Helemaal gratis, geen verplichtingen.'
   },
   {
     icon: Eye,
-    title: 'Preview binnen enkele dagen',
-    description: 'Snel resultaat. Je ziet binnen korte tijd hoe jouw website eruit komt te zien en wat we voor je kunnen betekenen.'
+    title: 'Stap 2: Jij beoordeelt',
+    description: 'Bevalt het opzetje? Dan gaan we verder. Niet tevreden? Dan stoppen we hier, zonder kosten.'
   },
   {
     icon: ThumbsUp,
-    title: 'Daarna plannen we een call',
-    description: 'Bevalt het? We bespreken jouw wensen en maken alles werkend volgens jouw eisen en onze expertise. Niet tevreden? Geen kosten.'
+    title: 'Stap 3: Ik regel de rest',
+    description: 'Domein, hosting, DNS, Google Business, WhatsApp — alles wordt voor je geregeld. Jij hoeft alleen je werk te doen.'
   }
 ];
 
@@ -36,10 +36,10 @@ export function WebsitesOffer() {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold mb-4 font-rubik">
-              Hoe werkt het?
+              Zo werkt het
             </h2>
             <p className="text-xl text-gray-600">
-              Simpel: wij bouwen, jij beoordeelt, dan beslissen we samen
+              Simpel, duidelijk en zonder gedoe
             </p>
           </motion.div>
 
@@ -81,7 +81,7 @@ export function WebsitesOffer() {
                        font-semibold text-lg hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl
                        hover:scale-[1.02] active:scale-[0.98]"
             >
-              Gratis eerste versie aanvragen
+              Gratis opzetje aanvragen
               <ArrowRight className="ml-2 w-6 h-6" />
             </button>
           </motion.div>

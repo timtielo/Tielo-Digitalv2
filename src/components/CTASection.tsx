@@ -13,13 +13,13 @@ export function CTASection() {
           className="max-w-4xl mx-auto text-center"
         >
           <h2 className="text-4xl font-bold mb-6 font-rubik text-gray-900">
-            Klaar om je bedrijf te transformeren?
+            Wil je zien hoe jouw website eruit kan zien?
           </h2>
           <p className="text-xl mb-8 text-gray-600">
-            Plan een gratis consultgesprek en ontdek hoe AI je bedrijf kan laten groeien
+            Vraag een gratis opzetje aan en ontdek hoe je zichtbaar wordt voor klanten
           </p>
           <ConsultButton>
-            Plan je gratis analyse
+            Vraag een gratis opzetje aan
           </ConsultButton>
         </motion.div>
       </div>

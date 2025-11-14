@@ -24,21 +24,19 @@ export function WebsitesHero() {
           >
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-semibold">Gratis eerste versie — geen risico</span>
+              <span className="text-sm font-semibold">Gratis website-opzetje — geen risico</span>
             </div>
 
             <h1 className="text-5xl md:text-6xl font-bold mb-6 font-rubik leading-tight">
-              Laat je website gratis bouwen
+              Laat mij jouw website regelen zodat jij jouw werk kan blijven doen
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-4 leading-relaxed">
-              Betaal pas als je tevreden bent
+              Je krijgt eerst een gratis opzetje. Daarna regel ik alles technisch voor je.
             </p>
 
             <p className="text-lg text-gray-500 mb-10 max-w-2xl mx-auto">
-              We bouwen een eerste versie van je website — volledig gratis. Zo zie je wat mogelijk is.
-              Bevalt het? Dan plannen we een call om jouw wensen door te nemen en alles werkend te maken.
-              Niet tevreden? Geen probleem, geen kosten.
+              Volledig ontzorgd. Je wordt niet lastiggevallen met ontwerpkeuzes of technische vragen. Jij werkt, ik bouw.
             </p>
 
             <motion.button
@@ -48,12 +46,12 @@ export function WebsitesHero() {
               className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white rounded-lg
                        font-semibold text-lg hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              Vraag je gratis eerste versie aan
+              Vraag jouw gratis opzetje aan
               <ArrowRight className="ml-2 w-6 h-6" />
             </motion.button>
 
             <p className="text-sm text-gray-500 mt-4">
-              ✓ Geen betaling vooraf  ✓ Geen verplichtingen  ✓ Eerst zien, dan beslissen
+              ✓ Volledig hands-off voor jou  ✓ Geen verplichtingen  ✓ Eerst zien, dan beslissen
             </p>
           </motion.div>
         </div>

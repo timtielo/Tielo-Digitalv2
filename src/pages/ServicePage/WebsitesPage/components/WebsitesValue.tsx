@@ -1,37 +1,37 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Paintbrush, BarChart, Smartphone, Lock, Search } from 'lucide-react';
+import { Gift, FileText, Globe, MapPin, MessageCircle, Server } from 'lucide-react';
 
 const features = [
   {
-    icon: Zap,
-    title: 'Snel online',
-    description: 'Binnen enkele dagen heb je een werkende eerste versie'
+    icon: Gift,
+    title: 'Gratis website-opzetje',
+    description: 'Ik maak een eerste ontwerp zodat je precies ziet hoe jouw website eruit kan zien.'
   },
   {
-    icon: Paintbrush,
-    title: 'Modern design',
-    description: 'Strak, professioneel en helemaal afgestemd op jouw merk'
+    icon: FileText,
+    title: 'Jij hoeft geen teksten te schrijven',
+    description: 'Ik schrijf alle teksten voor je. Jij hoeft alleen te controleren of het klopt.'
   },
   {
-    icon: BarChart,
-    title: 'Gericht op resultaat',
-    description: 'Elke pagina is gebouwd om te converteren'
+    icon: Globe,
+    title: 'Domein & DNS-regeling',
+    description: 'Van domeinregistratie tot DNS, SSL, e-mail en koppelingen: alles wordt ingesteld.'
   },
   {
-    icon: Smartphone,
-    title: 'Werkt overal',
-    description: 'Perfect op desktop, tablet en mobiel'
+    icon: MapPin,
+    title: 'Google Business Profiel',
+    description: 'Ik zorg dat je zichtbaar bent op Google Maps, met juiste categorieën en foto\'s.'
   },
   {
-    icon: Search,
-    title: 'SEO-ready',
-    description: 'Klaar voor Google vanaf dag één'
+    icon: MessageCircle,
+    title: 'WhatsApp Direct Lead',
+    description: 'Een knop waarmee klanten je met één tik kunnen appen.'
   },
   {
-    icon: Lock,
-    title: 'Alles geregeld',
-    description: 'Van hosting tot beveiliging — wij handelen het af'
+    icon: Server,
+    title: 'Hosting & onderhoud',
+    description: 'Snel, veilig en doorlopend onderhouden. Geen omkijken naar.'
   }
 ];
 
@@ -47,12 +47,10 @@ export function WebsitesValue() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold mb-6 font-rubik">
-              Websites die werken voor jouw bedrijf
+              Wat is er allemaal bij inbegrepen?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We bouwen geen standaard templates. Elke website wordt op maat gemaakt:
-              snel, modern, en gericht op het behalen van jouw doelen. Van design tot
-              technische setup — wij regelen alles.
+              Van het eerste opzetje tot hosting en onderhoud. Ik regel alles technisch zodat jij gewoon kan blijven werken.
             </p>
           </motion.div>
 

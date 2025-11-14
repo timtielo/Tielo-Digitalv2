@@ -39,10 +39,10 @@ export function WebsitesForm() {
               </div>
               <h2 className="text-3xl font-bold mb-4 font-rubik">Aanvraag ontvangen!</h2>
               <p className="text-xl text-gray-600 mb-6">
-                Bedankt voor je vertrouwen. We gaan aan de slag met een preview en nemen binnen 24 uur contact met je op.
+                Bedankt voor je vertrouwen. Ik ga aan de slag met een gratis opzetje en neem dezelfde dag nog contact met je op.
               </p>
               <p className="text-gray-500">
-                Check je inbox — je krijgt een bevestigingsmail met de volgende stappen.
+                Check je inbox — je krijgt een bevestigingsmail.
               </p>
             </motion.div>
           </div>
@@ -62,10 +62,10 @@ export function WebsitesForm() {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold mb-4 font-rubik">
-              Klaar om te zien wat mogelijk is?
+              Vraag je gratis opzetje aan
             </h2>
             <p className="text-xl text-gray-600">
-              Vul het formulier in en we bouwen een gratis preview van jouw website
+              Vul het formulier in en ik maak een gratis opzetje van jouw website
             </p>
           </motion.div>
 
@@ -178,7 +178,7 @@ export function WebsitesForm() {
                 </>
               ) : (
                 <>
-                  Vraag gratis eerste versie aan
+                  Vraag gratis opzetje aan
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
@@ -186,7 +186,7 @@ export function WebsitesForm() {
 
             <p className="text-sm text-gray-500 text-center">
               Door dit formulier in te vullen ga je akkoord met onze privacyverklaring.
-              We nemen binnen 24 uur contact met je op.
+              Ik neem dezelfde dag contact met je op.
             </p>
           </motion.form>
         </div>

@@ -1,27 +1,27 @@
 import React from 'react';
-import { Clock, TrendingUp, Shield, Zap } from 'lucide-react';
+import { Globe, User, Shield, Euro } from 'lucide-react';
 import { BenefitCard } from './BenefitCard';
 
 const benefits = [
   {
-    icon: Clock,
-    title: 'Tijdbesparing',
-    description: 'Automatiseer repetitieve taken en focus op wat echt belangrijk is'
+    icon: Globe,
+    title: 'Gespecialiseerd in kleine bouwbedrijven',
+    description: 'Ik begrijp precies waar jij als startend bouwbedrijf tegenaan loopt en wat je nodig hebt.'
   },
   {
-    icon: TrendingUp,
-    title: 'Verhoogde Productiviteit',
-    description: 'Optimaliseer werkprocessen met AI-gedreven oplossingen'
+    icon: User,
+    title: 'Volledig ontzorgd',
+    description: 'Jij hoeft niets te doen. Ik regel alles technisch voor je zodat jij gewoon kan blijven werken.'
   },
   {
     icon: Shield,
-    title: 'Betrouwbare Resultaten',
-    description: 'Minimaliseer menselijke fouten en verhoog accuraatheid'
+    title: 'Duidelijke communicatie',
+    description: 'Geen technische taal of verwarrende concepten. Alles wordt uitgelegd in normale taal.'
   },
   {
-    icon: Zap,
-    title: 'Snelle Implementatie',
-    description: 'Binnen enkele weken operationeel met onze expertise'
+    icon: Euro,
+    title: 'Vaste, eerlijke prijzen',
+    description: 'Je weet precies waar je aan toe bent. Geen verborgen kosten of verrassingen achteraf.'
   }
 ];
 
@@ -31,10 +31,10 @@ export function Benefits() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4 font-rubik">
-            Waarom kiezen voor AI-automatisering?
+            Waarom Tielo Digital
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Ontdek hoe onze oplossingen jouw bedrijf naar het volgende niveau tillen
+            Eenvoudig, betrouwbaar en gemaakt voor jouw situatie
           </p>
         </div>
 

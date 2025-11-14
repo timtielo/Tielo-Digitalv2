@@ -7,18 +7,18 @@ import { Link } from '../Link';
 const options = [
   {
     icon: Clock,
-    title: 'Alles zelf doen?',
-    description: 'Als je genoeg tijd hebt, is dit een prima optie. Maar als je het al zo druk hebt, wordt dat lastig.',
+    title: 'Klanten zoeken je online maar vinden niets',
+    description: 'Zonder website ben je onzichtbaar voor potentiële klanten die naar jouw diensten zoeken.',
   },
   {
     icon: Building2,
-    title: 'Een grote agency benaderen?',
-    description: 'Vaak wacht je lang op reacties en wordt jouw pakket opgepakt door de assistent van de assistent. Dit is inefficiënt en onpersoonlijk.',
+    title: 'Geen professionele uitstraling',
+    description: 'Je wilt serieus overkomen, maar zonder online aanwezigheid loop je opdrachten mis.',
   },
   {
     icon: AlertCircle,
-    title: 'Niet doen of het uitstellen?',
-    description: 'Hierdoor behaal je nooit jouw potentie. En dat zonde. Waarom wachten als het ook nu kan?',
+    title: 'Afhankelijk van dure leads',
+    description: 'Je betaalt veel voor onzekere Werkspot-leads, terwijl je eigen website stabielere resultaten oplevert.',
   },
 ];
 
@@ -26,13 +26,13 @@ export function ProblemSolveSection() {
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-12 font-rubik"
         >
-          Hoe behaal jij de beste resultaten?
+          Veel bouwbedrijven lopen werk mis zonder website
         </motion.h2>
         
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -49,11 +49,11 @@ export function ProblemSolveSection() {
         >
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg 
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg
                      font-semibold text-lg hover:bg-primary/90 transition-all duration-300
                      hover:scale-[1.02] active:scale-[0.98]"
           >
-            Plan een gratis analyse
+            Vraag een gratis opzetje aan
             <ArrowRight className="w-6 h-6" />
           </Link>
         </motion.div>

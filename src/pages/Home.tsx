@@ -1,9 +1,8 @@
 import React from 'react';
 import { Hero } from '../components/Hero';
-import { MetricsDashboard } from '../components/Dashboard';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
+import { OplossingSection } from '../components/Home/OplossingSection';
 import { Benefits } from '../components/Home/Benefits';
-import { Services } from '../components/Services';
 import { Testimonials } from '../components/Testimonials';
 import { CTASection } from '../components/CTASection';
 import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
@@ -15,8 +14,8 @@ export function Home() {
       <ContentfulSEO
         internalName="Home page SEO"
         fallback={{
-          title: "AI & Automatisering voor Bedrijven in Utrecht | Tielo Digital",
-          description: "Tielo Digital - AI-gedreven automatisering en digitale oplossingen voor bedrijven in Utrecht en heel Nederland. Verhoog efficiency, verminder kosten met slimme workflow automation. ✓ 1189% ROI ✓ 200+ uren bespaard."
+          title: "Website voor Bouwbedrijven | Gratis Opzetje | Tielo Digital",
+          description: "Word zichtbaar voor klanten zonder gedoe. Gratis website-opzetje voor startende bouwbedrijven. Ik regel alle techniek: DNS, hosting, Google Business, WhatsApp. Jij hoeft alleen je werk te doen."
         }}
       />
       <LocalBusinessSchema
@@ -26,10 +25,9 @@ export function Home() {
         }}
       />
       <Hero />
-      <MetricsDashboard />
       <ProblemSolveSection />
+      <OplossingSection />
       <Benefits />
-      <Services />
       <Testimonials />
       <CTASection />
     </>

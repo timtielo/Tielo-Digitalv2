@@ -1,11 +1,10 @@
 import React from 'react';
 import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
 import { WebsitesHero } from './WebsitesPage/components/WebsitesHero';
-import { WebsitesValue } from './WebsitesPage/components/WebsitesValue';
 import { WebsitesOffer } from './WebsitesPage/components/WebsitesOffer';
-import { WebsitesShowcase } from './WebsitesPage/components/WebsitesShowcase';
+import { WebsitesValue } from './WebsitesPage/components/WebsitesValue';
+import { WebsitesPricing } from './WebsitesPage/components/WebsitesPricing';
 import { WebsitesPortfolio } from './WebsitesPage/components/WebsitesPortfolio';
-import { WebsitesProcess } from './WebsitesPage/components/WebsitesProcess';
 import { WebsitesForm } from './WebsitesPage/components/WebsitesForm';
 
 export function WebsitesPage() {
@@ -14,16 +13,15 @@ export function WebsitesPage() {
       <ContentfulSEO
         internalName="Website Development SEO"
         fallback={{
-          title: "Gratis eerste websiteversie – Website laten maken door Tielo Digital",
-          description: "Laat gratis een eerste versie van je website bouwen door Tielo Digital. Bevalt het resultaat? Dan plannen we een korte call om te lanceren. Geen risico, geen verplichtingen."
+          title: "Website voor Bouwbedrijven | Gratis Opzetje | Tielo Digital",
+          description: "Gratis website-opzetje voor bouwbedrijven. Volledig ontzorgd: domein, hosting, DNS, Google Business, WhatsApp integratie. Jij werkt, ik bouw. €750 + €25/maand."
         }}
       />
       <WebsitesHero />
-      <WebsitesValue />
       <WebsitesOffer />
-      <WebsitesShowcase />
+      <WebsitesValue />
+      <WebsitesPricing />
       <WebsitesPortfolio />
-      <WebsitesProcess />
       <WebsitesForm />
     </div>
   );

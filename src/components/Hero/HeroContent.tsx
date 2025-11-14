@@ -11,21 +11,20 @@ export function HeroContent() {
       className="max-w-2xl"
     >
       <h1 className="text-5xl md:text-6xl font-bold mb-6 font-rubik leading-tight">
-        Professionele websites en{' '}
-        <span className="text-blue-600">slimme automatisering</span> voor jouw bedrijf
+        Word zichtbaar voor klanten{' '}
+        <span className="text-blue-600">zonder gedoe</span>
       </h1>
 
       <p className="text-xl text-gray-600 mb-8">
-        Van een moderne website tot AI-gedreven automatisering.
-        Wij helpen jouw bedrijf groeien met technologie die werkt.
+        Ik maak een gratis website-opzetje voor jouw bouwbedrijf en regel alle techniek — jij hoeft alleen je werk te doen.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <ConsultButton>
-          Vraag een gratis consult aan
+          Gratis opzetje aanvragen
         </ConsultButton>
         <ServicesButton>
-          Bekijk onze diensten
+          Voorbeelden bekijken
         </ServicesButton>
       </div>
     </motion.div>

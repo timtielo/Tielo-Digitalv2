@@ -17,14 +17,13 @@ export function ContactHero() {
               <MessageSquare className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 font-rubik">
-              Neem Contact Op
+              Vraag je gratis website-opzetje aan
             </h1>
             <p className="text-xl text-gray-600">
-              Heb je vragen over onze diensten of wil je weten wat wij voor je kunnen betekenen?
+              Vraag hier jouw gratis website-opzetje aan. Ik neem dezelfde dag contact op.
               <br />
-              Of wil je een gratis analyse?
               <br />
-              Neem dan gerust contact met ons op.
+              Andere vragen zijn ook welkom.
             </p>
           </motion.div>
         </div>
