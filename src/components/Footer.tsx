@@ -49,10 +49,8 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Diensten</h4>
             <ul className="space-y-2">
-              <li><Link href="/diensten/websites" className="text-white/80 hover:text-white">Websites</Link></li> 
-              <li><Link href="/diensten/workflow" className="text-white/80 hover:text-white">Workflow</Link></li>
+              <li><Link href="/diensten/websites" className="text-white/80 hover:text-white">Websites</Link></li>
               <li><Link href="/diensten/outreach" className="text-white/80 hover:text-white">Outreach</Link></li>
-              <li><Link href="/diensten/customer-service" className="text-white/80 hover:text-white">Klantenservice</Link></li> 
               <li><Link href="/diensten" className="text-white/80 hover:text-white">Alle diensten</Link></li>
             </ul>
           </div>
@@ -60,12 +58,10 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Links</h4>
             <ul className="space-y-2">
-            <li><Link href="/succesverhalen" className="text-white/80 hover:text-white">Succesverhalen</Link></li>
             <li><Link href="/oplossingen" className="text-white/80 hover:text-white">Oplossingen</Link></li>
             <li><Link href="/blog" className="text-white/80 hover:text-white">Blog</Link></li>
             <li><Link href="/contact" className="text-white/80 hover:text-white">Contact</Link></li>
-            <li><Link href="/gratis-guide" className="text-white/80 hover:text-white">Gratis Guide</Link></li>
-            <li><Link href="/contact" className="text-white/80 hover:text-white">Gratis AI + Automation Consult</Link></li>
+            <li><Link href="/gratis-opzetje" className="text-white/80 hover:text-white">Gratis opzetje</Link></li>
             </ul>
           </div>
           
