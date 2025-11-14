@@ -20,7 +20,7 @@ export function Footer() {
                 <Mail className="w-6 h-6" />
               </a>
               <a
-                href="https://wa.me/31612345678"
+                href="https://wa.me/31620948502"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-white transition-colors"
