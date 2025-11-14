@@ -24,7 +24,7 @@ export function ServicesList() {
               Maatwerk Oplossingen
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Heb je specifieke behoeften die standaard oplossingen niet dekken? Wij ontwikkelen custom oplossingen op maat
+              Heb je specifieke behoeften die standaard oplossingen niet dekken? Ik ontwikkel custom oplossingen op maat
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export function ServicesList() {
                 </h3>
                 <p className="text-gray-600 mb-6">
                   Elk bedrijf is uniek en heeft soms specifieke uitdagingen die standaard software niet kan oplossen.
-                  Wij bedenken en bouwen custom oplossingen die perfect aansluiten bij jouw bedrijfsprocessen.
+                  Ik bedenk en bouw custom oplossingen die perfect aansluiten bij jouw bedrijfsprocessen.
                 </p>
                 <div className="space-y-4 mb-8">
                   <div>

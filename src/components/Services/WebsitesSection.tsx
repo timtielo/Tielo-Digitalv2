@@ -12,7 +12,7 @@ export function WebsitesSection() {
               Websites voor Bouwbedrijven
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Geen gedoe met Werkspot of DNS settings. Wij regelen alles voor je
+              Geen gedoe met Werkspot of DNS settings. Ik regel alles voor je
             </p>
           </div>
 
@@ -20,7 +20,7 @@ export function WebsitesSection() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-2xl font-bold mb-4">
-                  Jij doet het werk, wij regelen de rest
+                  Jij doet jouw werk gewoon, ik regel de rest
                 </h3>
                 <p className="text-gray-600 mb-6">
                   Ik maak een gratis website-opzetje voor jouw bouwbedrijf. Geen gedoe, geen technische rompslomp.
