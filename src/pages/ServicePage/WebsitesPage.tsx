@@ -1,6 +1,7 @@
 import React from 'react';
 import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
 import { WebsitesHero } from './WebsitesPage/components/WebsitesHero';
+import { WebsitesShowcase } from './WebsitesPage/components/WebsitesShowcase';
 import { WebsitesOffer } from './WebsitesPage/components/WebsitesOffer';
 import { WebsitesValue } from './WebsitesPage/components/WebsitesValue';
 import { WebsitesPricing } from './WebsitesPage/components/WebsitesPricing';
@@ -18,6 +19,7 @@ export function WebsitesPage() {
         }}
       />
       <WebsitesHero />
+      <WebsitesShowcase />
       <WebsitesOffer />
       <WebsitesValue />
       <WebsitesPricing />
