@@ -1,6 +1,7 @@
 import React from 'react';
 import { Hero } from '../components/Hero';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
+import { AgitateSection } from '../components/Home/AgitateSection';
 import { OplossingSection } from '../components/Home/OplossingSection';
 import { Benefits } from '../components/Home/Benefits';
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
@@ -27,6 +28,7 @@ export function Home() {
       />
       <Hero />
       <ProblemSolveSection />
+      <AgitateSection />
       <OplossingSection />
       <Benefits />
       <div id="voorbeelden">
