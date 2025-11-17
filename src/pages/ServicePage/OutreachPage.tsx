@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Send, ArrowRight, Users, Target, BarChart, Zap, Check } from 'lucide-react';
 import { Link } from '../../components/Link';
-import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
+import { SEO } from '../../components/SEO';
 
 const features = [
   {
@@ -37,12 +37,18 @@ const benefits = [
 export function OutreachPage() {
   return (
     <div className="min-h-screen">
-      <ContentfulSEO 
-        internalName="Diensten Outreach"
-        fallback={{
-          title: "Outreach Automatisering | Lead Generation & Nurturing",
-          description: "Bereik meer potentiële klanten met geautomatiseerde outreach. Personaliseer je benadering, volg leads automatisch op en verhoog je conversies."
-        }}
+      <SEO
+        title="Outreach Automatisering | Lead Generation & Nurturing"
+        description="Bereik meer potentiële klanten met geautomatiseerde outreach. Personaliseer je benadering, volg leads automatisch op en verhoog je conversies."
+        keywords={[
+          'Outreach Automatisering',
+          'Lead Generation',
+          'Lead Nurturing',
+          'Email Automatisering',
+          'Sales Automatisering',
+          'Klanten Werven Automatisch'
+        ]}
+        canonical="https://www.tielo-digital.nl/diensten/outreach"
       />
 
       {/* Hero Section */}
