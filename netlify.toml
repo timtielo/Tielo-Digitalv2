@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Remove trailing slashes (except root)
+[[redirects]]
+  from = "/*/"
+  to = "/:splat"
+  status = 301
+  force = true
+
 # Handle client-side routing
 [[redirects]]
   from = "/*"
