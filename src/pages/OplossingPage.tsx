@@ -3,6 +3,7 @@ import { useOplossing } from '../hooks/useOplossing';
 import { Loader } from 'lucide-react';
 import { OplossingContent } from '../components/Oplossingen/OplossingContent';
 import { OplossingenCTA } from '../components/Oplossingen/OplossingenCTA';
+import { SEO } from '../components/SEO';
 
 interface OplossingPageProps {
   slug: string;
@@ -29,8 +30,26 @@ export function OplossingPage({ slug }: OplossingPageProps) {
     );
   }
 
+  const { fields } = oplossing;
+  const description = fields.shortDescription || 
+    `${fields.title} - Een concrete oplossing voor bouwbedrijven. Bekijk hoe we dit succesvol hebben geïmplementeerd en wat de resultaten zijn.`;
+
   return (
     <div className="min-h-screen">
+      <SEO
+        title={fields.title}
+        description={description}
+        keywords={[
+          'AI Oplossing',
+          'Automatisering',
+          'Bouwbedrijf',
+          'Succesverhaal',
+          'Case Study',
+          fields.title
+        ]}
+        canonical={`https://www.tielo-digital.nl/oplossingen/${slug}`}
+        ogImage={fields.featuredImage ? `https:${fields.featuredImage.fields.file.url}` : undefined}
+      />
       <OplossingContent oplossing={oplossing} />
       <OplossingenCTA />
     </div>

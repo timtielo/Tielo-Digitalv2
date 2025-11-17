@@ -1,17 +1,23 @@
 import React from 'react';
 import { BusinessCardHero } from '../components/BusinessCard/BusinessCardHero';
 import { SocialButtons } from '../components/BusinessCard/SocialButtons';
-import { SupabaseSEO } from '../components/SEO/SupabaseSEO';
+import { SEO } from '../components/SEO';
 
 export function BusinessCard() {
   return (
     <>
-      <SupabaseSEO 
-        internalName="Business Card SEO"
-        fallback={{
-          title: "Tim Tielkemeijer - Digital Business Card",
-          description: "Digitaal visitekaartje van Tim Tielkemeijer - AI & Automation Expert bij Tielo Digital."
-        }}
+      <SEO
+        title="Tim Tielkemeijer - Digital Business Card"
+        description="Digitaal visitekaartje van Tim Tielkemeijer, oprichter van Tielo Digital. Gratis website-opzetjes voor bouwbedrijven. Specialist in domein, hosting & online zichtbaarheid voor starters."
+        keywords={[
+          'Tim Tielkemeijer',
+          'Tielo Digital',
+          'Digital Business Card',
+          'Website Specialist',
+          'Bouwbedrijf Expert',
+          'Visitekaartje'
+        ]}
+        canonical="https://www.tielo-digital.nl/visitekaartje"
       />
       <div className="min-h-screen bg-gray-50">
         <BusinessCardHero />
