@@ -27,6 +27,11 @@ const websites = [
     url: 'https://www.mrclogged247.nl',
     logo: '/assets/mrclogged.jpg',
     nofollow: true
+  },
+  {
+    name: 'I-Lizard',
+    url: 'http://www.i-lizard.nl/',
+    logo: '/assets/Fulllogo.png'
   }
 ];
 
