@@ -4,23 +4,27 @@ import { motion } from 'framer-motion';
 const websites = [
   {
     name: 'Meer Impact Marketing',
-    url: 'https://meerimpactmarketing.tielo-digital.nl',
-    logo: '/assets/Meerimpactmarketinglogo.png'
+    url: 'https://www.meerimpactmarketing.nl',
+    logo: '/assets/Meerimpactmarketinglogo.png',
+    nofollow: true
   },
   {
     name: 'TG Ilde Gevelwerken',
-    url: 'https://tgildegevelwerken.tielo-digital.nl/',
-    logo: '/logo/tgildegevelwerkenlogo-transparant.svg'
+    url: 'https://www.tgildegevelwerken.nl',
+    logo: '/logo/tgildegevelwerkenlogo-transparant.svg',
+    nofollow: true
   },
   {
     name: 'Praktijk Tielo',
-    url: 'https://praktijk-tielo.nl/',
-    logo: '/assets/Praktijk Tielo 169.svg'
+    url: 'https://praktijk-tielo.nl',
+    logo: '/assets/Praktijk Tielo 169.svg',
+    nofollow: true
   },
   {
     name: 'Her Horizon',
-    url: 'https://herhorizonv4.tielo-digital.nl',
-    logo: 'https://herhorizonv4.tielo-digital.nl/images/Logofulltrans.svg'
+    url: 'https://www.herhorizon.nl',
+    logo: 'https://herhorizonv4.tielo-digital.nl/images/Logofulltrans.svg',
+    nofollow: true
   },
   {
     name: 'MrClogged',
@@ -30,8 +34,9 @@ const websites = [
   },
   {
     name: 'I-Lizard',
-    url: 'http://www.i-lizard.nl/',
-    logo: '/assets/Fulllogo.png'
+    url: 'http://www.i-lizard.nl',
+    logo: '/assets/Fulllogo.png',
+    nofollow: true
   }
 ];
 
