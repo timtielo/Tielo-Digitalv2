@@ -93,16 +93,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Generate access token for the user using admin.generateLink
-    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+    // Use the admin API to create a session URL with tokens
+    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email: targetUser.user.email!,
     });
 
-    if (linkError || !linkData) {
-      console.error('Error generating link:', linkError);
+    if (sessionError || !sessionData) {
+      console.error('Error generating session:', sessionError);
       return new Response(
-        JSON.stringify({ error: 'Failed to generate session' }),
+        JSON.stringify({ error: 'Failed to generate session', details: sessionError?.message }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -110,14 +110,31 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Extract tokens from the generated link
-    const url = new URL(linkData.properties.action_link);
-    const accessToken = url.searchParams.get('access_token');
-    const refreshToken = url.searchParams.get('refresh_token');
+    // Extract the hash from the action_link
+    const actionLink = sessionData.properties.action_link;
+    console.log('Action link:', actionLink);
+    
+    // Parse the hash from the URL fragment (after #)
+    const urlParts = actionLink.split('#');
+    if (urlParts.length < 2) {
+      console.error('No hash in action link');
+      return new Response(
+        JSON.stringify({ error: 'Failed to parse session link' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const hashParams = new URLSearchParams(urlParts[1]);
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
 
     if (!accessToken || !refreshToken) {
+      console.error('Tokens not found in hash. Hash:', urlParts[1]);
       return new Response(
-        JSON.stringify({ error: 'Failed to extract tokens' }),
+        JSON.stringify({ error: 'Failed to extract tokens from session link' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
