@@ -22,7 +22,12 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
@@ -88,19 +93,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Generate a temporary password
-    const tempPassword = crypto.randomUUID();
+    // Generate access token for the user using admin.generateLink
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'magiclink',
+      email: targetUser.user.email!,
+    });
 
-    // Update user's password without requiring them to confirm
-    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
-      body.target_user_id,
-      { password: tempPassword }
-    );
-
-    if (updateError) {
-      console.error('Error updating password:', updateError);
+    if (linkError || !linkData) {
+      console.error('Error generating link:', linkError);
       return new Response(
-        JSON.stringify({ error: 'Failed to update user password' }),
+        JSON.stringify({ error: 'Failed to generate session' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -108,16 +110,14 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Sign in with the temporary password using service role client
-    const { data: signInData, error: signInError } = await supabaseAdmin.auth.signInWithPassword({
-      email: targetUser.user.email!,
-      password: tempPassword,
-    });
+    // Extract tokens from the generated link
+    const url = new URL(linkData.properties.action_link);
+    const accessToken = url.searchParams.get('access_token');
+    const refreshToken = url.searchParams.get('refresh_token');
 
-    if (signInError || !signInData.session) {
-      console.error('Error signing in:', signInError);
+    if (!accessToken || !refreshToken) {
       return new Response(
-        JSON.stringify({ error: 'Failed to create session' }),
+        JSON.stringify({ error: 'Failed to extract tokens' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -128,8 +128,8 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        access_token: signInData.session.access_token,
-        refresh_token: signInData.session.refresh_token,
+        access_token: accessToken,
+        refresh_token: refreshToken,
         user: {
           id: targetUser.user.id,
           email: targetUser.user.email,
