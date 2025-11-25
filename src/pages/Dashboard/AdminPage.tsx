@@ -308,13 +308,11 @@ export function AdminPage() {
 
     setUpdating(editingUser.id);
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({
-          name: editForm.name,
-          business_name: editForm.business_name
-        })
-        .eq('id', editingUser.id);
+      const { error } = await supabase.rpc('update_user_details', {
+        target_user_id: editingUser.id,
+        new_name: editForm.name,
+        new_business_name: editForm.business_name
+      });
 
       if (error) throw error;
 

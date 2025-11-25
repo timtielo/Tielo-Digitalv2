@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase,
   Star,
@@ -10,7 +10,9 @@ import {
   X,
   ChevronRight,
   User,
-  Shield
+  Shield,
+  UserCog,
+  XCircle
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -44,12 +46,50 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
   const [navigation, setNavigation] = useState<DashboardModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isImpersonating, setIsImpersonating] = useState(false);
+  const [impersonatedUserEmail, setImpersonatedUserEmail] = useState('');
 
   useEffect(() => {
     if (user) {
       fetchUserModules();
+      checkImpersonation();
     }
   }, [user]);
+
+  const checkImpersonation = () => {
+    const adminSession = sessionStorage.getItem('admin_session');
+    if (adminSession) {
+      setIsImpersonating(true);
+      setImpersonatedUserEmail(user?.email || '');
+    }
+  };
+
+  const returnToAdmin = async () => {
+    const adminSessionStr = sessionStorage.getItem('admin_session');
+    if (!adminSessionStr) return;
+
+    try {
+      const adminSession = JSON.parse(adminSessionStr);
+
+      // Restore admin session
+      const { error } = await supabase.auth.setSession({
+        access_token: adminSession.access_token,
+        refresh_token: adminSession.refresh_token
+      });
+
+      if (error) throw error;
+
+      // Clear impersonation data
+      sessionStorage.removeItem('admin_session');
+
+      // Redirect to admin page
+      window.history.pushState({}, '', '/dashboard/admin');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.location.reload();
+    } catch (error) {
+      console.error('Error returning to admin:', error);
+    }
+  };
 
   const fetchUserModules = async () => {
     try {
@@ -108,6 +148,29 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <AnimatePresence>
+        {isImpersonating && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-4 right-4 z-50 bg-amber-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
+          >
+            <UserCog className="h-5 w-5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">Impersonating User</p>
+              <p className="text-xs opacity-90 truncate">{impersonatedUserEmail}</p>
+            </div>
+            <button
+              onClick={returnToAdmin}
+              className="flex-shrink-0 hover:bg-amber-600 rounded p-1 transition-colors"
+              title="Return to admin"
+            >
+              <XCircle className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="flex h-screen overflow-hidden">
         <aside className={`
           fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out
