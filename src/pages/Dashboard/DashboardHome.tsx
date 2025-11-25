@@ -274,19 +274,19 @@ function DashboardHomeContent() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-4"
+          className="text-center mb-8"
         >
           {userProfile?.profile_picture_url && (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="flex justify-center mb-2"
+              className="flex justify-center mb-3"
             >
               <img
                 src={userProfile.profile_picture_url}
                 alt="Profile"
-                className="w-14 h-14 rounded-full object-cover border-3 border-white/20"
+                className="w-16 h-16 rounded-full object-cover border-4 border-white/20 shadow-lg"
               />
             </motion.div>
           )}
@@ -301,7 +301,7 @@ function DashboardHomeContent() {
             Welkom terug{userProfile?.name ? `, ${userProfile.name}` : ''}
           </h1>
           {userProfile?.business_name && (
-            <p className="mt-2 text-xl text-gray-300">
+            <p className="mt-2 text-xl text-gray-300 font-medium">
               {userProfile.business_name}
             </p>
           )}
@@ -313,88 +313,92 @@ function DashboardHomeContent() {
               href={userProfile.website_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-sm"
+              className="mt-2 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-sm"
             >
               <ExternalLink className="h-4 w-4" />
               {userProfile.website_url.replace(/^https?:\/\//, '')}
             </motion.a>
           )}
-          <p className="mt-2 text-lg text-gray-400">
+          <p className="mt-4 text-lg text-gray-400">
             Kies een module om te beginnen
           </p>
         </motion.div>
 
-        <BentoGrid>
-          {allModules.map((module) => {
-            const Icon = iconMap[module.icon_name] || User;
-            const gradient = gradientMap[module.module_key] || {
-              from: 'from-gray-500',
-              to: 'to-gray-400',
-              span: 'md:col-span-2',
-            };
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-3">
+            <BentoGrid>
+              {allModules.map((module) => {
+                const Icon = iconMap[module.icon_name] || User;
+                const gradient = gradientMap[module.module_key] || {
+                  from: 'from-gray-500',
+                  to: 'to-gray-400',
+                  span: 'md:col-span-2',
+                };
 
-            return (
-              <BentoGridItem
-                key={module.module_key}
-                className={gradient.span}
-                gradientFrom={gradient.from}
-                gradientTo={gradient.to}
-                onClick={() => handleNavigation(module.route_path)}
-              >
-                <div className="mb-1">
-                  <Icon className="w-8 h-8 text-white" />
-                </div>
-                <div className="flex flex-col flex-grow">
-                  <h3 className="text-2xl font-bold text-white mb-1">
-                    {module.display_name}
-                  </h3>
-                  <p className="text-gray-200 text-base leading-snug flex-grow line-clamp-2">
-                    {module.description}
-                  </p>
-                </div>
-                <div className="mt-1">
-                  <span
-                    className="
-                      text-white font-semibold text-base inline-flex items-center
-                      group/link
-                    "
+                return (
+                  <BentoGridItem
+                    key={module.module_key}
+                    className={gradient.span}
+                    gradientFrom={gradient.from}
+                    gradientTo={gradient.to}
+                    onClick={() => handleNavigation(module.route_path)}
                   >
-                    Openen
-                    <ArrowRight className="ml-1 w-5 h-5 transition-transform duration-300 group-hover/link:translate-x-1" />
-                  </span>
-                </div>
-              </BentoGridItem>
-            );
-          })}
-        </BentoGrid>
+                    <div className="mb-2">
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="flex flex-col flex-grow">
+                      <h3 className="text-2xl font-bold text-white mb-2">
+                        {module.display_name}
+                      </h3>
+                      <p className="text-gray-200 text-base leading-snug flex-grow">
+                        {module.description}
+                      </p>
+                    </div>
+                    <div className="mt-3">
+                      <span
+                        className="
+                          text-white font-semibold text-base inline-flex items-center
+                          group/link
+                        "
+                      >
+                        Openen
+                        <ArrowRight className="ml-1 w-5 h-5 transition-transform duration-300 group-hover/link:translate-x-1" />
+                      </span>
+                    </div>
+                  </BentoGridItem>
+                );
+              })}
+            </BentoGrid>
+          </div>
 
-        {userProfile?.important_links && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-6"
-          >
-            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <LinkIcon className="w-6 h-6 text-blue-400" />
-                <h2 className="text-xl font-bold text-white">Belangrijke Links</h2>
+          {userProfile?.important_links && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="lg:col-span-1"
+            >
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+                <div className="flex items-center gap-2 mb-4">
+                  <LinkIcon className="w-6 h-6 text-blue-400 flex-shrink-0" />
+                  <h2 className="text-xl font-bold text-white">Belangrijke Links</h2>
+                </div>
+                <div
+                  className="prose prose-invert prose-sm max-w-none text-gray-200 [&_a]:text-blue-400 [&_a]:hover:text-blue-300 [&_a]:transition-colors [&_a]:underline [&_a]:decoration-blue-400/30 [&_ul]:space-y-2 [&_li]:text-sm"
+                  dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
+                    if (target.tagName === 'A') {
+                      const link = target as HTMLAnchorElement;
+                      link.setAttribute('target', '_blank');
+                      link.setAttribute('rel', 'noopener noreferrer');
+                    }
+                  }}
+                />
               </div>
-              <div
-                className="prose prose-invert max-w-none text-gray-200"
-                dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
-                onClick={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (target.tagName === 'A') {
-                    const link = target as HTMLAnchorElement;
-                    link.setAttribute('target', '_blank');
-                    link.setAttribute('rel', 'noopener noreferrer');
-                  }
-                }}
-              />
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );
