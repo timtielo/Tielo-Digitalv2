@@ -314,65 +314,68 @@ export function AdminPage() {
           )}
         </div>
 
-        {editingUser && (
-          <Dialog
-            isOpen={!!editingUser}
-            onClose={closeEditDialog}
-            title="Gebruiker Bewerken"
-          >
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="email">E-mailadres</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={editingUser.email}
-                  disabled
-                  className="bg-gray-50"
-                />
-                <p className="text-xs text-gray-500 mt-1">E-mailadres kan niet worden gewijzigd</p>
-              </div>
+        <Dialog
+          open={!!editingUser}
+          onOpenChange={(open) => !open && closeEditDialog()}
+        >
+          {editingUser && (
+            <div className="p-6">
+              <h2 className="text-lg font-semibold mb-4">Gebruiker Bewerken</h2>
 
-              <div>
-                <Label htmlFor="name">Naam</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Voer naam in"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                />
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email">E-mailadres</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={editingUser.email}
+                    disabled
+                    className="bg-gray-50"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">E-mailadres kan niet worden gewijzigd</p>
+                </div>
 
-              <div>
-                <Label htmlFor="business_name">Bedrijfsnaam</Label>
-                <Input
-                  id="business_name"
-                  type="text"
-                  placeholder="Voer bedrijfsnaam in"
-                  value={editForm.business_name}
-                  onChange={(e) => setEditForm({ ...editForm, business_name: e.target.value })}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="name">Naam</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Voer naam in"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  />
+                </div>
 
-              <div className="flex justify-end gap-3 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={closeEditDialog}
-                  disabled={updating === editingUser.id}
-                >
-                  Annuleren
-                </Button>
-                <Button
-                  onClick={updateUserDetails}
-                  disabled={updating === editingUser.id}
-                >
-                  {updating === editingUser.id ? 'Opslaan...' : 'Opslaan'}
-                </Button>
+                <div>
+                  <Label htmlFor="business_name">Bedrijfsnaam</Label>
+                  <Input
+                    id="business_name"
+                    type="text"
+                    placeholder="Voer bedrijfsnaam in"
+                    value={editForm.business_name}
+                    onChange={(e) => setEditForm({ ...editForm, business_name: e.target.value })}
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={closeEditDialog}
+                    disabled={updating === editingUser.id}
+                  >
+                    Annuleren
+                  </Button>
+                  <Button
+                    onClick={updateUserDetails}
+                    disabled={updating === editingUser.id}
+                  >
+                    {updating === editingUser.id ? 'Opslaan...' : 'Opslaan'}
+                  </Button>
+                </div>
               </div>
             </div>
-          </Dialog>
-        )}
+          )}
+        </Dialog>
       </DashboardLayout>
     </ProtectedRoute>
   );
