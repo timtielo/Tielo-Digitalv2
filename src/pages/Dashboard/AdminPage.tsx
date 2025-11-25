@@ -370,7 +370,7 @@ export function AdminPage() {
       showToast(`Nu ingelogd als ${targetUser.email}`, 'success');
 
       setTimeout(() => {
-        window.history.pushState({}, '', '/dashboard/portfolio');
+        window.history.pushState({}, '', '/dashboard');
         window.dispatchEvent(new PopStateEvent('popstate'));
         window.location.reload();
       }, 1000);
