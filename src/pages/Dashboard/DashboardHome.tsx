@@ -8,6 +8,8 @@ import {
   User,
   Shield,
   ArrowRight,
+  LogOut,
+  ExternalLink,
 } from 'lucide-react';
 import {
   AuroraBackground,
@@ -31,6 +33,8 @@ interface UserProfile {
   name: string;
   business_name: string;
   is_admin: boolean;
+  profile_picture_url: string | null;
+  website_url: string | null;
 }
 
 const iconMap: Record<string, any> = {
@@ -91,7 +95,7 @@ function DashboardHomeContent() {
     try {
       const { data: profileData } = await supabase
         .from('user_profiles')
-        .select('name, business_name, is_admin')
+        .select('name, business_name, is_admin, profile_picture_url, website_url')
         .eq('id', user?.id)
         .maybeSingle();
 
@@ -137,6 +141,15 @@ function DashboardHomeContent() {
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-gray-950 flex items-center justify-center">
@@ -163,12 +176,39 @@ function DashboardHomeContent() {
       <AuroraBackground />
 
       <div className="relative z-10 container mx-auto px-4 py-12">
+        <div className="flex justify-end mb-6">
+          <motion.button
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-xl transition-all duration-300"
+          >
+            <LogOut className="h-4 w-4" />
+            Uitloggen
+          </motion.button>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
+          {userProfile?.profile_picture_url && (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-6"
+            >
+              <img
+                src={userProfile.profile_picture_url}
+                alt="Profile"
+                className="w-24 h-24 rounded-full object-cover border-4 border-white/20"
+              />
+            </motion.div>
+          )}
+
           <h1
             className="
               text-4xl md:text-6xl font-extrabold tracking-tight
@@ -183,7 +223,21 @@ function DashboardHomeContent() {
               {userProfile.business_name}
             </p>
           )}
-          <p className="mt-2 text-lg text-gray-400">
+          {userProfile?.website_url && (
+            <motion.a
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              href={userProfile.website_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              <ExternalLink className="h-4 w-4" />
+              {userProfile.website_url.replace(/^https?:\/\//, '')}
+            </motion.a>
+          )}
+          <p className="mt-4 text-lg text-gray-400">
             Kies een module om te beginnen
           </p>
         </motion.div>

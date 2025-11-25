@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
@@ -318,6 +318,15 @@ function PortfolioContent() {
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
       <AuroraBackground />
@@ -329,12 +338,21 @@ function PortfolioContent() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <button
-              onClick={handleBackToDashboard}
-              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
-            >
-              ← Terug naar Dashboard
-            </button>
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={handleBackToDashboard}
+                className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
+              >
+                ← Terug naar Dashboard
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-xl transition-all duration-300 text-sm"
+              >
+                <LogOut className="h-4 w-4" />
+                Uitloggen
+              </button>
+            </div>
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-4xl font-bold text-white mb-2">Portfolio</h1>
