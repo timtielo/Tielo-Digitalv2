@@ -1,3 +1,8 @@
+# Block subdomains from indexing
+User-agent: *
+Host: www.tielo-digital.nl
+
+# Main domain robots.txt
 User-agent: *
 Allow: /
 
@@ -17,5 +22,5 @@ Allow: /public/logo/
 # Disallow business card page
 Disallow: /visitekaartje
 
-# Sitemap
+# Sitemap (main domain only)
 Sitemap: https://www.tielo-digital.nl/sitemap.xml
