@@ -36,6 +36,8 @@ export function PortfolioPage() {
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [imagePreview, setImagePreview] = useState<{ before?: string; after?: string }>({});
+  const [imageDimensions, setImageDimensions] = useState<{ before?: { width: number; height: number }; after?: { width: number; height: number } }>({});
 
   const [formData, setFormData] = useState({
     title: '',
@@ -92,6 +94,23 @@ export function PortfolioPage() {
     return () => {
       supabase.removeChannel(channel);
     };
+  };
+
+  const handleImageSelect = (file: File, type: 'before' | 'after') => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        setImageDimensions(prev => ({
+          ...prev,
+          [type]: { width: img.width, height: img.height }
+        }));
+      };
+      img.src = e.target?.result as string;
+      setImagePreview(prev => ({ ...prev, [type]: e.target?.result as string }));
+    };
+    reader.readAsDataURL(file);
+    uploadImage(file, type);
   };
 
   const uploadImage = async (file: File, type: 'before' | 'after') => {
@@ -177,6 +196,11 @@ export function PortfolioPage() {
       after_image: item.after_image || '',
       featured: item.featured,
     });
+    setImagePreview({
+      before: item.before_image || undefined,
+      after: item.after_image || undefined,
+    });
+    setImageDimensions({});
     setDialogOpen(true);
   };
 
@@ -210,6 +234,8 @@ export function PortfolioPage() {
       after_image: '',
       featured: false,
     });
+    setImagePreview({});
+    setImageDimensions({});
     setEditingItem(null);
   };
 
@@ -394,33 +420,44 @@ export function PortfolioPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Voor Foto</Label>
-                  {formData.before_image ? (
+                  {imagePreview.before || formData.before_image ? (
                     <div className="mt-2">
                       <img
-                        src={formData.before_image}
+                        src={imagePreview.before || formData.before_image}
                         alt="Voor"
-                        className="w-full h-32 object-cover rounded mb-2"
+                        className="w-full h-48 object-contain bg-gray-50 rounded mb-2 border border-gray-200"
                       />
+                      {imageDimensions.before && (
+                        <p className="text-xs text-gray-600 mb-2">
+                          Afmetingen: {imageDimensions.before.width} × {imageDimensions.before.height}px
+                        </p>
+                      )}
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => setFormData({ ...formData, before_image: '' })}
+                        onClick={() => {
+                          setFormData({ ...formData, before_image: '' });
+                          setImagePreview(prev => ({ ...prev, before: undefined }));
+                          setImageDimensions(prev => ({ ...prev, before: undefined }));
+                        }}
                       >
                         Verwijderen
                       </Button>
                     </div>
                   ) : (
-                    <label className="mt-2 flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                       <Upload className="h-8 w-8 text-gray-400 mb-2" />
                       <span className="text-sm text-gray-500">Upload foto</span>
+                      <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/*"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (file) uploadImage(file, 'before');
+                          if (file) handleImageSelect(file, 'before');
+                          e.target.value = '';
                         }}
                         disabled={uploading}
                       />
@@ -430,33 +467,44 @@ export function PortfolioPage() {
 
                 <div>
                   <Label>Na Foto</Label>
-                  {formData.after_image ? (
+                  {imagePreview.after || formData.after_image ? (
                     <div className="mt-2">
                       <img
-                        src={formData.after_image}
+                        src={imagePreview.after || formData.after_image}
                         alt="Na"
-                        className="w-full h-32 object-cover rounded mb-2"
+                        className="w-full h-48 object-contain bg-gray-50 rounded mb-2 border border-gray-200"
                       />
+                      {imageDimensions.after && (
+                        <p className="text-xs text-gray-600 mb-2">
+                          Afmetingen: {imageDimensions.after.width} × {imageDimensions.after.height}px
+                        </p>
+                      )}
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => setFormData({ ...formData, after_image: '' })}
+                        onClick={() => {
+                          setFormData({ ...formData, after_image: '' });
+                          setImagePreview(prev => ({ ...prev, after: undefined }));
+                          setImageDimensions(prev => ({ ...prev, after: undefined }));
+                        }}
                       >
                         Verwijderen
                       </Button>
                     </div>
                   ) : (
-                    <label className="mt-2 flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                       <Upload className="h-8 w-8 text-gray-400 mb-2" />
                       <span className="text-sm text-gray-500">Upload foto</span>
+                      <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/*"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (file) uploadImage(file, 'after');
+                          if (file) handleImageSelect(file, 'after');
+                          e.target.value = '';
                         }}
                         disabled={uploading}
                       />

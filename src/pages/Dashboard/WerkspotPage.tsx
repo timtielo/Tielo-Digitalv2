@@ -151,24 +151,14 @@ export function WerkspotPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {editing ? (
-                    <Input
-                      type="text"
-                      inputMode="decimal"
-                      placeholder="Bijv. 4.5"
-                      value={formData.avgstars}
-                      onChange={(e) =>
-                        setFormData({ ...formData, avgstars: e.target.value })
-                      }
-                    />
-                  ) : (
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-gray-900">
-                        {data?.avgstars?.toFixed(1) || '0.0'}
-                      </span>
-                      <span className="text-gray-500">/ 5.0</span>
-                    </div>
-                  )}
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-gray-900">
+                      {editing && formData.avgstars
+                        ? parseFloat(formData.avgstars).toFixed(1)
+                        : data?.avgstars?.toFixed(1) || '0.0'}
+                    </span>
+                    <span className="text-gray-500">/ 5.0</span>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -180,21 +170,11 @@ export function WerkspotPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {editing ? (
-                    <Input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="Bijv. 25"
-                      value={formData.reviewamount}
-                      onChange={(e) =>
-                        setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })
-                      }
-                    />
-                  ) : (
-                    <div className="text-4xl font-bold text-gray-900">
-                      {data?.reviewamount || 0}
-                    </div>
-                  )}
+                  <div className="text-4xl font-bold text-gray-900">
+                    {editing && formData.reviewamount
+                      ? formData.reviewamount
+                      : data?.reviewamount || 0}
+                  </div>
                 </CardContent>
               </Card>
             </div>
