@@ -25,6 +25,30 @@
     cursor: default;
   }
 
+  /* Styling for important links content */
+  .prose a {
+    color: #60a5fa;
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+
+  .prose a:hover {
+    color: #93c5fd;
+  }
+
+  .prose strong, .prose b {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .prose em, .prose i {
+    font-style: italic;
+  }
+
+  .prose p {
+    margin-bottom: 0.5rem;
+  }
+
   /* Keep buttons and links clickable with pointer cursor */
   button, a {
     user-select: none;

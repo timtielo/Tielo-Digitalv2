@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -15,6 +15,7 @@ interface UserProfile {
   is_admin: boolean;
   created_at: string;
   website_url?: string;
+  important_links?: string;
 }
 
 interface UserWithEmail extends UserProfile {
@@ -52,6 +53,81 @@ const GlassSelect = ({ label, children, ...props }: any) => (
     </div>
   </div>
 );
+
+const RichTextEditor = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => {
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editorRef.current && value !== editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = value;
+    }
+  }, [value]);
+
+  const handleInput = () => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  };
+
+  const applyFormat = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      editorRef.current.focus();
+      onChange(editorRef.current.innerHTML);
+    }
+  };
+
+  const insertLink = () => {
+    const url = prompt('Voer de URL in:');
+    if (url) {
+      applyFormat('createLink', url);
+    }
+  };
+
+  return (
+    <div>
+      {label && <label className="text-sm font-medium text-gray-300 block mb-2">{label}</label>}
+      <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm overflow-hidden">
+        <div className="flex gap-1 p-2 border-b border-white/10">
+          <button
+            type="button"
+            onClick={() => applyFormat('bold')}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Bold"
+          >
+            <Bold className="h-4 w-4 text-gray-300" />
+          </button>
+          <button
+            type="button"
+            onClick={() => applyFormat('italic')}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Italic"
+          >
+            <Italic className="h-4 w-4 text-gray-300" />
+          </button>
+          <button
+            type="button"
+            onClick={insertLink}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Link toevoegen"
+          >
+            <LinkIcon className="h-4 w-4 text-gray-300" />
+          </button>
+        </div>
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={handleInput}
+          className="w-full min-h-[120px] bg-transparent text-sm p-3 focus:outline-none text-white"
+          style={{ wordBreak: 'break-word' }}
+        />
+      </div>
+      <p className="text-xs text-gray-500 mt-1">
+        Selecteer tekst en klik op de knoppen om op te maken. Links worden automatisch aanklikbaar.
+      </p>
+    </div>
+  );
+};
 
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
   if (!isOpen) return null;
@@ -97,7 +173,7 @@ export function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingUser, setEditingUser] = useState<UserWithEmail | null>(null);
-  const [editForm, setEditForm] = useState({ email: '', name: '', business_name: '', website_url: '', password: '' });
+  const [editForm, setEditForm] = useState({ email: '', name: '', business_name: '', website_url: '', password: '', important_links: '' });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUserForm, setNewUserForm] = useState({
     email: '',
@@ -302,13 +378,14 @@ export function AdminPage() {
       name: user.name || '',
       business_name: user.business_name || '',
       website_url: user.website_url || '',
-      password: ''
+      password: '',
+      important_links: user.important_links || ''
     });
   };
 
   const closeEditDialog = () => {
     setEditingUser(null);
-    setEditForm({ email: '', name: '', business_name: '', website_url: '', password: '' });
+    setEditForm({ email: '', name: '', business_name: '', website_url: '', password: '', important_links: '' });
   };
 
   const createNewUser = async () => {
@@ -424,6 +501,14 @@ export function AdminPage() {
       });
 
       if (websiteError) throw websiteError;
+
+      // Update important links
+      const { error: linksError } = await supabase.rpc('update_user_important_links', {
+        target_user_id: editingUser.id,
+        new_important_links: editForm.important_links
+      });
+
+      if (linksError) throw linksError;
 
       if (editForm.password) {
         console.log('Starting password update...');
@@ -792,6 +877,12 @@ export function AdminPage() {
                   placeholder="https://example.com"
                   value={editForm.website_url}
                   onChange={(e: any) => setEditForm({ ...editForm, website_url: e.target.value })}
+                />
+
+                <RichTextEditor
+                  label="Belangrijke Links"
+                  value={editForm.important_links}
+                  onChange={(value) => setEditForm({ ...editForm, important_links: value })}
                 />
 
                 <GlassInput

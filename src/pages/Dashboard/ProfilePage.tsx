@@ -18,6 +18,7 @@ interface UserProfile {
   profile_picture_url: string | null;
   business_type: 'bouw' | 'basis';
   is_admin: boolean;
+  important_links?: string;
 }
 
 function ProfileContent() {
@@ -353,6 +354,21 @@ function ProfileContent() {
                         />
                       </div>
                     </motion.div>
+
+                    {profile?.important_links && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="pt-6 border-t border-white/10"
+                      >
+                        <h3 className="text-lg font-semibold text-white mb-3">Belangrijke Links</h3>
+                        <div
+                          className="prose prose-invert max-w-none bg-white/5 border border-white/10 rounded-xl p-4 text-gray-200"
+                          dangerouslySetInnerHTML={{ __html: profile.important_links }}
+                        />
+                      </motion.div>
+                    )}
 
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
