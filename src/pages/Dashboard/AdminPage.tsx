@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle } from 'lucide-react';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Label } from '../../components/ui/Label';
-import { Select } from '../../components/ui/Select';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../../components/ui/Table';
-import { Dialog } from '../../components/ui/Dialog';
-import { Textarea } from '../../components/ui/Textarea';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 
 interface UserProfile {
   id: string;
@@ -27,6 +22,73 @@ interface UserProfile {
 interface UserWithEmail extends UserProfile {
   email: string;
 }
+
+const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl shadow-xl ${className}`}>
+    {children}
+  </div>
+);
+
+const GlassInput = ({ label, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-200 block mb-2">{label}</label>}
+    <div className="rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm transition-colors focus-within:border-blue-400/70 focus-within:bg-blue-500/10">
+      <input
+        {...props}
+        className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-white placeholder-gray-400"
+      />
+    </div>
+  </div>
+);
+
+const GlassSelect = ({ label, children, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-200 block mb-2">{label}</label>}
+    <div className="rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm transition-colors focus-within:border-blue-400/70 focus-within:bg-blue-500/10">
+      <select
+        {...props}
+        className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-white"
+      >
+        {children}
+      </select>
+    </div>
+  </div>
+);
+
+const GlassDialog = ({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) => (
+  <AnimatePresence>
+    {open && (
+      <>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="w-full max-w-md"
+          >
+            <GlassCard className="p-6 relative">
+              <button
+                onClick={onClose}
+                className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <h2 className="text-xl font-bold text-white mb-6">{title}</h2>
+              {children}
+            </GlassCard>
+          </motion.div>
+        </div>
+      </>
+    )}
+  </AnimatePresence>
+);
 
 export function AdminPage() {
   const { user } = useAuth();
@@ -155,14 +217,12 @@ export function AdminPage() {
   const impersonateUser = async (targetUserId: string) => {
     setUpdating(targetUserId);
     try {
-      // Store the admin's session info so they can return
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         showToast('Niet ingelogd', 'error');
         return;
       }
 
-      // Store admin session for potential return
       sessionStorage.setItem('admin_session', JSON.stringify({
         access_token: session.access_token,
         refresh_token: session.refresh_token,
@@ -170,14 +230,12 @@ export function AdminPage() {
       }));
       sessionStorage.setItem('is_impersonating', 'true');
 
-      // Get the target user info
       const targetUser = users.find(u => u.id === targetUserId);
       if (!targetUser) {
         showToast('Gebruiker niet gevonden', 'error');
         return;
       }
 
-      // Step 1: Call the Edge Function to generate an impersonation token
       const impersonateUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/impersonate-user`;
 
       const impersonateResponse = await fetch(impersonateUrl, {
@@ -197,7 +255,6 @@ export function AdminPage() {
         throw new Error(impersonateResult.error || 'Fout bij genereren van impersonation token');
       }
 
-      // Step 2: Exchange the token for a session
       const exchangeUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/exchange-impersonation-token`;
 
       const exchangeResponse = await fetch(exchangeUrl, {
@@ -216,7 +273,6 @@ export function AdminPage() {
         throw new Error(exchangeResult.error || 'Fout bij uitwisselen van token');
       }
 
-      // Set the new session for the target user
       const { error: sessionError } = await supabase.auth.setSession({
         access_token: exchangeResult.access_token,
         refresh_token: exchangeResult.refresh_token
@@ -228,11 +284,10 @@ export function AdminPage() {
 
       showToast(`Nu ingelogd als ${targetUser.email}`, 'success');
 
-      // Redirect to their dashboard
       setTimeout(() => {
         window.history.pushState({}, '', '/dashboard/portfolio');
         window.dispatchEvent(new PopStateEvent('popstate'));
-        window.location.reload(); // Force refresh to update auth context
+        window.location.reload();
       }, 1000);
     } catch (error: any) {
       console.error('Error impersonating user:', error);
@@ -285,14 +340,12 @@ export function AdminPage() {
 
     setUpdating('creating');
     try {
-      // Get the current session token
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
         throw new Error('Niet ingelogd');
       }
 
-      // Call the Edge Function to create user
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
 
       const response = await fetch(apiUrl, {
@@ -352,7 +405,6 @@ export function AdminPage() {
 
       if (websiteError) throw websiteError;
 
-      // Update password if provided
       if (editForm.password) {
         const { data: { session } } = await supabase.auth.getSession();
 
@@ -424,13 +476,18 @@ export function AdminPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout currentPage="admin">
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Geen Toegang</h2>
-              <p className="text-gray-600">Je hebt geen admin rechten om deze pagina te bekijken.</p>
-            </CardContent>
-          </Card>
+          <div className="min-h-screen relative">
+            <div className="absolute inset-0 -z-10">
+              <AuroraBackground />
+            </div>
+            <div className="flex items-center justify-center min-h-[60vh]">
+              <GlassCard className="p-8 text-center max-w-md">
+                <Shield className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-white mb-2">Geen Toegang</h2>
+                <p className="text-gray-300">Je hebt geen admin rechten om deze pagina te bekijken.</p>
+              </GlassCard>
+            </div>
+          </div>
         </DashboardLayout>
       </ProtectedRoute>
     );
@@ -439,408 +496,393 @@ export function AdminPage() {
   return (
     <ProtectedRoute>
       <DashboardLayout currentPage="admin">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Gebruikersbeheer</h1>
-            <p className="text-gray-600 mt-1">Beheer account types en toegangsrechten van gebruikers</p>
+        <div className="min-h-screen relative pb-12">
+          <div className="absolute inset-0 -z-10">
+            <AuroraBackground />
           </div>
 
-          {loading ? (
-            <Card>
-              <CardContent className="p-8">
+          <div className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="text-4xl font-bold text-white">Gebruikersbeheer</h1>
+              <p className="text-gray-300 mt-2">Beheer account types en toegangsrechten van gebruikers</p>
+            </motion.div>
+
+            {loading ? (
+              <GlassCard className="p-12">
                 <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
                 </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Alle Gebruikers
-                  </CardTitle>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      onClick={openCreateUserDialog}
-                      className="flex items-center gap-2"
-                    >
-                      <UserPlus className="h-4 w-4" />
-                      Nieuwe Gebruiker
-                    </Button>
-                    <div className="relative w-64">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        type="text"
-                        placeholder="Zoek gebruiker..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
+              </GlassCard>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <GlassCard className="overflow-hidden">
+                  <div className="p-6 border-b border-white/10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center">
+                          <Shield className="h-6 w-6 text-white" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white">Alle Gebruikers</h2>
+                      </div>
+                      <div className="flex items-center gap-3 w-full md:w-auto">
+                        <button
+                          onClick={openCreateUserDialog}
+                          className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg hover:shadow-blue-500/50"
+                        >
+                          <UserPlus className="h-4 w-4" />
+                          Nieuwe Gebruiker
+                        </button>
+                        <div className="relative flex-1 md:w-64">
+                          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Zoek gebruiker..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:border-blue-400/70 focus:bg-blue-500/10 transition-colors"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Naam</TableHead>
-                        <TableHead>E-mail</TableHead>
-                        <TableHead>Bedrijf</TableHead>
-                        <TableHead>Account Type</TableHead>
-                        <TableHead>Admin</TableHead>
-                        <TableHead>Acties</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredUsers.map((profile) => (
-                        <TableRow key={profile.id}>
-                          <TableCell className="font-medium">{profile.name || '-'}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4 text-gray-400" />
-                              <span className="text-sm">{profile.email}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{profile.business_name || '-'}</TableCell>
-                          <TableCell>
-                            <Select
-                              value={profile.business_type}
-                              onChange={(e) => updateBusinessType(profile.id, e.target.value as 'bouw' | 'basis')}
-                              disabled={updating === profile.id}
-                              className="w-32"
-                            >
-                              <option value="basis">Basis</option>
-                              <option value="bouw">Bouw</option>
-                            </Select>
-                          </TableCell>
-                          <TableCell>
-                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${
-                              profile.is_admin ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {profile.is_admin ? 'Ja' : 'Nee'}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openEditDialog(profile)}
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-white/10">
+                          <th className="text-left p-4 text-sm font-semibold text-gray-300">Naam</th>
+                          <th className="text-left p-4 text-sm font-semibold text-gray-300">E-mail</th>
+                          <th className="text-left p-4 text-sm font-semibold text-gray-300">Bedrijf</th>
+                          <th className="text-left p-4 text-sm font-semibold text-gray-300">Account Type</th>
+                          <th className="text-left p-4 text-sm font-semibold text-gray-300">Admin</th>
+                          <th className="text-left p-4 text-sm font-semibold text-gray-300">Acties</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredUsers.map((profile, index) => (
+                          <motion.tr
+                            key={profile.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                          >
+                            <td className="p-4 text-white font-medium">{profile.name || '-'}</td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-gray-400" />
+                                <span className="text-sm text-gray-300">{profile.email}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-gray-300">{profile.business_name || '-'}</td>
+                            <td className="p-4">
+                              <select
+                                value={profile.business_type}
+                                onChange={(e) => updateBusinessType(profile.id, e.target.value as 'bouw' | 'basis')}
                                 disabled={updating === profile.id}
-                                title="Bewerk gebruiker"
+                                className="px-3 py-2 rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm text-white text-sm focus:outline-none focus:border-blue-400/70 disabled:opacity-50"
                               >
-                                <Edit2 className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => impersonateUser(profile.id)}
-                                disabled={updating === profile.id}
-                                title="Inloggen als deze gebruiker"
-                              >
-                                <UserCog className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => requestAdminStatusChange(profile.id, profile.is_admin)}
-                                disabled={updating === profile.id || profile.id === user?.id}
-                              >
-                                {profile.is_admin ? 'Admin verwijderen' : 'Admin maken'}
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setConfirmDeleteUser(profile)}
-                                disabled={updating === profile.id || profile.id === user?.id}
-                                title="Verwijder gebruiker"
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {filteredUsers.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center text-gray-500 py-8">
-                            Geen gebruikers gevonden
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
+                                <option value="basis">Basis</option>
+                                <option value="bouw">Bouw</option>
+                              </select>
+                            </td>
+                            <td className="p-4">
+                              <span className={`inline-flex px-3 py-1 text-xs font-medium rounded-xl ${
+                                profile.is_admin
+                                  ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                                  : 'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+                              }`}>
+                                {profile.is_admin ? 'Ja' : 'Nee'}
+                              </span>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => openEditDialog(profile)}
+                                  disabled={updating === profile.id}
+                                  title="Bewerk gebruiker"
+                                  className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all disabled:opacity-50"
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => impersonateUser(profile.id)}
+                                  disabled={updating === profile.id}
+                                  title="Inloggen als deze gebruiker"
+                                  className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all disabled:opacity-50"
+                                >
+                                  <UserCog className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => requestAdminStatusChange(profile.id, profile.is_admin)}
+                                  disabled={updating === profile.id || profile.id === user?.id}
+                                  className="px-3 py-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all disabled:opacity-50 text-xs font-medium whitespace-nowrap"
+                                >
+                                  {profile.is_admin ? 'Admin verwijderen' : 'Admin maken'}
+                                </button>
+                                <button
+                                  onClick={() => setConfirmDeleteUser(profile)}
+                                  disabled={updating === profile.id || profile.id === user?.id}
+                                  title="Verwijder gebruiker"
+                                  className="p-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-red-200 transition-all disabled:opacity-50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </motion.tr>
+                        ))}
+                        {filteredUsers.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="text-center text-gray-400 py-12">
+                              Geen gebruikers gevonden
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
 
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h3 className="font-medium text-blue-900 mb-2">Account Types</h3>
-                  <ul className="space-y-2 text-sm text-blue-800">
-                    <li><strong>Basis:</strong> Toegang tot Reviews, Leads en Profiel</li>
-                    <li><strong>Bouw:</strong> Volledige toegang inclusief Portfolio en Werkspot</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                  <div className="p-6 border-t border-white/10">
+                    <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm p-4">
+                      <h3 className="font-semibold text-blue-300 mb-3 flex items-center gap-2">
+                        <AlertCircle className="h-5 w-5" />
+                        Account Types
+                      </h3>
+                      <ul className="space-y-2 text-sm text-blue-200">
+                        <li><strong className="text-blue-100">Basis:</strong> Toegang tot Reviews, Leads en Profiel</li>
+                        <li><strong className="text-blue-100">Bouw:</strong> Volledige toegang inclusief Portfolio en Werkspot</li>
+                      </ul>
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            )}
+          </div>
 
-        <Dialog
-          open={!!editingUser}
-          onOpenChange={(open) => !open && closeEditDialog()}
-        >
-          {editingUser && (
-            <div className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Gebruiker Bewerken</h2>
-
+          <GlassDialog
+            open={!!editingUser}
+            onClose={closeEditDialog}
+            title="Gebruiker Bewerken"
+          >
+            {editingUser && (
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="email">E-mailadres</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={editingUser.email}
-                    disabled
-                    className="bg-gray-50"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">E-mailadres kan niet worden gewijzigd</p>
-                </div>
-
-                <div>
-                  <Label htmlFor="name">Naam</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Voer naam in"
-                    value={editForm.name}
-                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="business_name">Bedrijfsnaam</Label>
-                  <Input
-                    id="business_name"
-                    type="text"
-                    placeholder="Voer bedrijfsnaam in"
-                    value={editForm.business_name}
-                    onChange={(e) => setEditForm({ ...editForm, business_name: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="website_url">Website URL</Label>
-                  <Input
-                    id="website_url"
-                    type="url"
-                    placeholder="https://example.com"
-                    value={editForm.website_url}
-                    onChange={(e) => setEditForm({ ...editForm, website_url: e.target.value })}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Alleen admins kunnen dit veld bewerken</p>
-                </div>
-
-                <div>
-                  <Label htmlFor="password">Nieuw Wachtwoord</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Laat leeg om niet te wijzigen"
-                    value={editForm.password}
-                    onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Minimaal 6 tekens. Laat leeg om wachtwoord niet te wijzigen</p>
-                </div>
-
-                <div className="flex justify-end gap-3 mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={closeEditDialog}
-                    disabled={updating === editingUser.id}
-                  >
-                    Annuleren
-                  </Button>
-                  <Button
-                    onClick={updateUserDetails}
-                    disabled={updating === editingUser.id}
-                  >
-                    {updating === editingUser.id ? 'Opslaan...' : 'Opslaan'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </Dialog>
-
-        <Dialog
-          open={isCreatingUser}
-          onOpenChange={(open) => !open && closeCreateUserDialog()}
-        >
-          <div className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Nieuwe Gebruiker Aanmaken</h2>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="new_email">E-mailadres *</Label>
-                <Input
-                  id="new_email"
+                <GlassInput
+                  label="E-mailadres"
                   type="email"
-                  placeholder="gebruiker@voorbeeld.nl"
-                  value={newUserForm.email}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
-                  required
+                  value={editingUser.email}
+                  disabled
                 />
-              </div>
+                <p className="text-xs text-gray-400 -mt-2">E-mailadres kan niet worden gewijzigd</p>
 
-              <div>
-                <Label htmlFor="new_password">Wachtwoord *</Label>
-                <Input
-                  id="new_password"
-                  type="password"
-                  placeholder="Minimaal 6 tekens"
-                  value={newUserForm.password}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">Minimaal 6 tekens</p>
-              </div>
-
-              <div>
-                <Label htmlFor="new_name">Naam</Label>
-                <Input
-                  id="new_name"
+                <GlassInput
+                  label="Naam"
                   type="text"
                   placeholder="Voer naam in"
-                  value={newUserForm.name}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, name: e.target.value })}
+                  value={editForm.name}
+                  onChange={(e: any) => setEditForm({ ...editForm, name: e.target.value })}
                 />
-              </div>
 
-              <div>
-                <Label htmlFor="new_business_name">Bedrijfsnaam</Label>
-                <Input
-                  id="new_business_name"
+                <GlassInput
+                  label="Bedrijfsnaam"
                   type="text"
                   placeholder="Voer bedrijfsnaam in"
-                  value={newUserForm.business_name}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, business_name: e.target.value })}
+                  value={editForm.business_name}
+                  onChange={(e: any) => setEditForm({ ...editForm, business_name: e.target.value })}
                 />
-              </div>
 
-              <div>
-                <Label htmlFor="new_business_type">Account Type</Label>
-                <Select
-                  id="new_business_type"
-                  value={newUserForm.business_type}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, business_type: e.target.value as 'bouw' | 'basis' })}
-                  className="w-full"
-                >
-                  <option value="basis">Basis</option>
-                  <option value="bouw">Bouw</option>
-                </Select>
-              </div>
+                <GlassInput
+                  label="Website URL"
+                  type="url"
+                  placeholder="https://example.com"
+                  value={editForm.website_url}
+                  onChange={(e: any) => setEditForm({ ...editForm, website_url: e.target.value })}
+                />
 
-              <div className="flex justify-end gap-3 mt-6">
-                <Button
-                  variant="outline"
+                <GlassInput
+                  label="Nieuw Wachtwoord"
+                  type="password"
+                  placeholder="Laat leeg om niet te wijzigen"
+                  value={editForm.password}
+                  onChange={(e: any) => setEditForm({ ...editForm, password: e.target.value })}
+                />
+                <p className="text-xs text-gray-400 -mt-2">Minimaal 6 tekens. Laat leeg om wachtwoord niet te wijzigen</p>
+
+                <div className="flex justify-end gap-3 mt-6 pt-4">
+                  <button
+                    onClick={closeEditDialog}
+                    disabled={updating === editingUser.id}
+                    className="px-6 py-3 rounded-2xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all disabled:opacity-50"
+                  >
+                    Annuleren
+                  </button>
+                  <button
+                    onClick={updateUserDetails}
+                    disabled={updating === editingUser.id}
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg hover:shadow-blue-500/50 disabled:opacity-50"
+                  >
+                    {updating === editingUser.id ? 'Opslaan...' : 'Opslaan'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </GlassDialog>
+
+          <GlassDialog
+            open={isCreatingUser}
+            onClose={closeCreateUserDialog}
+            title="Nieuwe Gebruiker Aanmaken"
+          >
+            <div className="space-y-4">
+              <GlassInput
+                label="E-mailadres *"
+                type="email"
+                placeholder="gebruiker@voorbeeld.nl"
+                value={newUserForm.email}
+                onChange={(e: any) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+                required
+              />
+
+              <GlassInput
+                label="Wachtwoord *"
+                type="password"
+                placeholder="Minimaal 6 tekens"
+                value={newUserForm.password}
+                onChange={(e: any) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                required
+              />
+
+              <GlassInput
+                label="Naam"
+                type="text"
+                placeholder="Voer naam in"
+                value={newUserForm.name}
+                onChange={(e: any) => setNewUserForm({ ...newUserForm, name: e.target.value })}
+              />
+
+              <GlassInput
+                label="Bedrijfsnaam"
+                type="text"
+                placeholder="Voer bedrijfsnaam in"
+                value={newUserForm.business_name}
+                onChange={(e: any) => setNewUserForm({ ...newUserForm, business_name: e.target.value })}
+              />
+
+              <GlassSelect
+                label="Account Type"
+                value={newUserForm.business_type}
+                onChange={(e: any) => setNewUserForm({ ...newUserForm, business_type: e.target.value })}
+              >
+                <option value="basis">Basis</option>
+                <option value="bouw">Bouw</option>
+              </GlassSelect>
+
+              <div className="flex justify-end gap-3 mt-6 pt-4">
+                <button
                   onClick={closeCreateUserDialog}
                   disabled={updating === 'creating'}
+                  className="px-6 py-3 rounded-2xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all disabled:opacity-50"
                 >
                   Annuleren
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={createNewUser}
                   disabled={updating === 'creating'}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg hover:shadow-blue-500/50 disabled:opacity-50"
                 >
                   {updating === 'creating' ? 'Aanmaken...' : 'Gebruiker Aanmaken'}
-                </Button>
+                </button>
               </div>
             </div>
-          </div>
-        </Dialog>
+          </GlassDialog>
 
-        <Dialog
-          open={!!confirmAdminAction}
-          onOpenChange={(open) => !open && setConfirmAdminAction(null)}
-        >
-          <div className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Bevestig Admin Wijziging</h2>
+          <GlassDialog
+            open={!!confirmAdminAction}
+            onClose={() => setConfirmAdminAction(null)}
+            title="Bevestig Admin Wijziging"
+          >
+            <div className="space-y-4">
+              <p className="text-gray-300">
+                {confirmAdminAction?.makeAdmin
+                  ? 'Weet je zeker dat je deze gebruiker admin rechten wilt geven? Deze gebruiker krijgt toegang tot alle administratieve functies.'
+                  : 'Weet je zeker dat je de admin rechten van deze gebruiker wilt verwijderen? Deze gebruiker verliest toegang tot alle administratieve functies.'}
+              </p>
 
-            <p className="text-gray-600 mb-6">
-              {confirmAdminAction?.makeAdmin
-                ? 'Weet je zeker dat je deze gebruiker admin rechten wilt geven? Deze gebruiker krijgt toegang tot alle administratieve functies.'
-                : 'Weet je zeker dat je de admin rechten van deze gebruiker wilt verwijderen? Deze gebruiker verliest toegang tot alle administratieve functies.'}
-            </p>
-
-            <div className="flex justify-end gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setConfirmAdminAction(null)}
-                disabled={!!updating}
-              >
-                Annuleren
-              </Button>
-              <Button
-                onClick={toggleAdminStatus}
-                disabled={!!updating}
-                className={confirmAdminAction?.makeAdmin ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
-              >
-                {updating ? 'Bezig...' : 'Bevestigen'}
-              </Button>
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  onClick={() => setConfirmAdminAction(null)}
+                  disabled={!!updating}
+                  className="px-6 py-3 rounded-2xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all disabled:opacity-50"
+                >
+                  Annuleren
+                </button>
+                <button
+                  onClick={toggleAdminStatus}
+                  disabled={!!updating}
+                  className={`px-6 py-3 rounded-2xl font-medium text-white transition-all shadow-lg disabled:opacity-50 ${
+                    confirmAdminAction?.makeAdmin
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 hover:shadow-green-500/50'
+                      : 'bg-gradient-to-r from-red-500 to-rose-400 hover:from-red-600 hover:to-rose-500 hover:shadow-red-500/50'
+                  }`}
+                >
+                  {updating ? 'Bezig...' : 'Bevestigen'}
+                </button>
+              </div>
             </div>
-          </div>
-        </Dialog>
+          </GlassDialog>
 
-        <Dialog
-          open={!!confirmDeleteUser}
-          onOpenChange={(open) => !open && setConfirmDeleteUser(null)}
-        >
-          <div className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-red-600">Gebruiker Verwijderen</h2>
-
+          <GlassDialog
+            open={!!confirmDeleteUser}
+            onClose={() => setConfirmDeleteUser(null)}
+            title="Gebruiker Verwijderen"
+          >
             {confirmDeleteUser && (
               <div className="space-y-4">
-                <p className="text-gray-600">
+                <p className="text-gray-300">
                   Weet je zeker dat je deze gebruiker wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
                 </p>
 
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-sm font-medium text-red-900 mb-2">Te verwijderen gebruiker:</p>
-                  <div className="text-sm text-red-800 space-y-1">
-                    <p><strong>Naam:</strong> {confirmDeleteUser.name || 'Geen naam'}</p>
-                    <p><strong>Email:</strong> {confirmDeleteUser.email}</p>
-                    <p><strong>Bedrijf:</strong> {confirmDeleteUser.business_name || 'Geen bedrijf'}</p>
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 backdrop-blur-sm p-4">
+                  <p className="text-sm font-semibold text-red-300 mb-3">Te verwijderen gebruiker:</p>
+                  <div className="text-sm text-red-200 space-y-1">
+                    <p><strong className="text-red-100">Naam:</strong> {confirmDeleteUser.name || 'Geen naam'}</p>
+                    <p><strong className="text-red-100">Email:</strong> {confirmDeleteUser.email}</p>
+                    <p><strong className="text-red-100">Bedrijf:</strong> {confirmDeleteUser.business_name || 'Geen bedrijf'}</p>
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   Alle gegevens van deze gebruiker inclusief profiel, portfolio items en dashboard configuratie worden permanent verwijderd.
                 </p>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    onClick={() => setConfirmDeleteUser(null)}
+                    disabled={!!updating}
+                    className="px-6 py-3 rounded-2xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all disabled:opacity-50"
+                  >
+                    Annuleren
+                  </button>
+                  <button
+                    onClick={deleteUser}
+                    disabled={!!updating}
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-rose-400 hover:from-red-600 hover:to-rose-500 text-white font-medium transition-all shadow-lg hover:shadow-red-500/50 disabled:opacity-50"
+                  >
+                    {updating ? 'Verwijderen...' : 'Verwijder Gebruiker'}
+                  </button>
+                </div>
               </div>
             )}
-
-            <div className="flex justify-end gap-3 mt-6">
-              <Button
-                variant="outline"
-                onClick={() => setConfirmDeleteUser(null)}
-                disabled={!!updating}
-              >
-                Annuleren
-              </Button>
-              <Button
-                onClick={deleteUser}
-                disabled={!!updating}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                {updating ? 'Verwijderen...' : 'Verwijder Gebruiker'}
-              </Button>
-            </div>
-          </div>
-        </Dialog>
+          </GlassDialog>
+        </div>
       </DashboardLayout>
     </ProtectedRoute>
   );
