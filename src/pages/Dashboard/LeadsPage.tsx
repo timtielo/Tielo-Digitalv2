@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Mail, Phone, Calendar, TrendingUp } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { supabase } from '../../lib/supabase/client';
@@ -13,6 +13,7 @@ interface Lead {
   email: string | null;
   message: string | null;
   date: string;
+  drive_url: string | null;
 }
 
 function LeadsContent() {
@@ -193,6 +194,7 @@ function LeadsContent() {
                       <th className="text-left p-4 text-gray-300 font-medium">Telefoon</th>
                       <th className="text-left p-4 text-gray-300 font-medium">Email</th>
                       <th className="text-left p-4 text-gray-300 font-medium">Bericht</th>
+                      <th className="text-left p-4 text-gray-300 font-medium">Drive URL</th>
                       <th className="text-left p-4">
                         <button
                           onClick={() => handleSort('date')}
@@ -251,6 +253,21 @@ function LeadsContent() {
                             <div className="text-gray-300 truncate" title={lead.message}>
                               {lead.message}
                             </div>
+                          ) : (
+                            <span className="text-gray-500">-</span>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          {lead.drive_url ? (
+                            <a
+                              href={lead.drive_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              Drive
+                            </a>
                           ) : (
                             <span className="text-gray-500">-</span>
                           )}
