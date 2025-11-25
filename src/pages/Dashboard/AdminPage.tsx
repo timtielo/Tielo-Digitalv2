@@ -903,38 +903,40 @@ export function AdminPage() {
           title="Gebruiker Bewerken"
         >
             {editingUser && (
-              <div className="space-y-4">
-                <GlassInput
-                  label="E-mailadres"
-                  type="email"
-                  placeholder="gebruiker@example.com"
-                  value={editForm.email}
-                  onChange={(e: any) => setEditForm({ ...editForm, email: e.target.value })}
-                />
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <GlassInput
+                    label="E-mailadres"
+                    type="email"
+                    placeholder="gebruiker@example.com"
+                    value={editForm.email}
+                    onChange={(e: any) => setEditForm({ ...editForm, email: e.target.value })}
+                  />
 
-                <GlassInput
-                  label="Naam"
-                  type="text"
-                  placeholder="Voer naam in"
-                  value={editForm.name}
-                  onChange={(e: any) => setEditForm({ ...editForm, name: e.target.value })}
-                />
+                  <GlassInput
+                    label="Naam"
+                    type="text"
+                    placeholder="Voer naam in"
+                    value={editForm.name}
+                    onChange={(e: any) => setEditForm({ ...editForm, name: e.target.value })}
+                  />
 
-                <GlassInput
-                  label="Bedrijfsnaam"
-                  type="text"
-                  placeholder="Voer bedrijfsnaam in"
-                  value={editForm.business_name}
-                  onChange={(e: any) => setEditForm({ ...editForm, business_name: e.target.value })}
-                />
+                  <GlassInput
+                    label="Bedrijfsnaam"
+                    type="text"
+                    placeholder="Voer bedrijfsnaam in"
+                    value={editForm.business_name}
+                    onChange={(e: any) => setEditForm({ ...editForm, business_name: e.target.value })}
+                  />
 
-                <GlassInput
-                  label="Website URL"
-                  type="url"
-                  placeholder="https://example.com"
-                  value={editForm.website_url}
-                  onChange={(e: any) => setEditForm({ ...editForm, website_url: e.target.value })}
-                />
+                  <GlassInput
+                    label="Website URL"
+                    type="url"
+                    placeholder="https://example.com"
+                    value={editForm.website_url}
+                    onChange={(e: any) => setEditForm({ ...editForm, website_url: e.target.value })}
+                  />
+                </div>
 
                 <RichTextEditor
                   label="Belangrijke Links"
@@ -942,14 +944,16 @@ export function AdminPage() {
                   onChange={(value) => setEditForm({ ...editForm, important_links: value })}
                 />
 
-                <GlassInput
-                  label="Nieuw Wachtwoord"
-                  type="password"
-                  placeholder="Laat leeg om niet te wijzigen"
-                  value={editForm.password}
-                  onChange={(e: any) => setEditForm({ ...editForm, password: e.target.value })}
-                />
-                <p className="text-xs text-gray-500 -mt-2">Minimaal 6 tekens</p>
+                <div>
+                  <GlassInput
+                    label="Nieuw Wachtwoord"
+                    type="password"
+                    placeholder="Laat leeg om niet te wijzigen"
+                    value={editForm.password}
+                    onChange={(e: any) => setEditForm({ ...editForm, password: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Minimaal 6 tekens</p>
+                </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
