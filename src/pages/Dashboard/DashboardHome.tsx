@@ -100,10 +100,25 @@ function DashboardHomeContent() {
 
   const checkImpersonation = () => {
     const isImpersonatingFlag = sessionStorage.getItem('is_impersonating');
-    const adminSession = sessionStorage.getItem('admin_session');
-    if (isImpersonatingFlag === 'true' && adminSession) {
-      setIsImpersonating(true);
-      setImpersonatedUserEmail(user?.email || '');
+    const adminSessionStr = sessionStorage.getItem('admin_session');
+
+    if (isImpersonatingFlag === 'true' && adminSessionStr) {
+      try {
+        const adminSession = JSON.parse(adminSessionStr);
+        // Only show impersonation banner if the current user is different from the admin
+        if (adminSession.user_id && adminSession.user_id !== user?.id) {
+          setIsImpersonating(true);
+          setImpersonatedUserEmail(user?.email || '');
+        } else {
+          // Clear stale impersonation flags
+          sessionStorage.removeItem('is_impersonating');
+          sessionStorage.removeItem('admin_session');
+        }
+      } catch (error) {
+        // Invalid session data, clear it
+        sessionStorage.removeItem('is_impersonating');
+        sessionStorage.removeItem('admin_session');
+      }
     }
   };
 
