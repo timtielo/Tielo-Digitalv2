@@ -213,7 +213,7 @@ function DashboardHomeContent() {
 
           <h1
             className="
-              text-3xl md:text-4xl font-extrabold tracking-tight
+              text-4xl md:text-5xl font-extrabold tracking-tight
               bg-gradient-to-r from-blue-400 via-green-400 to-orange-500
               bg-clip-text text-transparent
             "
@@ -221,7 +221,7 @@ function DashboardHomeContent() {
             Welkom terug{userProfile?.name ? `, ${userProfile.name}` : ''}
           </h1>
           {userProfile?.business_name && (
-            <p className="mt-2 text-lg text-gray-300">
+            <p className="mt-3 text-xl text-gray-300">
               {userProfile.business_name}
             </p>
           )}
@@ -239,7 +239,7 @@ function DashboardHomeContent() {
               {userProfile.website_url.replace(/^https?:\/\//, '')}
             </motion.a>
           )}
-          <p className="mt-3 text-base text-gray-400">
+          <p className="mt-4 text-lg text-gray-400">
             Kies een module om te beginnen
           </p>
         </motion.div>
@@ -261,21 +261,21 @@ function DashboardHomeContent() {
                 gradientTo={gradient.to}
                 onClick={() => handleNavigation(module.route_path)}
               >
-                <div className="mb-2">
-                  <Icon className="w-8 h-8 text-white" />
+                <div className="mb-1">
+                  <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex flex-col flex-grow">
-                  <h3 className="text-lg font-bold text-white mb-1">
+                  <h3 className="text-base font-bold text-white mb-1">
                     {module.display_name}
                   </h3>
-                  <p className="text-gray-200 text-xs flex-grow">
+                  <p className="text-gray-200 text-[11px] leading-tight flex-grow line-clamp-2">
                     {module.description}
                   </p>
                 </div>
-                <div className="mt-2">
+                <div className="mt-1">
                   <span
                     className="
-                      text-white font-semibold text-xs inline-flex items-center
+                      text-white font-semibold text-[11px] inline-flex items-center
                       group/link
                     "
                   >
