@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Search, Edit2, Mail, UserPlus } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog } from 'lucide-react';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -45,6 +45,7 @@ export function AdminPage() {
     business_name: '',
     business_type: 'basis' as 'bouw' | 'basis'
   });
+  const [confirmAdminAction, setConfirmAdminAction] = useState<{ userId: string; makeAdmin: boolean } | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -112,28 +113,76 @@ export function AdminPage() {
     }
   };
 
-  const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
+  const requestAdminStatusChange = (userId: string, currentStatus: boolean) => {
     if (userId === user?.id) {
       showToast('Je kunt je eigen admin status niet wijzigen', 'error');
       return;
     }
 
+    setConfirmAdminAction({
+      userId,
+      makeAdmin: !currentStatus
+    });
+  };
+
+  const toggleAdminStatus = async () => {
+    if (!confirmAdminAction) return;
+
+    const { userId, makeAdmin } = confirmAdminAction;
+
     setUpdating(userId);
     try {
       const { error } = await supabase.rpc('update_user_admin_status', {
         target_user_id: userId,
-        new_admin_status: !currentStatus
+        new_admin_status: makeAdmin
       });
 
       if (error) throw error;
 
       showToast('Admin status succesvol bijgewerkt', 'success');
+      setConfirmAdminAction(null);
       fetchUsers();
     } catch (error) {
       console.error('Error updating admin status:', error);
       showToast('Fout bij bijwerken van admin status', 'error');
     } finally {
       setUpdating(null);
+    }
+  };
+
+  const impersonateUser = async (targetUserId: string) => {
+    try {
+      // Store the admin's session info so they can return
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        sessionStorage.setItem('admin_session', JSON.stringify({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          user_id: user?.id
+        }));
+      }
+
+      // Get the target user's email
+      const targetUser = users.find(u => u.id === targetUserId);
+      if (!targetUser) {
+        showToast('Gebruiker niet gevonden', 'error');
+        return;
+      }
+
+      // Sign out current user
+      await supabase.auth.signOut();
+
+      // Show message and redirect to login with prefilled email
+      showToast(`Impersonating ${targetUser.email}. Je moet nog inloggen met hun wachtwoord.`, 'success');
+
+      // Redirect to login with impersonate flag
+      setTimeout(() => {
+        window.history.pushState({}, '', `/login?impersonate=${encodeURIComponent(targetUser.email)}`);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }, 1500);
+    } catch (error) {
+      console.error('Error impersonating user:', error);
+      showToast('Fout bij impersoneren van gebruiker', 'error');
     }
   };
 
@@ -363,13 +412,23 @@ export function AdminPage() {
                                 size="sm"
                                 onClick={() => openEditDialog(profile)}
                                 disabled={updating === profile.id}
+                                title="Bewerk gebruiker"
                               >
                                 <Edit2 className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => toggleAdminStatus(profile.id, profile.is_admin)}
+                                onClick={() => impersonateUser(profile.id)}
+                                disabled={updating === profile.id}
+                                title="Inloggen als deze gebruiker"
+                              >
+                                <UserCog className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => requestAdminStatusChange(profile.id, profile.is_admin)}
                                 disabled={updating === profile.id || profile.id === user?.id}
                               >
                                 {profile.is_admin ? 'Admin verwijderen' : 'Admin maken'}
@@ -547,6 +606,38 @@ export function AdminPage() {
                   {updating === 'creating' ? 'Aanmaken...' : 'Gebruiker Aanmaken'}
                 </Button>
               </div>
+            </div>
+          </div>
+        </Dialog>
+
+        <Dialog
+          open={!!confirmAdminAction}
+          onOpenChange={(open) => !open && setConfirmAdminAction(null)}
+        >
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Bevestig Admin Wijziging</h2>
+
+            <p className="text-gray-600 mb-6">
+              {confirmAdminAction?.makeAdmin
+                ? 'Weet je zeker dat je deze gebruiker admin rechten wilt geven? Deze gebruiker krijgt toegang tot alle administratieve functies.'
+                : 'Weet je zeker dat je de admin rechten van deze gebruiker wilt verwijderen? Deze gebruiker verliest toegang tot alle administratieve functies.'}
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setConfirmAdminAction(null)}
+                disabled={!!updating}
+              >
+                Annuleren
+              </Button>
+              <Button
+                onClick={toggleAdminStatus}
+                disabled={!!updating}
+                className={confirmAdminAction?.makeAdmin ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+              >
+                {updating ? 'Bezig...' : 'Bevestigen'}
+              </Button>
             </div>
           </div>
         </Dialog>

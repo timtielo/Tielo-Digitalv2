@@ -10,6 +10,16 @@ export function Login() {
   const { signIn, user } = useAuth();
 
   useEffect(() => {
+    // Check if impersonating
+    const urlParams = new URLSearchParams(window.location.search);
+    const impersonateEmail = urlParams.get('impersonate');
+
+    if (impersonateEmail) {
+      setCredentials(prev => ({ ...prev, email: decodeURIComponent(impersonateEmail) }));
+    }
+  }, []);
+
+  useEffect(() => {
     if (user) {
       window.history.pushState({}, '', '/dashboard/portfolio');
       window.dispatchEvent(new PopStateEvent('popstate'));
