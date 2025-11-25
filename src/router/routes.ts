@@ -29,6 +29,7 @@ import { ReviewsPage } from '../pages/Dashboard/ReviewsPage';
 import { LeadsPage } from '../pages/Dashboard/LeadsPage';
 import { ProfilePage } from '../pages/Dashboard/ProfilePage';
 import { AdminPage } from '../pages/Dashboard/AdminPage';
+import { DashboardHome } from '../pages/Dashboard/DashboardHome';
 
 export interface Route {
   path: string;
@@ -41,6 +42,7 @@ export interface Route {
 export const routes: Route[] = [
   { path: '/', component: Home },
   { path: '/login', component: Login, layout: false },
+  { path: '/dashboard', component: DashboardHome, layout: false },
   { path: '/dashboard/portfolio', component: PortfolioPage, layout: false },
   { path: '/dashboard/werkspot', component: WerkspotPage, layout: false },
   { path: '/dashboard/reviews', component: ReviewsPage, layout: false },

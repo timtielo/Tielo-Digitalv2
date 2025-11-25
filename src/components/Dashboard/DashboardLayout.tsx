@@ -193,7 +193,12 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
         `}>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-              <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+              <button
+                onClick={() => handleNavigation('/dashboard')}
+                className="text-xl font-bold text-gray-900 hover:text-primary transition-colors"
+              >
+                Dashboard
+              </button>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="lg:hidden"
