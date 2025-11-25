@@ -15,6 +15,8 @@ interface UserProfile {
   name: string;
   business_name: string;
   profile_picture: string | null;
+  business_type: 'bouw' | 'basis';
+  is_admin: boolean;
 }
 
 export function ProfilePage() {
@@ -290,6 +292,27 @@ export function ProfilePage() {
                         }
                         required
                       />
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <Label>Account Type</Label>
+                    <div className="mt-2 p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {profile?.business_type === 'bouw' ? 'Bouw Profiel' : 'Basis Profiel'}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {profile?.business_type === 'bouw'
+                              ? 'Volledige toegang tot alle dashboard functies inclusief Portfolio en Werkspot'
+                              : 'Toegang tot Reviews, Leads en Profiel beheer'}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-3">
+                        Neem contact op met een beheerder om je account type te wijzigen.
+                      </p>
                     </div>
                   </div>
 

@@ -28,6 +28,7 @@ import { WerkspotPage } from '../pages/Dashboard/WerkspotPage';
 import { ReviewsPage } from '../pages/Dashboard/ReviewsPage';
 import { LeadsPage } from '../pages/Dashboard/LeadsPage';
 import { ProfilePage } from '../pages/Dashboard/ProfilePage';
+import { AdminPage } from '../pages/Dashboard/AdminPage';
 
 export interface Route {
   path: string;
@@ -45,6 +46,7 @@ export const routes: Route[] = [
   { path: '/dashboard/reviews', component: ReviewsPage, layout: false },
   { path: '/dashboard/leads', component: LeadsPage, layout: false },
   { path: '/dashboard/profile', component: ProfilePage, layout: false },
+  { path: '/dashboard/admin', component: AdminPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },
   { path: '/diensten', component: Services },

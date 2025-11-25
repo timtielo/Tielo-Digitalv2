@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Briefcase,
@@ -9,27 +9,90 @@ import {
   Menu,
   X,
   ChevronRight,
-  User
+  User,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
+import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile';
 }
 
-const navigation = [
-  { name: 'Portfolio', href: '/dashboard/portfolio', icon: Briefcase, key: 'portfolio' },
-  { name: 'Werkspot', href: '/dashboard/werkspot', icon: Star, key: 'werkspot' },
-  { name: 'Reviews', href: '/dashboard/reviews', icon: MessageSquare, key: 'reviews' },
-  { name: 'Leads', href: '/dashboard/leads', icon: Users, key: 'leads' },
-  { name: 'Profiel', href: '/dashboard/profile', icon: User, key: 'profile' },
-];
+interface DashboardModule {
+  module_key: string;
+  display_name: string;
+  icon_name: string;
+  route_path: string;
+  sort_order: number;
+}
+
+const iconMap: Record<string, any> = {
+  Briefcase,
+  Star,
+  MessageSquare,
+  Users,
+  User,
+  Shield,
+};
 
 export function DashboardLayout({ children, currentPage }: DashboardLayoutProps) {
   const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navigation, setNavigation] = useState<DashboardModule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserModules();
+    }
+  }, [user]);
+
+  const fetchUserModules = async () => {
+    try {
+      const { data: profileData } = await supabase
+        .from('user_profiles')
+        .select('is_admin')
+        .eq('id', user?.id)
+        .maybeSingle();
+
+      setIsAdmin(profileData?.is_admin || false);
+
+      const { data, error } = await supabase
+        .from('user_dashboard_config')
+        .select(`
+          module_key,
+          sort_order,
+          dashboard_modules (
+            display_name,
+            icon_name,
+            route_path
+          )
+        `)
+        .eq('user_id', user?.id)
+        .eq('enabled', true)
+        .order('sort_order', { ascending: true });
+
+      if (error) throw error;
+
+      const modules = data?.map(item => ({
+        module_key: item.module_key,
+        display_name: (item.dashboard_modules as any)?.display_name || '',
+        icon_name: (item.dashboard_modules as any)?.icon_name || '',
+        route_path: (item.dashboard_modules as any)?.route_path || '',
+        sort_order: item.sort_order,
+      })) || [];
+
+      setNavigation(modules);
+    } catch (error) {
+      console.error('Error fetching user modules:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNavigation = (href: string) => {
     window.history.pushState({}, '', href);
@@ -63,27 +126,48 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
             </div>
 
             <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentPage === item.key;
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => handleNavigation(item.href)}
-                    className={`
-                      w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
-                      ${isActive
-                        ? 'bg-primary text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
-                      }
-                    `}
-                  >
-                    <Icon className="h-5 w-5" />
-                    {item.name}
-                    {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
-                  </button>
-                );
-              })}
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  {navigation.map((item) => {
+                    const Icon = iconMap[item.icon_name] || User;
+                    const isActive = currentPage === item.module_key;
+                    return (
+                      <button
+                        key={item.module_key}
+                        onClick={() => handleNavigation(item.route_path)}
+                        className={`
+                          w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                          ${isActive
+                            ? 'bg-primary text-white'
+                            : 'text-gray-700 hover:bg-gray-100'
+                          }
+                        `}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.display_name}
+                        {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
+                      </button>
+                    );
+                  })}
+
+                  {isAdmin && (
+                    <>
+                      <div className="border-t border-gray-200 my-2 pt-2" />
+                      <button
+                        onClick={() => handleNavigation('/dashboard/admin')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <Shield className="h-5 w-5" />
+                        Admin
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
             </nav>
 
             <div className="border-t border-gray-200 p-4">
@@ -115,7 +199,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
               <Menu className="h-6 w-6 text-gray-500" />
             </button>
             <h2 className="text-lg font-semibold text-gray-900 capitalize">
-              {currentPage}
+              {navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
             </h2>
           </header>
 
