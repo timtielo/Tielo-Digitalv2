@@ -175,10 +175,10 @@ export function AdminPage() {
         return;
       }
 
-      // Call the Edge Function to generate a session for the target user
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/impersonate-user`;
+      // Step 1: Call the Edge Function to generate an impersonation token
+      const impersonateUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/impersonate-user`;
 
-      const response = await fetch(apiUrl, {
+      const impersonateResponse = await fetch(impersonateUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -189,16 +189,35 @@ export function AdminPage() {
         })
       });
 
-      const result = await response.json();
+      const impersonateResult = await impersonateResponse.json();
 
-      if (!response.ok) {
-        throw new Error(result.error || 'Fout bij impersoneren van gebruiker');
+      if (!impersonateResponse.ok) {
+        throw new Error(impersonateResult.error || 'Fout bij genereren van impersonation token');
+      }
+
+      // Step 2: Exchange the token for a session
+      const exchangeUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/exchange-impersonation-token`;
+
+      const exchangeResponse = await fetch(exchangeUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          impersonation_token: impersonateResult.impersonation_token
+        })
+      });
+
+      const exchangeResult = await exchangeResponse.json();
+
+      if (!exchangeResponse.ok) {
+        throw new Error(exchangeResult.error || 'Fout bij uitwisselen van token');
       }
 
       // Set the new session for the target user
       const { error: sessionError } = await supabase.auth.setSession({
-        access_token: result.access_token,
-        refresh_token: result.refresh_token
+        access_token: exchangeResult.access_token,
+        refresh_token: exchangeResult.refresh_token
       });
 
       if (sessionError) {

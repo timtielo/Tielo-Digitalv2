@@ -93,16 +93,21 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Use the admin API to create a session URL with tokens
-    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
-      email: targetUser.user.email!,
-    });
+    // Generate a temporary one-time token
+    const impersonationToken = crypto.randomUUID();
 
-    if (sessionError || !sessionData) {
-      console.error('Error generating session:', sessionError);
+    // Store the token in the database
+    const { error: insertError } = await supabaseAdmin
+      .from('impersonation_tokens')
+      .insert({
+        user_id: body.target_user_id,
+        token: impersonationToken,
+      });
+
+    if (insertError) {
+      console.error('Error storing token:', insertError);
       return new Response(
-        JSON.stringify({ error: 'Failed to generate session', details: sessionError?.message }),
+        JSON.stringify({ error: 'Failed to create impersonation token' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -110,83 +115,20 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Extract tokens from the action_link
-    const actionLink = sessionData.properties.action_link;
-    console.log('Action link:', actionLink);
-    
-    // Try parsing as URL with query params first
-    try {
-      const url = new URL(actionLink);
-      let accessToken = url.searchParams.get('access_token');
-      let refreshToken = url.searchParams.get('refresh_token');
-      
-      // If not in query params, try hash fragment
-      if (!accessToken && url.hash) {
-        const hashParams = new URLSearchParams(url.hash.substring(1));
-        accessToken = hashParams.get('access_token');
-        refreshToken = hashParams.get('refresh_token');
+    return new Response(
+      JSON.stringify({
+        success: true,
+        impersonation_token: impersonationToken,
+        user: {
+          id: targetUser.user.id,
+          email: targetUser.user.email,
+        },
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
-      
-      // If still not found, try the token from hashed_token property
-      if (!accessToken && sessionData.properties.hashed_token) {
-        // The hashed_token can be used to verify the magic link
-        // We need to exchange it for actual tokens by calling the verify endpoint
-        const verifyUrl = `${supabaseUrl}/auth/v1/verify`;
-        const verifyResponse = await fetch(verifyUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': supabaseServiceKey,
-          },
-          body: JSON.stringify({
-            type: 'magiclink',
-            token: sessionData.properties.hashed_token,
-          }),
-        });
-        
-        if (verifyResponse.ok) {
-          const verifyData = await verifyResponse.json();
-          accessToken = verifyData.access_token;
-          refreshToken = verifyData.refresh_token;
-        }
-      }
-      
-      if (!accessToken || !refreshToken) {
-        console.error('Tokens not found. URL:', actionLink, 'Hash:', url.hash, 'Hashed token:', sessionData.properties.hashed_token);
-        return new Response(
-          JSON.stringify({ error: 'Failed to extract tokens from session link' }),
-          {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({
-          success: true,
-          access_token: accessToken,
-          refresh_token: refreshToken,
-          user: {
-            id: targetUser.user.id,
-            email: targetUser.user.email,
-          },
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    } catch (parseError) {
-      console.error('Error parsing action link:', parseError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to parse action link' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
+    );
   } catch (error: any) {
     console.error('Error in impersonate-user function:', error);
     return new Response(
