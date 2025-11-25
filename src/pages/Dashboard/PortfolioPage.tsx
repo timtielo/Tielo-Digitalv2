@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { Card, CardContent } from '../../components/ui/Card';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
 import { Select } from '../../components/ui/Select';
 import { Label } from '../../components/ui/Label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '../../components/ui/Dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -32,7 +30,7 @@ interface Category {
   name: string;
 }
 
-export function PortfolioPage() {
+function PortfolioContent() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [items, setItems] = useState<PortfolioItem[]>([]);
@@ -49,7 +47,7 @@ export function PortfolioPage() {
 
   const [formData, setFormData] = useState({
     title: '',
-    category: 'Groepenkast',
+    category: '',
     location: '',
     date: new Date().toISOString().split('T')[0],
     description: '',
@@ -145,7 +143,7 @@ export function PortfolioPage() {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}-${type}.${fileExt}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('portfolio-images')
         .upload(fileName, file);
 
@@ -313,374 +311,422 @@ export function PortfolioPage() {
     setDialogOpen(true);
   };
 
+  const handleBackToDashboard = () => {
+    window.history.pushState({}, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
-    <ProtectedRoute>
-      <DashboardLayout currentPage="portfolio">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Portfolio</h1>
-              <p className="text-gray-600 mt-1">Beheer je projecten en referenties</p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setCategoryDialogOpen(true)}>
-                <Tag className="h-4 w-4 mr-2" />
-                Categorieën
-              </Button>
-              <Button onClick={openNewDialog}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nieuw Project
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+      <AuroraBackground />
 
-          <Card>
-            <CardContent className="p-0">
-              {loading ? (
-                <div className="p-8 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                </div>
-              ) : items.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
-                  <Briefcase className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p>Nog geen portfolio items</p>
-                  <Button onClick={openNewDialog} className="mt-4">
-                    Voeg je eerste project toe
-                  </Button>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Voor</TableHead>
-                      <TableHead>Na</TableHead>
-                      <TableHead>Titel</TableHead>
-                      <TableHead>Categorie</TableHead>
-                      <TableHead>Locatie</TableHead>
-                      <TableHead>Datum</TableHead>
-                      <TableHead>Featured</TableHead>
-                      <TableHead className="text-right">Acties</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {items.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>
-                          {item.before_image ? (
-                            <img
-                              src={item.before_image}
-                              alt="Voor"
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">
-                              Geen foto
-                            </div>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {item.after_image ? (
-                            <img
-                              src={item.after_image}
-                              alt="Na"
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">
-                              Geen foto
-                            </div>
-                          )}
-                        </TableCell>
-                        <TableCell className="font-medium">{item.title}</TableCell>
-                        <TableCell>{item.category}</TableCell>
-                        <TableCell>{item.location}</TableCell>
-                        <TableCell>{new Date(item.date).toLocaleDateString('nl-NL')}</TableCell>
-                        <TableCell>
-                          {item.featured && <Check className="h-4 w-4 text-green-600" />}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(item)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDelete(item.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-600" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingItem ? 'Project Bewerken' : 'Nieuw Project'}
-              </DialogTitle>
-              <DialogClose onClose={() => setDialogOpen(false)} />
-            </DialogHeader>
-
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <button
+              onClick={handleBackToDashboard}
+              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+            >
+              ← Terug naar Dashboard
+            </button>
+            <div className="flex justify-between items-center">
               <div>
-                <Label htmlFor="title">Titel *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                />
+                <h1 className="text-4xl font-bold text-white mb-2">Portfolio</h1>
+                <p className="text-gray-300">Beheer je projecten en referenties</p>
               </div>
-
-              <div>
-                <Label htmlFor="category">Categorie *</Label>
-                <Select
-                  id="category"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  required
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setCategoryDialogOpen(true)}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
                 >
-                  {categories.length === 0 ? (
-                    <option value="">Geen categorieën - Voeg eerst categorieën toe</option>
-                  ) : (
-                    categories.map(cat => (
-                      <option key={cat.id} value={cat.name}>{cat.name}</option>
-                    ))
-                  )}
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="location">Locatie *</Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="date">Datum *</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="description">Beschrijving</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Voor Foto</Label>
-                  {imagePreview.before || formData.before_image ? (
-                    <div className="mt-2">
-                      <img
-                        src={imagePreview.before || formData.before_image}
-                        alt="Voor"
-                        className="w-full h-48 object-contain bg-gray-50 rounded mb-2 border border-gray-200"
-                      />
-                      {imageDimensions.before && (
-                        <p className="text-xs text-gray-600 mb-2">
-                          Afmetingen: {imageDimensions.before.width} × {imageDimensions.before.height}px
-                        </p>
-                      )}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setFormData({ ...formData, before_image: '' });
-                          setImagePreview(prev => ({ ...prev, before: undefined }));
-                          setImageDimensions(prev => ({ ...prev, before: undefined }));
-                        }}
-                      >
-                        Verwijderen
-                      </Button>
-                    </div>
-                  ) : (
-                    <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Upload foto</span>
-                      <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleImageSelect(file, 'before');
-                          e.target.value = '';
-                        }}
-                        disabled={uploading}
-                      />
-                    </label>
-                  )}
-                </div>
-
-                <div>
-                  <Label>Na Foto</Label>
-                  {imagePreview.after || formData.after_image ? (
-                    <div className="mt-2">
-                      <img
-                        src={imagePreview.after || formData.after_image}
-                        alt="Na"
-                        className="w-full h-48 object-contain bg-gray-50 rounded mb-2 border border-gray-200"
-                      />
-                      {imageDimensions.after && (
-                        <p className="text-xs text-gray-600 mb-2">
-                          Afmetingen: {imageDimensions.after.width} × {imageDimensions.after.height}px
-                        </p>
-                      )}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setFormData({ ...formData, after_image: '' });
-                          setImagePreview(prev => ({ ...prev, after: undefined }));
-                          setImageDimensions(prev => ({ ...prev, after: undefined }));
-                        }}
-                      >
-                        Verwijderen
-                      </Button>
-                    </div>
-                  ) : (
-                    <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Upload foto</span>
-                      <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleImageSelect(file, 'after');
-                          e.target.value = '';
-                        }}
-                        disabled={uploading}
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                  className="w-4 h-4 text-primary rounded focus:ring-primary"
-                />
-                <Label htmlFor="featured">Featured (uitgelicht op homepage)</Label>
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={uploading || saving}>
-                  {saving ? 'Opslaan...' : uploading ? 'Uploaden...' : editingItem ? 'Bijwerken' : 'Toevoegen'}
+                  <Tag className="h-4 w-4 mr-2" />
+                  Categorieën
                 </Button>
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
+                  onClick={openNewDialog}
+                  className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
                 >
-                  Annuleren
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Categorieën Beheren</DialogTitle>
-              <DialogClose onClose={() => setCategoryDialogOpen(false)} />
-            </DialogHeader>
-
-            <div className="space-y-4 mt-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Nieuwe categorie..."
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addCategory();
-                    }
-                  }}
-                />
-                <Button onClick={addCategory} disabled={!newCategoryName.trim()}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Toevoegen
+                  Nieuw Project
                 </Button>
               </div>
+            </div>
+          </motion.div>
 
-              <div className="border rounded-lg divide-y">
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            </div>
+          ) : items.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20"
+            >
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto border border-white/10">
+                <Briefcase className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-2xl font-bold text-white mb-2">Nog geen portfolio items</h3>
+                <p className="text-gray-400 mb-6">Begin met het toevoegen van je eerste project</p>
+                <Button
+                  onClick={openNewDialog}
+                  className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Voeg je eerste project toe
+                </Button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <AnimatePresence>
+                {items.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group relative bg-gradient-to-br from-blue-500/20 to-cyan-400/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300"
+                  >
+                    <div className="aspect-video relative overflow-hidden bg-gray-900/50">
+                      {item.after_image || item.before_image ? (
+                        <img
+                          src={item.after_image || item.before_image || ''}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ImageIcon className="h-12 w-12 text-gray-600" />
+                        </div>
+                      )}
+                      {item.featured && (
+                        <div className="absolute top-3 right-3 bg-yellow-500/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+                          <Check className="h-3 w-3 text-white" />
+                          <span className="text-xs font-semibold text-white">Featured</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-white mb-1 truncate">{item.title}</h3>
+                          <p className="text-sm text-gray-400">{item.category}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 mb-4">
+                        <p className="text-sm text-gray-300">{item.location}</p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(item.date).toLocaleDateString('nl-NL', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(item)}
+                          className="flex-1 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Bewerken
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(item.id)}
+                          className="bg-red-500/20 backdrop-blur-sm border-red-500/30 text-red-400 hover:bg-red-500/30"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingItem ? 'Project Bewerken' : 'Nieuw Project'}
+            </DialogTitle>
+            <DialogClose onClose={() => setDialogOpen(false)} />
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="title">Titel *</Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="category">Categorie *</Label>
+              <Select
+                id="category"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                required
+              >
                 {categories.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">
-                    <Tag className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm">Nog geen categorieën</p>
-                    <p className="text-xs text-gray-400 mt-1">Voeg je eerste categorie toe</p>
+                  <option value="">Geen categorieën - Voeg eerst categorieën toe</option>
+                ) : (
+                  categories.map(cat => (
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                  ))
+                )}
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="location">Locatie *</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="date">Datum *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Beschrijving</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Voor Foto</Label>
+                {imagePreview.before || formData.before_image ? (
+                  <div className="mt-2">
+                    <img
+                      src={imagePreview.before || formData.before_image}
+                      alt="Voor"
+                      className="w-full h-48 object-contain bg-gray-50 rounded mb-2 border border-gray-200"
+                    />
+                    {imageDimensions.before && (
+                      <p className="text-xs text-gray-600 mb-2">
+                        Afmetingen: {imageDimensions.before.width} × {imageDimensions.before.height}px
+                      </p>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setFormData({ ...formData, before_image: '' });
+                        setImagePreview(prev => ({ ...prev, before: undefined }));
+                        setImageDimensions(prev => ({ ...prev, before: undefined }));
+                      }}
+                    >
+                      Verwijderen
+                    </Button>
                   </div>
                 ) : (
-                  categories.map((category) => (
-                    <div key={category.id} className="flex items-center justify-between p-3 hover:bg-gray-50">
-                      <div className="flex items-center gap-2">
-                        <Tag className="h-4 w-4 text-gray-400" />
-                        <span className="font-medium">{category.name}</span>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteCategory(category.id, category.name)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))
+                  <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">Upload foto</span>
+                    <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageSelect(file, 'before');
+                        e.target.value = '';
+                      }}
+                      disabled={uploading}
+                    />
+                  </label>
                 )}
               </div>
 
-              <div className="flex justify-end pt-4">
-                <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
-                  Sluiten
-                </Button>
+              <div>
+                <Label>Na Foto</Label>
+                {imagePreview.after || formData.after_image ? (
+                  <div className="mt-2">
+                    <img
+                      src={imagePreview.after || formData.after_image}
+                      alt="Na"
+                      className="w-full h-48 object-contain bg-gray-50 rounded mb-2 border border-gray-200"
+                    />
+                    {imageDimensions.after && (
+                      <p className="text-xs text-gray-600 mb-2">
+                        Afmetingen: {imageDimensions.after.width} × {imageDimensions.after.height}px
+                      </p>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setFormData({ ...formData, after_image: '' });
+                        setImagePreview(prev => ({ ...prev, after: undefined }));
+                        setImageDimensions(prev => ({ ...prev, after: undefined }));
+                      }}
+                    >
+                      Verwijderen
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">Upload foto</span>
+                    <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageSelect(file, 'after');
+                        e.target.value = '';
+                      }}
+                      disabled={uploading}
+                    />
+                  </label>
+                )}
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
-      </DashboardLayout>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="featured"
+                checked={formData.featured}
+                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                className="w-4 h-4 text-primary rounded focus:ring-primary"
+              />
+              <Label htmlFor="featured">Featured (uitgelicht op homepage)</Label>
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button type="submit" disabled={uploading || saving}>
+                {saving ? 'Opslaan...' : uploading ? 'Uploaden...' : editingItem ? 'Bijwerken' : 'Toevoegen'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDialogOpen(false)}
+              >
+                Annuleren
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Categorieën Beheren</DialogTitle>
+            <DialogClose onClose={() => setCategoryDialogOpen(false)} />
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Nieuwe categorie..."
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCategory();
+                  }
+                }}
+              />
+              <Button onClick={addCategory} disabled={!newCategoryName.trim()}>
+                <Plus className="h-4 w-4 mr-2" />
+                Toevoegen
+              </Button>
+            </div>
+
+            <div className="border rounded-lg divide-y max-h-96 overflow-y-auto">
+              {categories.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">
+                  <Tag className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm">Nog geen categorieën</p>
+                  <p className="text-xs text-gray-400 mt-1">Voeg je eerste categorie toe</p>
+                </div>
+              ) : (
+                categories.map((category) => (
+                  <div key={category.id} className="flex items-center justify-between p-3 hover:bg-gray-50">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4 text-gray-400" />
+                      <span className="font-medium">{category.name}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteCategory(category.id, category.name)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="flex justify-end pt-4">
+              <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+                Sluiten
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export function PortfolioPage() {
+  return (
+    <ProtectedRoute>
+      <PortfolioContent />
     </ProtectedRoute>
   );
 }
