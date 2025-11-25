@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, MessageSquare } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Pencil, Trash2, MessageSquare, Star } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { Card, CardContent } from '../../components/ui/Card';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
 import { Label } from '../../components/ui/Label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '../../components/ui/Dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -20,7 +19,7 @@ interface Review {
   date: string;
 }
 
-export function ReviewsPage() {
+function ReviewsContent() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -161,136 +160,200 @@ export function ReviewsPage() {
     setDialogOpen(true);
   };
 
+  const handleBackToDashboard = () => {
+    window.history.pushState({}, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+      <AuroraBackground />
+
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <button
+              onClick={handleBackToDashboard}
+              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+            >
+              ← Terug naar Dashboard
+            </button>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2">Reviews</h1>
+                <p className="text-gray-300">Beheer klantbeoordelingen</p>
+              </div>
+              <Button
+                onClick={openNewDialog}
+                className="bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-600 hover:to-emerald-500 border-0"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuwe Review
+              </Button>
+            </div>
+          </motion.div>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            </div>
+          ) : reviews.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20"
+            >
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto border border-white/10">
+                <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-2xl font-bold text-white mb-2">Nog geen reviews</h3>
+                <p className="text-gray-400 mb-6">Begin met het toevoegen van je eerste review</p>
+                <Button
+                  onClick={openNewDialog}
+                  className="bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-600 hover:to-emerald-500 border-0"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Voeg je eerste review toe
+                </Button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <AnimatePresence>
+                {reviews.map((review, index) => (
+                  <motion.div
+                    key={review.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group relative bg-gradient-to-br from-teal-500/20 to-emerald-400/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-400 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Star className="h-6 w-6 text-white" fill="white" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-lg font-bold text-white truncate">{review.name}</h3>
+                            <p className="text-xs text-gray-400">
+                              {new Date(review.date).toLocaleDateString('nl-NL', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mb-4 min-h-[100px]">
+                        <p className="text-sm text-gray-200 leading-relaxed line-clamp-4">
+                          "{review.review}"
+                        </p>
+                      </div>
+
+                      <div className="flex gap-2 pt-4 border-t border-white/10">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(review)}
+                          className="flex-1 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Bewerken
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(review.id)}
+                          className="bg-red-500/20 backdrop-blur-sm border-red-500/30 text-red-400 hover:bg-red-500/30"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingReview ? 'Review Bewerken' : 'Nieuwe Review'}
+            </DialogTitle>
+            <DialogClose onClose={() => setDialogOpen(false)} />
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="name">Naam *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="review">Review *</Label>
+              <Textarea
+                id="review"
+                value={formData.review}
+                onChange={(e) => setFormData({ ...formData, review: e.target.value })}
+                rows={4}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="date">Datum *</Label>
+              <Input
+                id="date"
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button type="submit" disabled={saving}>
+                {saving ? 'Opslaan...' : editingReview ? 'Bijwerken' : 'Toevoegen'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDialogOpen(false)}
+              >
+                Annuleren
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export function ReviewsPage() {
   return (
     <ProtectedRoute>
-      <DashboardLayout currentPage="reviews">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Reviews</h1>
-              <p className="text-gray-600 mt-1">Beheer klantbeoordelingen</p>
-            </div>
-            <Button onClick={openNewDialog}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nieuwe Review
-            </Button>
-          </div>
-
-          <Card>
-            <CardContent className="p-0">
-              {loading ? (
-                <div className="p-8 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                </div>
-              ) : reviews.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
-                  <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p>Nog geen reviews</p>
-                  <Button onClick={openNewDialog} className="mt-4">
-                    Voeg je eerste review toe
-                  </Button>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Naam</TableHead>
-                      <TableHead>Review</TableHead>
-                      <TableHead>Datum</TableHead>
-                      <TableHead className="text-right">Acties</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reviews.map((review) => (
-                      <TableRow key={review.id}>
-                        <TableCell className="font-medium">{review.name}</TableCell>
-                        <TableCell className="max-w-md truncate">{review.review}</TableCell>
-                        <TableCell>{new Date(review.date).toLocaleDateString('nl-NL')}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(review)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDelete(review.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-600" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingReview ? 'Review Bewerken' : 'Nieuwe Review'}
-              </DialogTitle>
-              <DialogClose onClose={() => setDialogOpen(false)} />
-            </DialogHeader>
-
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <div>
-                <Label htmlFor="name">Naam *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="review">Review *</Label>
-                <Textarea
-                  id="review"
-                  value={formData.review}
-                  onChange={(e) => setFormData({ ...formData, review: e.target.value })}
-                  rows={4}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="date">Datum *</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={saving}>
-                  {saving ? 'Opslaan...' : editingReview ? 'Bijwerken' : 'Toevoegen'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
-                  Annuleren
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </DashboardLayout>
+      <ReviewsContent />
     </ProtectedRoute>
   );
 }

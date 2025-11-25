@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Star, TrendingUp } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { motion } from 'framer-motion';
+import { Star, TrendingUp, Edit } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
@@ -16,7 +16,7 @@ interface WerkspotData {
   avgstars: number;
 }
 
-export function WerkspotPage() {
+function WerkspotContent() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [data, setData] = useState<WerkspotData | null>(null);
@@ -124,70 +124,99 @@ export function WerkspotPage() {
     }
   };
 
+  const handleBackToDashboard = () => {
+    window.history.pushState({}, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
-    <ProtectedRoute>
-      <DashboardLayout currentPage="werkspot">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Werkspot Gegevens</h1>
-            <p className="text-gray-600 mt-1">Beheer je Werkspot statistieken</p>
-          </div>
+    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+      <AuroraBackground />
+
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <button
+              onClick={handleBackToDashboard}
+              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+            >
+              ← Terug naar Dashboard
+            </button>
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">Werkspot Gegevens</h1>
+              <p className="text-gray-300">Beheer je Werkspot statistieken</p>
+            </div>
+          </motion.div>
 
           {loading ? (
-            <Card>
-              <CardContent className="p-8">
-                <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-500" />
-                    Gemiddelde Sterren
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-900">
-                      {editing && formData.avgstars
-                        ? parseFloat(formData.avgstars).toFixed(1)
-                        : data?.avgstars?.toFixed(1) || '0.0'}
-                    </span>
-                    <span className="text-gray-500">/ 5.0</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    Aantal Reviews
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-gray-900">
-                    {editing && formData.reviewamount
-                      ? formData.reviewamount
-                      : data?.reviewamount || 0}
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-gradient-to-br from-amber-500/20 to-yellow-400/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
+                      <Star className="h-8 w-8 text-yellow-400" fill="currentColor" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-300">Gemiddelde Sterren</p>
+                      <p className="text-5xl font-bold text-white">
+                        {editing && formData.avgstars
+                          ? parseFloat(formData.avgstars).toFixed(1)
+                          : data?.avgstars?.toFixed(1) || '0.0'}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm">van de 5.0</p>
+                </motion.div>
 
-          {!loading && (
-            <Card>
-              <CardContent className="p-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-gradient-to-br from-blue-500/20 to-cyan-400/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
+                      <TrendingUp className="h-8 w-8 text-cyan-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-300">Aantal Reviews</p>
+                      <p className="text-5xl font-bold text-white">
+                        {editing && formData.reviewamount
+                          ? formData.reviewamount
+                          : data?.reviewamount || 0}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm">totaal ontvangen</p>
+                </motion.div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
+              >
                 {editing ? (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="avgstars">Gemiddelde Sterren (0-5)</Label>
+                        <Label htmlFor="avgstars" className="text-gray-300">
+                          Gemiddelde Sterren (0-5)
+                        </Label>
                         <Input
                           id="avgstars"
                           type="text"
@@ -198,11 +227,14 @@ export function WerkspotPage() {
                             setFormData({ ...formData, avgstars: e.target.value })
                           }
                           required
+                          className="bg-white/5 border-white/20 text-white"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="reviewamount">Aantal Reviews</Label>
+                        <Label htmlFor="reviewamount" className="text-gray-300">
+                          Aantal Reviews
+                        </Label>
                         <Input
                           id="reviewamount"
                           type="text"
@@ -213,12 +245,17 @@ export function WerkspotPage() {
                             setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })
                           }
                           required
+                          className="bg-white/5 border-white/20 text-white"
                         />
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      <Button type="submit" disabled={saving}>
+                    <div className="flex gap-2 pt-4">
+                      <Button
+                        type="submit"
+                        disabled={saving}
+                        className="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 border-0"
+                      >
                         {saving ? 'Opslaan...' : 'Opslaan'}
                       </Button>
                       <Button
@@ -233,6 +270,7 @@ export function WerkspotPage() {
                             });
                           }
                         }}
+                        className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                       >
                         Annuleren
                       </Button>
@@ -240,17 +278,31 @@ export function WerkspotPage() {
                   </form>
                 ) : (
                   <div className="flex justify-between items-center">
-                    <p className="text-gray-600">
+                    <p className="text-gray-300">
                       Klik op bewerken om je Werkspot gegevens bij te werken
                     </p>
-                    <Button onClick={() => setEditing(true)}>Bewerken</Button>
+                    <Button
+                      onClick={() => setEditing(true)}
+                      className="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 border-0"
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Bewerken
+                    </Button>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </motion.div>
+            </>
           )}
         </div>
-      </DashboardLayout>
+      </div>
+    </div>
+  );
+}
+
+export function WerkspotPage() {
+  return (
+    <ProtectedRoute>
+      <WerkspotContent />
     </ProtectedRoute>
   );
 }
