@@ -262,25 +262,25 @@ function DashboardHomeContent() {
                 onClick={() => handleNavigation(module.route_path)}
               >
                 <div className="mb-1">
-                  <Icon className="w-6 h-6 text-white" />
+                  <Icon className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex flex-col flex-grow">
-                  <h3 className="text-lg font-bold text-white mb-1">
+                  <h3 className="text-2xl font-bold text-white mb-1">
                     {module.display_name}
                   </h3>
-                  <p className="text-gray-200 text-sm leading-snug flex-grow line-clamp-2">
+                  <p className="text-gray-200 text-base leading-snug flex-grow line-clamp-2">
                     {module.description}
                   </p>
                 </div>
                 <div className="mt-1">
                   <span
                     className="
-                      text-white font-semibold text-sm inline-flex items-center
+                      text-white font-semibold text-base inline-flex items-center
                       group/link
                     "
                   >
                     Openen
-                    <ArrowRight className="ml-1 w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1" />
+                    <ArrowRight className="ml-1 w-5 h-5 transition-transform duration-300 group-hover/link:translate-x-1" />
                   </span>
                 </div>
               </BentoGridItem>
