@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut, Search } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
@@ -44,6 +44,8 @@ function PortfolioContent() {
   const [imagePreview, setImagePreview] = useState<{ before?: string; after?: string }>({});
   const [imageDimensions, setImageDimensions] = useState<{ before?: { width: number; height: number }; after?: { width: number; height: number } }>({});
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -292,6 +294,19 @@ function PortfolioContent() {
     }
   };
 
+  const filteredItems = useMemo(() => {
+    return items.filter(item => {
+      const matchesSearch = searchQuery === '' ||
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [items, searchQuery, selectedCategory]);
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -336,7 +351,7 @@ function PortfolioContent() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-6"
           >
             <div className="flex justify-between items-center mb-4">
               <button
@@ -376,13 +391,37 @@ function PortfolioContent() {
                 </Button>
               </div>
             </div>
+
+            <div className="mt-6 flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Zoek op titel, locatie of beschrijving..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder-gray-400"
+                />
+              </div>
+              <Select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white md:w-64"
+              >
+                <option value="all">Alle categorieën</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.name}>{cat.name}</option>
+                ))}
+              </Select>
+            </div>
           </motion.div>
 
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
             </div>
-          ) : items.length === 0 ? (
+          ) : filteredItems.length === 0 ? (
+            items.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -401,6 +440,29 @@ function PortfolioContent() {
                 </Button>
               </div>
             </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-20"
+              >
+                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto border border-white/10">
+                  <Search className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-2xl font-bold text-white mb-2">Geen resultaten gevonden</h3>
+                  <p className="text-gray-400 mb-6">Probeer een andere zoekopdracht of filter</p>
+                  <Button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('all');
+                    }}
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                  >
+                    Reset filters
+                  </Button>
+                </div>
+              </motion.div>
+            )
           ) : (
             <motion.div
               initial={{ opacity: 0 }}
@@ -408,7 +470,7 @@ function PortfolioContent() {
               className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               <AnimatePresence>
-                {items.map((item, index) => (
+                {filteredItems.map((item, index) => (
                   <motion.div
                     key={item.id}
                     initial={{ opacity: 0, y: 20 }}
