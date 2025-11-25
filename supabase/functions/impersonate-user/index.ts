@@ -92,16 +92,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Generate a session for the target user using admin API
-    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
+    // Generate a magic link for the target user
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email: targetUser.user.email!,
     });
 
-    if (sessionError || !sessionData) {
-      console.error('Session error:', sessionError);
+    if (linkError || !linkData) {
+      console.error('Link generation error:', linkError);
       return new Response(
-        JSON.stringify({ error: 'Failed to generate session' }),
+        JSON.stringify({ error: 'Failed to generate magic link' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -109,14 +109,34 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // The generated link contains the access and refresh tokens as query parameters
-    // Extract them from the properties object
-    const accessToken = sessionData.properties?.access_token;
-    const refreshToken = sessionData.properties?.refresh_token;
+    // Extract tokens from the generated link
+    // The link contains tokens in the hash fragment
+    const actionLink = linkData.properties?.action_link;
+    
+    if (!actionLink) {
+      console.error('No action link in response:', linkData);
+      return new Response(
+        JSON.stringify({ error: 'No action link generated' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Parse the URL to extract tokens from hash
+    const url = new URL(actionLink);
+    const hash = url.hash.substring(1); // Remove the '#'
+    const params = new URLSearchParams(hash);
+    
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
 
     if (!accessToken || !refreshToken) {
+      console.error('Tokens not found in URL. Hash:', hash);
+      console.error('Full link data:', JSON.stringify(linkData));
       return new Response(
-        JSON.stringify({ error: 'Failed to generate tokens' }),
+        JSON.stringify({ error: 'Failed to extract tokens from link' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
