@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Search, Edit2, Mail } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus } from 'lucide-react';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -37,6 +37,14 @@ export function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingUser, setEditingUser] = useState<UserWithEmail | null>(null);
   const [editForm, setEditForm] = useState({ name: '', business_name: '' });
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [newUserForm, setNewUserForm] = useState({
+    email: '',
+    password: '',
+    name: '',
+    business_name: '',
+    business_type: 'basis' as 'bouw' | 'basis'
+  });
 
   useEffect(() => {
     if (user) {
@@ -142,6 +150,73 @@ export function AdminPage() {
     setEditForm({ name: '', business_name: '' });
   };
 
+  const openCreateUserDialog = () => {
+    setIsCreatingUser(true);
+  };
+
+  const closeCreateUserDialog = () => {
+    setIsCreatingUser(false);
+    setNewUserForm({
+      email: '',
+      password: '',
+      name: '',
+      business_name: '',
+      business_type: 'basis'
+    });
+  };
+
+  const createNewUser = async () => {
+    if (!newUserForm.email || !newUserForm.password) {
+      showToast('Email en wachtwoord zijn verplicht', 'error');
+      return;
+    }
+
+    if (newUserForm.password.length < 6) {
+      showToast('Wachtwoord moet minimaal 6 tekens bevatten', 'error');
+      return;
+    }
+
+    setUpdating('creating');
+    try {
+      // Create auth user using signUp
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: newUserForm.email,
+        password: newUserForm.password,
+        options: {
+          emailRedirectTo: undefined,
+          data: {}
+        }
+      });
+
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error('Gebruiker aanmaken mislukt');
+      }
+
+      // Update the profile with additional details
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .update({
+          name: newUserForm.name,
+          business_name: newUserForm.business_name,
+          business_type: newUserForm.business_type
+        })
+        .eq('id', authData.user.id);
+
+      if (profileError) throw profileError;
+
+      showToast('Nieuwe gebruiker succesvol aangemaakt', 'success');
+      closeCreateUserDialog();
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      showToast(error.message || 'Fout bij aanmaken van gebruiker', 'error');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const updateUserDetails = async () => {
     if (!editingUser) return;
 
@@ -215,15 +290,24 @@ export function AdminPage() {
                     <Shield className="h-5 w-5" />
                     Alle Gebruikers
                   </CardTitle>
-                  <div className="relative w-64">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="text"
-                      placeholder="Zoek gebruiker..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
+                  <div className="flex items-center gap-3">
+                    <Button
+                      onClick={openCreateUserDialog}
+                      className="flex items-center gap-2"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Nieuwe Gebruiker
+                    </Button>
+                    <div className="relative w-64">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder="Zoek gebruiker..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -375,6 +459,93 @@ export function AdminPage() {
               </div>
             </div>
           )}
+        </Dialog>
+
+        <Dialog
+          open={isCreatingUser}
+          onOpenChange={(open) => !open && closeCreateUserDialog()}
+        >
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Nieuwe Gebruiker Aanmaken</h2>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="new_email">E-mailadres *</Label>
+                <Input
+                  id="new_email"
+                  type="email"
+                  placeholder="gebruiker@voorbeeld.nl"
+                  value={newUserForm.email}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="new_password">Wachtwoord *</Label>
+                <Input
+                  id="new_password"
+                  type="password"
+                  placeholder="Minimaal 6 tekens"
+                  value={newUserForm.password}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Minimaal 6 tekens</p>
+              </div>
+
+              <div>
+                <Label htmlFor="new_name">Naam</Label>
+                <Input
+                  id="new_name"
+                  type="text"
+                  placeholder="Voer naam in"
+                  value={newUserForm.name}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, name: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="new_business_name">Bedrijfsnaam</Label>
+                <Input
+                  id="new_business_name"
+                  type="text"
+                  placeholder="Voer bedrijfsnaam in"
+                  value={newUserForm.business_name}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, business_name: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="new_business_type">Account Type</Label>
+                <Select
+                  id="new_business_type"
+                  value={newUserForm.business_type}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, business_type: e.target.value as 'bouw' | 'basis' })}
+                  className="w-full"
+                >
+                  <option value="basis">Basis</option>
+                  <option value="bouw">Bouw</option>
+                </Select>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={closeCreateUserDialog}
+                  disabled={updating === 'creating'}
+                >
+                  Annuleren
+                </Button>
+                <Button
+                  onClick={createNewUser}
+                  disabled={updating === 'creating'}
+                >
+                  {updating === 'creating' ? 'Aanmaken...' : 'Gebruiker Aanmaken'}
+                </Button>
+              </div>
+            </div>
+          </div>
         </Dialog>
       </DashboardLayout>
     </ProtectedRoute>
