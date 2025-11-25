@@ -97,7 +97,7 @@ export function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingUser, setEditingUser] = useState<UserWithEmail | null>(null);
-  const [editForm, setEditForm] = useState({ name: '', business_name: '', website_url: '', password: '' });
+  const [editForm, setEditForm] = useState({ email: '', name: '', business_name: '', website_url: '', password: '' });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUserForm, setNewUserForm] = useState({
     email: '',
@@ -298,6 +298,7 @@ export function AdminPage() {
   const openEditDialog = (user: UserWithEmail) => {
     setEditingUser(user);
     setEditForm({
+      email: user.email || '',
       name: user.name || '',
       business_name: user.business_name || '',
       website_url: user.website_url || '',
@@ -307,7 +308,7 @@ export function AdminPage() {
 
   const closeEditDialog = () => {
     setEditingUser(null);
-    setEditForm({ name: '', business_name: '', website_url: '', password: '' });
+    setEditForm({ email: '', name: '', business_name: '', website_url: '', password: '' });
   };
 
   const createNewUser = async () => {
@@ -380,6 +381,35 @@ export function AdminPage() {
 
     setUpdating(editingUser.id);
     try {
+      // Update email if changed
+      if (editForm.email && editForm.email !== editingUser.email) {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+          throw new Error('Niet ingelogd');
+        }
+
+        const emailApiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-email`;
+
+        const emailResponse = await fetch(emailApiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: editingUser.id,
+            new_email: editForm.email
+          })
+        });
+
+        const emailResult = await emailResponse.json();
+
+        if (!emailResponse.ok) {
+          throw new Error(emailResult.error || 'Fout bij bijwerken van email');
+        }
+      }
+
       const { error: detailsError } = await supabase.rpc('update_user_details', {
         target_user_id: editingUser.id,
         new_name: editForm.name,
@@ -735,10 +765,10 @@ export function AdminPage() {
                 <GlassInput
                   label="E-mailadres"
                   type="email"
-                  value={editingUser.email}
-                  disabled
+                  placeholder="gebruiker@example.com"
+                  value={editForm.email}
+                  onChange={(e: any) => setEditForm({ ...editForm, email: e.target.value })}
                 />
-                <p className="text-xs text-gray-500 -mt-2">E-mailadres kan niet worden gewijzigd</p>
 
                 <GlassInput
                   label="Naam"
