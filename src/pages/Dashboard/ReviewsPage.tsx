@@ -109,6 +109,7 @@ function ReviewsContent() {
 
       setDialogOpen(false);
       resetForm();
+      await fetchReviews();
     } catch (error) {
       console.error('Error saving review:', error);
       showToast('Fout bij opslaan', 'error');
@@ -140,6 +141,7 @@ function ReviewsContent() {
 
       if (error) throw error;
       showToast('Review succesvol verwijderd', 'success');
+      await fetchReviews();
     } catch (error) {
       console.error('Error deleting review:', error);
       showToast('Fout bij verwijderen', 'error');

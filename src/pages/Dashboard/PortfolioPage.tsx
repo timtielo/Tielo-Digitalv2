@@ -198,6 +198,7 @@ function PortfolioContent() {
 
       setDialogOpen(false);
       resetForm();
+      await fetchItems();
     } catch (error) {
       console.error('Error saving portfolio item:', error);
       showToast('Fout bij opslaan', 'error');
@@ -239,6 +240,7 @@ function PortfolioContent() {
 
       if (error) throw error;
       showToast('Project succesvol verwijderd', 'success');
+      await fetchItems();
     } catch (error) {
       console.error('Error deleting portfolio item:', error);
       showToast('Fout bij verwijderen', 'error');
@@ -260,7 +262,7 @@ function PortfolioContent() {
 
       showToast('Categorie toegevoegd', 'success');
       setNewCategoryName('');
-      fetchCategories();
+      await fetchCategories();
     } catch (error: any) {
       console.error('Error adding category:', error);
       if (error.code === '23505') {
@@ -283,7 +285,7 @@ function PortfolioContent() {
       if (error) throw error;
 
       showToast('Categorie verwijderd', 'success');
-      fetchCategories();
+      await fetchCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
       showToast('Fout bij verwijderen categorie', 'error');

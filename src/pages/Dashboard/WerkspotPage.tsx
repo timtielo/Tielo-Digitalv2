@@ -116,6 +116,7 @@ function WerkspotContent() {
       }
 
       setEditing(false);
+      await fetchData();
     } catch (error) {
       console.error('Error saving werkspot data:', error);
       showToast('Fout bij opslaan', 'error');

@@ -158,7 +158,7 @@ function ProfileContent() {
         showToast('Profiel succesvol aangemaakt', 'success');
       }
 
-      fetchProfile();
+      await fetchProfile();
     } catch (error) {
       console.error('Error saving profile:', error);
       showToast('Fout bij opslaan van profiel', 'error');
