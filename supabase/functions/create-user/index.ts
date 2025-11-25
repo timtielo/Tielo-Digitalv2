@@ -16,6 +16,7 @@ interface CreateUserRequest {
   name?: string;
   business_name?: string;
   business_type?: 'bouw' | 'basis';
+  account_type_id?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -138,13 +139,19 @@ Deno.serve(async (req: Request) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Update the profile with additional details
+    const updateData: any = {
+      name: body.name || '',
+      business_name: body.business_name || '',
+      business_type: body.business_type || 'basis',
+    };
+
+    if (body.account_type_id) {
+      updateData.account_type_id = body.account_type_id;
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from('user_profiles')
-      .update({
-        name: body.name || '',
-        business_name: body.business_name || '',
-        business_type: body.business_type || 'basis',
-      })
+      .update(updateData)
       .eq('id', newUser.user.id);
 
     if (updateError) {
