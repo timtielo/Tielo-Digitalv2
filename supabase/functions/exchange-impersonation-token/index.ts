@@ -49,6 +49,7 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (tokenError || !tokenData) {
+      console.error('Token lookup error:', tokenError);
       return new Response(
         JSON.stringify({ error: 'Invalid impersonation token' }),
         {
@@ -94,6 +95,7 @@ Deno.serve(async (req: Request) => {
     const { data: targetUser, error: userError } = await supabaseAdmin.auth.admin.getUserById(tokenData.user_id);
 
     if (userError || !targetUser.user) {
+      console.error('User lookup error:', userError);
       return new Response(
         JSON.stringify({ error: 'User not found' }),
         {
@@ -103,16 +105,26 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Create a session for the user using admin API
-    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
-      email: targetUser.user.email!,
+    // Use the admin createSession method to generate a valid session
+    // This creates a session without requiring a password or email verification
+    const response = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseServiceKey}`,
+        'apikey': supabaseServiceKey,
+      },
+      body: JSON.stringify({
+        type: 'magiclink',
+        email: targetUser.user.email,
+      }),
     });
 
-    if (sessionError || !sessionData) {
-      console.error('Error generating session:', sessionError);
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Generate link error:', errorData);
       return new Response(
-        JSON.stringify({ error: 'Failed to create session' }),
+        JSON.stringify({ error: 'Failed to generate session' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -120,16 +132,41 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Exchange the OTP hash for a real session
-    const { data: verifyData, error: verifyError } = await supabaseAdmin.auth.verifyOtp({
-      type: 'magiclink',
-      token_hash: sessionData.properties.hashed_token,
+    const linkData = await response.json();
+    console.log('Link data:', JSON.stringify(linkData));
+
+    // Now verify the OTP using the hashed_token from the link generation
+    const verifyResponse = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseServiceKey,
+      },
+      body: JSON.stringify({
+        type: 'magiclink',
+        token_hash: linkData.hashed_token,
+      }),
     });
 
-    if (verifyError || !verifyData.session) {
-      console.error('Error verifying OTP:', verifyError);
+    if (!verifyResponse.ok) {
+      const errorData = await verifyResponse.text();
+      console.error('Verify error:', errorData);
       return new Response(
-        JSON.stringify({ error: 'Failed to create session' }),
+        JSON.stringify({ error: 'Failed to verify session', details: errorData }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const sessionData = await verifyResponse.json();
+    console.log('Session data:', JSON.stringify(sessionData));
+
+    if (!sessionData.access_token || !sessionData.refresh_token) {
+      console.error('No tokens in session data');
+      return new Response(
+        JSON.stringify({ error: 'Failed to get tokens from session' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -140,9 +177,9 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        access_token: verifyData.session.access_token,
-        refresh_token: verifyData.session.refresh_token,
-        user: verifyData.user,
+        access_token: sessionData.access_token,
+        refresh_token: sessionData.refresh_token,
+        user: sessionData.user,
       }),
       {
         status: 200,
