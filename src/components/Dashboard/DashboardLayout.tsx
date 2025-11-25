@@ -18,7 +18,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile';
+  currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin';
 }
 
 interface DashboardModule {
@@ -159,10 +159,17 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                       <div className="border-t border-gray-200 my-2 pt-2" />
                       <button
                         onClick={() => handleNavigation('/dashboard/admin')}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                        className={`
+                          w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                          ${currentPage === 'admin'
+                            ? 'bg-primary text-white'
+                            : 'text-gray-700 hover:bg-gray-100'
+                          }
+                        `}
                       >
                         <Shield className="h-5 w-5" />
                         Admin
+                        {currentPage === 'admin' && <ChevronRight className="h-4 w-4 ml-auto" />}
                       </button>
                     </>
                   )}
@@ -199,7 +206,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
               <Menu className="h-6 w-6 text-gray-500" />
             </button>
             <h2 className="text-lg font-semibold text-gray-900 capitalize">
-              {navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+              {currentPage === 'admin' ? 'Admin' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
             </h2>
           </header>
 
