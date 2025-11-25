@@ -9,6 +9,7 @@ import { Textarea } from '../../components/ui/Textarea';
 import { Select } from '../../components/ui/Select';
 import { Label } from '../../components/ui/Label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '../../components/ui/Dialog';
+import { ImageEditor } from '../../components/Dashboard/ImageEditor';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -46,6 +47,8 @@ function PortfolioContent() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [editingImage, setEditingImage] = useState<{ file: File; type: 'before' | 'after' } | null>(null);
+  const [aspectRatio, setAspectRatio] = useState<'4:3' | '16:9'>('4:3');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -121,28 +124,44 @@ function PortfolioContent() {
   };
 
   const handleImageSelect = (file: File, type: 'before' | 'after') => {
+    setEditingImage({ file, type });
+  };
+
+  const handleImageEditorSave = async (blob: Blob) => {
+    if (!editingImage) return;
+
+    const file = new File([blob], `edited-${editingImage.type}-${Date.now()}.jpg`, {
+      type: 'image/jpeg',
+    });
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
         setImageDimensions(prev => ({
           ...prev,
-          [type]: { width: img.width, height: img.height }
+          [editingImage.type]: { width: img.width, height: img.height }
         }));
       };
       img.src = e.target?.result as string;
-      setImagePreview(prev => ({ ...prev, [type]: e.target?.result as string }));
+      setImagePreview(prev => ({ ...prev, [editingImage.type]: e.target?.result as string }));
     };
     reader.readAsDataURL(file);
-    uploadImage(file, type);
+
+    await uploadImage(file, editingImage.type);
+    setEditingImage(null);
   };
 
-  const uploadImage = async (file: File, type: 'before' | 'after') => {
+  const handleImageEditorCancel = () => {
+    setEditingImage(null);
+  };
+
+  const uploadImage = async (file: File | Blob, type: 'before' | 'after') => {
     if (!user) return;
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
       const fileName = `${user.id}/${Date.now()}-${type}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
@@ -617,6 +636,18 @@ function PortfolioContent() {
               />
             </div>
 
+            <div>
+              <Label htmlFor="aspectRatio">Beeldverhouding *</Label>
+              <Select
+                id="aspectRatio"
+                value={aspectRatio}
+                onChange={(e) => setAspectRatio(e.target.value as '4:3' | '16:9')}
+              >
+                <option value="4:3">4:3 (800 × 600px) - Klassiek formaat</option>
+                <option value="16:9">16:9 (800 × 450px) - Widescreen formaat</option>
+              </Select>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Voor Foto</Label>
@@ -649,7 +680,9 @@ function PortfolioContent() {
                   <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <span className="text-sm text-gray-500">Upload foto</span>
-                    <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
+                    <span className="text-xs text-gray-400 mt-1">
+                      {aspectRatio === '4:3' ? '800×600px (4:3)' : '800×450px (16:9)'}
+                    </span>
                     <input
                       type="file"
                       className="hidden"
@@ -696,7 +729,9 @@ function PortfolioContent() {
                   <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <span className="text-sm text-gray-500">Upload foto</span>
-                    <span className="text-xs text-gray-400 mt-1">Aanbevolen: 1200×800px</span>
+                    <span className="text-xs text-gray-400 mt-1">
+                      {aspectRatio === '4:3' ? '800×600px (4:3)' : '800×450px (16:9)'}
+                    </span>
                     <input
                       type="file"
                       className="hidden"
@@ -801,6 +836,15 @@ function PortfolioContent() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {editingImage && (
+        <ImageEditor
+          imageFile={editingImage.file}
+          aspectRatio={aspectRatio}
+          onSave={handleImageEditorSave}
+          onCancel={handleImageEditorCancel}
+        />
+      )}
     </div>
   );
 }
