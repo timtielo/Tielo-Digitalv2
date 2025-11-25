@@ -151,38 +151,72 @@ export function AdminPage() {
   };
 
   const impersonateUser = async (targetUserId: string) => {
+    setUpdating(targetUserId);
     try {
       // Store the admin's session info so they can return
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        sessionStorage.setItem('admin_session', JSON.stringify({
-          access_token: session.access_token,
-          refresh_token: session.refresh_token,
-          user_id: user?.id
-        }));
+      if (!session) {
+        showToast('Niet ingelogd', 'error');
+        return;
       }
 
-      // Get the target user's email
+      // Store admin session for potential return
+      sessionStorage.setItem('admin_session', JSON.stringify({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        user_id: user?.id
+      }));
+
+      // Get the target user info
       const targetUser = users.find(u => u.id === targetUserId);
       if (!targetUser) {
         showToast('Gebruiker niet gevonden', 'error');
         return;
       }
 
-      // Sign out current user
-      await supabase.auth.signOut();
+      // Call the Edge Function to generate a session for the target user
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/impersonate-user`;
 
-      // Show message and redirect to login with prefilled email
-      showToast(`Impersonating ${targetUser.email}. Je moet nog inloggen met hun wachtwoord.`, 'success');
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          target_user_id: targetUserId
+        })
+      });
 
-      // Redirect to login with impersonate flag
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Fout bij impersoneren van gebruiker');
+      }
+
+      // Set the new session for the target user
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: result.access_token,
+        refresh_token: result.refresh_token
+      });
+
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      showToast(`Nu ingelogd als ${targetUser.email}`, 'success');
+
+      // Redirect to their dashboard
       setTimeout(() => {
-        window.history.pushState({}, '', `/login?impersonate=${encodeURIComponent(targetUser.email)}`);
+        window.history.pushState({}, '', '/dashboard/portfolio');
         window.dispatchEvent(new PopStateEvent('popstate'));
-      }, 1500);
-    } catch (error) {
+        window.location.reload(); // Force refresh to update auth context
+      }, 1000);
+    } catch (error: any) {
       console.error('Error impersonating user:', error);
-      showToast('Fout bij impersoneren van gebruiker', 'error');
+      showToast(error.message || 'Fout bij impersoneren van gebruiker', 'error');
+    } finally {
+      setUpdating(null);
     }
   };
 
