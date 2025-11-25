@@ -58,11 +58,7 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showResetForm, setShowResetForm] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetSuccess, setResetSuccess] = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
-  const [resetError, setResetError] = useState('');
-  const { signIn, user, resetPassword } = useAuth();
+  const { signIn, user } = useAuth();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -101,37 +97,13 @@ export function Login() {
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setResetError('');
-    setResetLoading(true);
-
-    try {
-      const { error: resetError } = await resetPassword(resetEmail);
-
-      if (resetError) {
-        setResetError('Er is een fout opgetreden. Controleer je emailadres.');
-      } else {
-        setResetSuccess(true);
-      }
-    } catch (err) {
-      setResetError('Er is een fout opgetreden. Probeer het later opnieuw.');
-    } finally {
-      setResetLoading(false);
-    }
-  };
-
   const handleShowResetForm = () => {
     setShowResetForm(true);
-    setResetEmail(credentials.email);
     setError('');
   };
 
   const handleBackToLogin = () => {
     setShowResetForm(false);
-    setResetSuccess(false);
-    setResetError('');
-    setResetEmail('');
   };
 
   return (
@@ -172,7 +144,7 @@ export function Login() {
                 className="text-gray-300 text-center"
               >
                 {showResetForm
-                  ? 'Voer je emailadres in om je wachtwoord te resetten'
+                  ? 'Neem contact op om je wachtwoord te resetten'
                   : 'Meld aan met je account om je dashboard te bekijken'}
               </motion.p>
 
@@ -268,73 +240,34 @@ export function Login() {
                 </motion.button>
               </form>
               ) : (
-              <form className="space-y-5 mt-4" onSubmit={handleResetPassword}>
+              <div className="space-y-5 mt-4">
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 }}
+                  className="text-blue-300 text-center bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 p-6 rounded-2xl"
                 >
-                  <label className="text-sm font-medium text-gray-300 block mb-2">
-                    Email Adres
-                  </label>
-                  <GlassInputWrapper>
-                    <input
-                      name="reset-email"
-                      type="email"
-                      placeholder="je@email.nl"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      disabled={resetLoading || resetSuccess}
-                      required
-                      className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-white placeholder-gray-400"
-                    />
-                  </GlassInputWrapper>
+                  <p className="text-sm mb-2">Stuur een email naar:</p>
+                  <a
+                    href="mailto:tim@tielo-digital.nl"
+                    className="text-lg font-semibold text-blue-200 hover:text-blue-100 transition-colors"
+                  >
+                    tim@tielo-digital.nl
+                  </a>
+                  <p className="text-sm mt-2">om een nieuw wachtwoord aan te vragen</p>
                 </motion.div>
-
-                {resetError && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-red-300 text-sm text-center bg-red-500/20 backdrop-blur-sm border border-red-500/30 p-3 rounded-2xl"
-                  >
-                    {resetError}
-                  </motion.div>
-                )}
-
-                {resetSuccess && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-green-300 text-sm text-center bg-green-500/20 backdrop-blur-sm border border-green-500/30 p-3 rounded-2xl"
-                  >
-                    Wachtwoord reset link is verstuurd naar je email!
-                  </motion.div>
-                )}
-
-                {!resetSuccess && (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    type="submit"
-                    disabled={resetLoading}
-                    className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 py-4 font-medium text-white hover:from-blue-600 hover:to-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
-                  >
-                    {resetLoading ? 'Bezig...' : 'Verstuur Reset Link'}
-                  </motion.button>
-                )}
 
                 <motion.button
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
+                  transition={{ delay: 0.5 }}
                   type="button"
                   onClick={handleBackToLogin}
                   className="w-full text-sm text-gray-400 hover:text-blue-400 transition-colors"
                 >
                   Terug naar inloggen
                 </motion.button>
-              </form>
+              </div>
               )}
 
               <motion.div
