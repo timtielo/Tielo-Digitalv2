@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, RotateCw, ZoomIn, ZoomOut, Move, Crop, Check } from 'lucide-react';
+import { X, RotateCw, ZoomIn, ZoomOut, Move, Check } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface ImageEditorProps {
@@ -21,19 +21,16 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
 
   const targetWidth = 800;
   const targetHeight = aspectRatio === '4:3' ? 600 : 450;
-  const displayWidth = 800;
-  const displayHeight = aspectRatio === '4:3' ? 600 : 450;
 
   useEffect(() => {
     const img = new Image();
     img.onload = () => {
       setImage(img);
-      const scaleX = displayWidth / img.width;
-      const scaleY = displayHeight / img.height;
-      setScale(Math.max(scaleX, scaleY));
+      const initialScale = Math.min(targetWidth / img.width, targetHeight / img.height);
+      setScale(initialScale);
       setPosition({
-        x: (displayWidth - img.width * Math.max(scaleX, scaleY)) / 2,
-        y: (displayHeight - img.height * Math.max(scaleX, scaleY)) / 2,
+        x: 0,
+        y: 0,
       });
     };
     img.src = URL.createObjectURL(imageFile);
@@ -41,7 +38,7 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
     return () => {
       URL.revokeObjectURL(img.src);
     };
-  }, [imageFile, aspectRatio]);
+  }, [imageFile, aspectRatio, targetWidth, targetHeight]);
 
   useEffect(() => {
     if (!image || !canvasRef.current) return;
@@ -50,38 +47,53 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
 
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, displayWidth, displayHeight);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
 
     ctx.save();
-    ctx.translate(displayWidth / 2, displayHeight / 2);
+
+    const centerX = targetWidth / 2;
+    const centerY = targetHeight / 2;
+
+    ctx.translate(centerX + position.x, centerY + position.y);
     ctx.rotate((rotation * Math.PI) / 180);
-    ctx.scale(scale, scale);
-    ctx.translate(-displayWidth / 2, -displayHeight / 2);
-    ctx.drawImage(image, position.x / scale, position.y / scale);
+
+    const scaledWidth = image.width * scale;
+    const scaledHeight = image.height * scale;
+
+    ctx.drawImage(
+      image,
+      -scaledWidth / 2,
+      -scaledHeight / 2,
+      scaledWidth,
+      scaledHeight
+    );
+
     ctx.restore();
 
-    ctx.strokeStyle = '#ffffff';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, displayWidth, displayHeight);
-  }, [image, scale, rotation, position]);
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(1, 1, targetWidth - 2, targetHeight - 2);
+    ctx.setLineDash([]);
+  }, [image, scale, rotation, position, targetWidth, targetHeight]);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDragging(true);
     setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
+      x: e.nativeEvent.offsetX - position.x,
+      y: e.nativeEvent.offsetY - position.y,
     });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDragging) return;
     setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
+      x: e.nativeEvent.offsetX - dragStart.x,
+      y: e.nativeEvent.offsetY - dragStart.y,
     });
   };
 
@@ -103,14 +115,10 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
 
   const handleReset = () => {
     if (!image) return;
-    const scaleX = displayWidth / image.width;
-    const scaleY = displayHeight / image.height;
-    setScale(Math.max(scaleX, scaleY));
+    const initialScale = Math.min(targetWidth / image.width, targetHeight / image.height);
+    setScale(initialScale);
     setRotation(0);
-    setPosition({
-      x: (displayWidth - image.width * Math.max(scaleX, scaleY)) / 2,
-      y: (displayHeight - image.height * Math.max(scaleX, scaleY)) / 2,
-    });
+    setPosition({ x: 0, y: 0 });
   };
 
   const handleSave = async () => {
@@ -126,11 +134,24 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
     ctx.fillRect(0, 0, targetWidth, targetHeight);
 
     ctx.save();
-    ctx.translate(targetWidth / 2, targetHeight / 2);
+
+    const centerX = targetWidth / 2;
+    const centerY = targetHeight / 2;
+
+    ctx.translate(centerX + position.x, centerY + position.y);
     ctx.rotate((rotation * Math.PI) / 180);
-    ctx.scale(scale, scale);
-    ctx.translate(-targetWidth / 2, -targetHeight / 2);
-    ctx.drawImage(image, position.x / scale, position.y / scale);
+
+    const scaledWidth = image.width * scale;
+    const scaledHeight = image.height * scale;
+
+    ctx.drawImage(
+      image,
+      -scaledWidth / 2,
+      -scaledHeight / 2,
+      scaledWidth,
+      scaledHeight
+    );
+
     ctx.restore();
 
     outputCanvas.toBlob((blob) => {
@@ -145,7 +166,7 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
     >
       <motion.div
         initial={{ scale: 0.9 }}
@@ -168,20 +189,21 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
             </button>
           </div>
 
-          <div className="mb-6 flex justify-center bg-gray-950 rounded-xl p-4">
-            <canvas
-              ref={canvasRef}
-              className="max-w-full cursor-move border-2 border-white/20 rounded-lg"
-              style={{
-                maxHeight: '500px',
-                width: `${displayWidth}px`,
-                height: `${displayHeight}px`,
-              }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-            />
+          <div className="mb-6 flex justify-center bg-gray-950 rounded-xl p-8">
+            <div className="relative">
+              <canvas
+                ref={canvasRef}
+                className="border-2 border-white/20 rounded-lg cursor-move"
+                style={{
+                  width: `${targetWidth}px`,
+                  height: `${targetHeight}px`,
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3 mb-6">
