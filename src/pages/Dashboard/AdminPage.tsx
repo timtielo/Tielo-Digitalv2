@@ -79,10 +79,10 @@ export function AdminPage() {
   const updateBusinessType = async (userId: string, newType: 'bouw' | 'basis') => {
     setUpdating(userId);
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ business_type: newType })
-        .eq('id', userId);
+      const { error } = await supabase.rpc('update_user_business_type', {
+        target_user_id: userId,
+        new_business_type: newType
+      });
 
       if (error) throw error;
 
@@ -104,10 +104,10 @@ export function AdminPage() {
 
     setUpdating(userId);
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ is_admin: !currentStatus })
-        .eq('id', userId);
+      const { error } = await supabase.rpc('update_user_admin_status', {
+        target_user_id: userId,
+        new_admin_status: !currentStatus
+      });
 
       if (error) throw error;
 
