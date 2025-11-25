@@ -37,7 +37,7 @@ export function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingUser, setEditingUser] = useState<UserWithEmail | null>(null);
-  const [editForm, setEditForm] = useState({ name: '', business_name: '', website_url: '' });
+  const [editForm, setEditForm] = useState({ name: '', business_name: '', website_url: '', password: '' });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUserForm, setNewUserForm] = useState({
     email: '',
@@ -247,13 +247,14 @@ export function AdminPage() {
     setEditForm({
       name: user.name || '',
       business_name: user.business_name || '',
-      website_url: user.website_url || ''
+      website_url: user.website_url || '',
+      password: ''
     });
   };
 
   const closeEditDialog = () => {
     setEditingUser(null);
-    setEditForm({ name: '', business_name: '', website_url: '' });
+    setEditForm({ name: '', business_name: '', website_url: '', password: '' });
   };
 
   const openCreateUserDialog = () => {
@@ -329,6 +330,11 @@ export function AdminPage() {
   const updateUserDetails = async () => {
     if (!editingUser) return;
 
+    if (editForm.password && editForm.password.length < 6) {
+      showToast('Wachtwoord moet minimaal 6 tekens bevatten', 'error');
+      return;
+    }
+
     setUpdating(editingUser.id);
     try {
       const { error: detailsError } = await supabase.rpc('update_user_details', {
@@ -346,12 +352,41 @@ export function AdminPage() {
 
       if (websiteError) throw websiteError;
 
+      // Update password if provided
+      if (editForm.password) {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+          throw new Error('Niet ingelogd');
+        }
+
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-password`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: editingUser.id,
+            new_password: editForm.password
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Fout bij bijwerken van wachtwoord');
+        }
+      }
+
       showToast('Gebruikersgegevens succesvol bijgewerkt', 'success');
       closeEditDialog();
       fetchUsers();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating user details:', error);
-      showToast('Fout bij bijwerken van gebruikersgegevens', 'error');
+      showToast(error.message || 'Fout bij bijwerken van gebruikersgegevens', 'error');
     } finally {
       setUpdating(null);
     }
@@ -607,6 +642,18 @@ export function AdminPage() {
                     onChange={(e) => setEditForm({ ...editForm, website_url: e.target.value })}
                   />
                   <p className="text-xs text-gray-500 mt-1">Alleen admins kunnen dit veld bewerken</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="password">Nieuw Wachtwoord</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Laat leeg om niet te wijzigen"
+                    value={editForm.password}
+                    onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Minimaal 6 tekens. Laat leeg om wachtwoord niet te wijzigen</p>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
