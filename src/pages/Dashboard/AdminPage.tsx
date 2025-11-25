@@ -81,6 +81,17 @@ const RichTextEditor = ({ label, value, onChange }: { label: string; value: stri
     const url = prompt('Voer de URL in:');
     if (url) {
       applyFormat('createLink', url);
+      // Add target="_blank" to the newly created link
+      setTimeout(() => {
+        if (editorRef.current) {
+          const links = editorRef.current.querySelectorAll('a:not([target])');
+          links.forEach(link => {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+          });
+          onChange(editorRef.current.innerHTML);
+        }
+      }, 0);
     }
   };
 
@@ -133,7 +144,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -145,7 +156,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative z-10 w-full max-w-md"
+        className="relative z-10 w-full max-w-md my-8"
       >
         <GlassCard className="p-6">
           <div className="flex items-center justify-between mb-6">

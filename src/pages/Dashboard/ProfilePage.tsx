@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Upload, Loader2, Camera, Building2, Shield } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
@@ -30,6 +30,7 @@ function ProfileContent() {
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const linksContainerRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -42,6 +43,16 @@ function ProfileContent() {
       fetchProfile();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (linksContainerRef.current && profile?.important_links) {
+      const links = linksContainerRef.current.querySelectorAll('a');
+      links.forEach(link => {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      });
+    }
+  }, [profile?.important_links]);
 
   const fetchProfile = async () => {
     try {
@@ -427,6 +438,7 @@ function ProfileContent() {
                   <div className="p-8">
                     <h3 className="text-2xl font-bold text-white mb-4">Belangrijke Links</h3>
                     <div
+                      ref={linksContainerRef}
                       className="prose prose-invert max-w-none text-gray-200"
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
