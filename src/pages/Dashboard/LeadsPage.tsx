@@ -284,13 +284,11 @@ function LeadsContent() {
                           )}
                         </div>
 
-                        {(lead.postcode || lead.place) && (
+                        {lead.place && (
                           <div className="flex items-center gap-3">
                             <MapPin className="h-5 w-5 text-gray-400" />
                             <span className="text-gray-300 font-medium">
-                              {lead.postcode && lead.place
-                                ? `${lead.postcode}, ${lead.place}`
-                                : lead.postcode || lead.place}
+                              {lead.place}
                             </span>
                           </div>
                         )}
