@@ -109,7 +109,7 @@ export const BentoGridItem = ({
       className={`
         relative overflow-hidden group cursor-pointer
         bg-gradient-to-br ${gradientFrom} ${gradientTo}
-        rounded-2xl shadow-lg p-3 flex flex-col justify-between
+        rounded-2xl shadow-lg p-2.5 flex flex-col justify-between
         ${className}
       `}
     >

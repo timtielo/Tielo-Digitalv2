@@ -177,8 +177,8 @@ function DashboardHomeContent() {
     <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
       <AuroraBackground />
 
-      <div className="relative z-10 container mx-auto px-4 py-6">
-        <div className="flex justify-end mb-6">
+      <div className="relative z-10 container mx-auto px-4 py-4">
+        <div className="flex justify-end mb-4">
           <motion.button
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -194,19 +194,19 @@ function DashboardHomeContent() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-6"
+          className="text-center mb-4"
         >
           {userProfile?.profile_picture_url && (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="flex justify-center mb-3"
+              className="flex justify-center mb-2"
             >
               <img
                 src={userProfile.profile_picture_url}
                 alt="Profile"
-                className="w-16 h-16 rounded-full object-cover border-4 border-white/20"
+                className="w-14 h-14 rounded-full object-cover border-3 border-white/20"
               />
             </motion.div>
           )}
@@ -221,7 +221,7 @@ function DashboardHomeContent() {
             Welkom terug{userProfile?.name ? `, ${userProfile.name}` : ''}
           </h1>
           {userProfile?.business_name && (
-            <p className="mt-3 text-xl text-gray-300">
+            <p className="mt-2 text-xl text-gray-300">
               {userProfile.business_name}
             </p>
           )}
@@ -233,13 +233,13 @@ function DashboardHomeContent() {
               href={userProfile.website_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-sm"
+              className="mt-1 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-sm"
             >
               <ExternalLink className="h-4 w-4" />
               {userProfile.website_url.replace(/^https?:\/\//, '')}
             </motion.a>
           )}
-          <p className="mt-4 text-lg text-gray-400">
+          <p className="mt-2 text-lg text-gray-400">
             Kies een module om te beginnen
           </p>
         </motion.div>
@@ -265,22 +265,22 @@ function DashboardHomeContent() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex flex-col flex-grow">
-                  <h3 className="text-base font-bold text-white mb-1">
+                  <h3 className="text-lg font-bold text-white mb-1">
                     {module.display_name}
                   </h3>
-                  <p className="text-gray-200 text-[11px] leading-tight flex-grow line-clamp-2">
+                  <p className="text-gray-200 text-sm leading-snug flex-grow line-clamp-2">
                     {module.description}
                   </p>
                 </div>
                 <div className="mt-1">
                   <span
                     className="
-                      text-white font-semibold text-[11px] inline-flex items-center
+                      text-white font-semibold text-sm inline-flex items-center
                       group/link
                     "
                   >
                     Openen
-                    <ArrowRight className="ml-1 w-3 h-3 transition-transform duration-300 group-hover/link:translate-x-1" />
+                    <ArrowRight className="ml-1 w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1" />
                   </span>
                 </div>
               </BentoGridItem>
