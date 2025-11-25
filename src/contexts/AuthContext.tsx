@@ -18,6 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastActivity, setLastActivity] = useState<number>(Date.now());
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -34,8 +35,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
+    const activityHandler = () => setLastActivity(Date.now());
+
+    window.addEventListener('mousedown', activityHandler);
+    window.addEventListener('keydown', activityHandler);
+    window.addEventListener('scroll', activityHandler);
+    window.addEventListener('touchstart', activityHandler);
+
+    const timeoutInterval = setInterval(() => {
+      if (user && Date.now() - lastActivity > SESSION_TIMEOUT) {
+        signOut();
+      }
+    }, 60000);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('mousedown', activityHandler);
+      window.removeEventListener('keydown', activityHandler);
+      window.removeEventListener('scroll', activityHandler);
+      window.removeEventListener('touchstart', activityHandler);
+      clearInterval(timeoutInterval);
+    };
+  }, [user, lastActivity]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
