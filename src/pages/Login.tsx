@@ -306,11 +306,11 @@ export function Login() {
               >
                 <div className="flex-1 flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                   <Shield className="h-4 w-4 text-blue-400 flex-shrink-0" />
-                  <span className="text-xs text-gray-300">Beveiligde verbinding</span>
+                  <span className="text-xs text-gray-300">Portfolio beheer</span>
                 </div>
                 <div className="flex-1 flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                   <Zap className="h-4 w-4 text-cyan-400 flex-shrink-0" />
-                  <span className="text-xs text-gray-300">Supersnel dashboard</span>
+                  <span className="text-xs text-gray-300">Leads bekijken</span>
                 </div>
               </motion.div>
             </motion.div>
