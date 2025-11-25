@@ -20,11 +20,18 @@ const reviews = [
     role: 'Meer Impact Marketing',
     quote: 'Professioneel, supersnel en helemaal naar wens. Binnen een paar dagen was alles geregeld, van ons eerste contact tot het online-gaan van de site.',
     rating: 5
+  },
+  {
+    name: 'Youssef Fazazi',
+    role: 'Mr. Clogged 24/7',
+    quote: 'Ik twijfelde of ik een eigen website nodig had, maar door de hoge kosten en het gebrek aan direct klantcontact via Werkspot besloot ik de stap te zetten. Tim regelde alles snel en professioneel, nu bellen klanten me direct en ben ik minder afhankelijk.',
+    rating: 5
   }
 ];
 
 export function HeroReviews() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleReviews, setVisibleReviews] = useState([0, 1, 2]);
 
   useEffect(() => {
     // Auto-rotate reviews every 5 seconds
@@ -34,6 +41,16 @@ export function HeroReviews() {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    // Update visible reviews for desktop view
+    const newVisible = [
+      currentIndex,
+      (currentIndex + 1) % reviews.length,
+      (currentIndex + 2) % reviews.length
+    ];
+    setVisibleReviews(newVisible);
+  }, [currentIndex]);
 
   const nextReview = () => {
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
@@ -104,28 +121,49 @@ export function HeroReviews() {
         </div>
       </div>
 
-      {/* Desktop Stacked View */}
-      <div className="hidden md:block space-y-4">
-        {reviews.map((review, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.2 }}
-            className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            <div className="flex items-center gap-1 mb-3">
-              {[...Array(review.rating)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
-              ))}
-            </div>
-            <p className="text-gray-700 mb-4 text-base italic leading-relaxed">"{review.quote}"</p>
-            <div>
-              <p className="font-semibold text-base text-gray-900">{review.name}</p>
-              <p className="text-sm text-gray-500">{review.role}</p>
-            </div>
-          </motion.div>
-        ))}
+      {/* Desktop Animated Vertical Carousel */}
+      <div className="hidden md:block relative overflow-hidden" style={{ height: '460px' }}>
+        <AnimatePresence initial={false}>
+          {visibleReviews.map((reviewIndex, position) => (
+            <motion.div
+              key={`${reviewIndex}-${currentIndex}`}
+              initial={{
+                opacity: 0,
+                y: -100,
+                scale: 0.95
+              }}
+              animate={{
+                opacity: position === 2 ? 0.4 : 1,
+                y: position * 150,
+                scale: 1
+              }}
+              exit={{
+                opacity: 0,
+                y: 450,
+                scale: 0.95
+              }}
+              transition={{
+                duration: 0.6,
+                ease: [0.4, 0, 0.2, 1]
+              }}
+              className="absolute w-full bg-white rounded-xl p-6 shadow-md"
+              style={{ zIndex: 3 - position }}
+            >
+              <div className="flex items-center gap-1 mb-3">
+                {[...Array(reviews[reviewIndex].rating)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
+                ))}
+              </div>
+              <p className="text-gray-700 mb-4 text-base italic leading-relaxed">
+                "{reviews[reviewIndex].quote}"
+              </p>
+              <div>
+                <p className="font-semibold text-base text-gray-900">{reviews[reviewIndex].name}</p>
+                <p className="text-sm text-gray-500">{reviews[reviewIndex].role}</p>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </>
   );
