@@ -10,6 +10,7 @@ import {
   ArrowRight,
   LogOut,
   ExternalLink,
+  Link as LinkIcon,
 } from 'lucide-react';
 import {
   AuroraBackground,
@@ -35,6 +36,7 @@ interface UserProfile {
   is_admin: boolean;
   profile_picture_url: string | null;
   website_url: string | null;
+  important_links: string | null;
 }
 
 const iconMap: Record<string, any> = {
@@ -95,7 +97,7 @@ function DashboardHomeContent() {
     try {
       const { data: profileData } = await supabase
         .from('user_profiles')
-        .select('name, business_name, is_admin, profile_picture_url, website_url')
+        .select('name, business_name, is_admin, profile_picture_url, website_url, important_links')
         .eq('id', user?.id)
         .maybeSingle();
 
@@ -285,6 +287,34 @@ function DashboardHomeContent() {
             );
           })}
         </BentoGrid>
+
+        {userProfile?.important_links && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8"
+          >
+            <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <LinkIcon className="w-8 h-8 text-blue-400" />
+                <h2 className="text-2xl font-bold text-white">Belangrijke Links</h2>
+              </div>
+              <div
+                className="prose prose-invert max-w-none text-gray-200"
+                dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.tagName === 'A') {
+                    const link = target as HTMLAnchorElement;
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                  }
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

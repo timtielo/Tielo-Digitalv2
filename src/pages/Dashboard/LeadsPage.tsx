@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, ChevronDown, ChevronUp, Search, Archive, ArchiveRestore } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { supabase } from '../../lib/supabase/client';
@@ -16,6 +16,7 @@ interface Lead {
   drive_url: string | null;
   postcode: string | null;
   place: string | null;
+  archived: boolean;
 }
 
 function LeadsContent() {
@@ -25,6 +26,8 @@ function LeadsContent() {
   const [sortField, setSortField] = useState<'date' | 'name'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [expandedLeads, setExpandedLeads] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -49,6 +52,33 @@ function LeadsContent() {
       setLoading(false);
     }
   };
+
+  const toggleArchive = async (leadId: string, currentArchived: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({ archived: !currentArchived })
+        .eq('id', leadId);
+
+      if (error) throw error;
+      await fetchLeads();
+    } catch (error) {
+      console.error('Error toggling archive:', error);
+    }
+  };
+
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch =
+      lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.place?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.postcode?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesArchived = showArchived ? lead.archived : !lead.archived;
+
+    return matchesSearch && matchesArchived;
+  });
 
   const subscribeToChanges = () => {
     const channel = supabase
@@ -167,11 +197,40 @@ function LeadsContent() {
             ))}
           </div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mb-6 flex flex-col sm:flex-row gap-4"
+          >
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Zoek op naam, email, telefoon, plaats of postcode..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 transition-colors"
+              />
+            </div>
+            <button
+              onClick={() => setShowArchived(!showArchived)}
+              className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
+                showArchived
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+              }`}
+            >
+              {showArchived ? <ArchiveRestore className="h-5 w-5" /> : <Archive className="h-5 w-5" />}
+              {showArchived ? 'Toon Actieve' : 'Toon Gearchiveerde'}
+            </button>
+          </motion.div>
+
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
             </div>
-          ) : leads.length === 0 ? (
+          ) : filteredLeads.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -210,7 +269,7 @@ function LeadsContent() {
                 </button>
               </div>
 
-              {leads.map((lead, index) => {
+              {filteredLeads.map((lead, index) => {
                 const isExpanded = expandedLeads.has(lead.id);
                 return (
                   <motion.div
@@ -327,6 +386,27 @@ function LeadsContent() {
                           </motion.div>
                         )}
                       </AnimatePresence>
+                    </div>
+                    <div className="px-6 pb-6">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleArchive(lead.id, lead.archived);
+                        }}
+                        className="w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2"
+                      >
+                        {lead.archived ? (
+                          <>
+                            <ArchiveRestore className="h-5 w-5" />
+                            Herstellen
+                          </>
+                        ) : (
+                          <>
+                            <Archive className="h-5 w-5" />
+                            Archiveren
+                          </>
+                        )}
+                      </button>
                     </div>
                   </motion.div>
                 );
