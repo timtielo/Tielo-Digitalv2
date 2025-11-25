@@ -166,15 +166,15 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 overflow-hidden"
     >
       <motion.div
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
-        className="bg-gray-900 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-auto"
+        className="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-6xl h-[95vh] flex flex-col"
       >
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="p-4 flex-shrink-0 border-b border-white/10">
+          <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white mb-1">Afbeelding Bewerken</h2>
               <p className="text-sm text-gray-400">
@@ -188,15 +188,18 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
               <X className="h-6 w-6" />
             </button>
           </div>
+        </div>
 
-          <div className="mb-6 flex justify-center bg-gray-950 rounded-xl p-8">
-            <div className="relative">
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-6 flex justify-center bg-gray-950 rounded-xl p-4">
               <canvas
                 ref={canvasRef}
                 className="border-2 border-white/20 rounded-lg cursor-move"
                 style={{
-                  width: `${targetWidth}px`,
-                  height: `${targetHeight}px`,
+                  width: `${Math.min(targetWidth, 700)}px`,
+                  height: `${Math.min(targetHeight, targetHeight * (700 / targetWidth))}px`,
+                  maxWidth: '100%',
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -204,58 +207,54 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
                 onMouseLeave={handleMouseUp}
               />
             </div>
-          </div>
 
-          <div className="flex flex-wrap gap-3 mb-6">
-            <Button
-              variant="outline"
-              onClick={handleZoomIn}
-              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-            >
-              <ZoomIn className="h-4 w-4 mr-2" />
-              Zoom In
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleZoomOut}
-              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-            >
-              <ZoomOut className="h-4 w-4 mr-2" />
-              Zoom Out
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleRotate}
-              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-            >
-              <RotateCw className="h-4 w-4 mr-2" />
-              Roteren
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-            >
-              Reset
-            </Button>
-          </div>
+            <div className="flex flex-wrap gap-2 mb-4 justify-center">
+              <Button
+                variant="outline"
+                onClick={handleZoomIn}
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              >
+                <ZoomIn className="h-4 w-4 mr-2" />
+                Zoom In
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleZoomOut}
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              >
+                <ZoomOut className="h-4 w-4 mr-2" />
+                Zoom Out
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleRotate}
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              >
+                <RotateCw className="h-4 w-4 mr-2" />
+                Roteren
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              >
+                Reset
+              </Button>
+            </div>
 
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <Move className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-blue-200">
-                <p className="font-semibold mb-1">Hoe te gebruiken:</p>
-                <ul className="list-disc list-inside space-y-1 text-blue-300">
-                  <li>Sleep de afbeelding om te verplaatsen</li>
-                  <li>Gebruik zoom knoppen om in/uit te zoomen</li>
-                  <li>Roteer de afbeelding met de roteer knop</li>
-                  <li>De afbeelding wordt automatisch bijgesneden naar {targetWidth}×{targetHeight}px</li>
-                </ul>
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-4">
+              <div className="flex items-start gap-2">
+                <Move className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-blue-200">
+                  <span className="font-semibold">Instructies:</span> Sleep de afbeelding • Gebruik zoom knoppen • Roteer met roteer knop • Bijgesneden naar {targetWidth}×{targetHeight}px
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex gap-3">
+        <div className="p-4 flex-shrink-0 border-t border-white/10 bg-gray-900">
+          <div className="flex gap-3 max-w-4xl mx-auto">
             <Button
               onClick={handleSave}
               className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
