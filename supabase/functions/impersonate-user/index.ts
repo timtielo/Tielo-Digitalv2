@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
+import * as jose from 'npm:jose@5.2.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,6 +23,7 @@ Deno.serve(async (req: Request) => {
     // Get the Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const jwtSecret = Deno.env.get('SUPABASE_JWT_SECRET')!;
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Verify the requesting user is an admin
@@ -92,57 +94,46 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Generate a magic link for the target user
-    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
-      email: targetUser.user.email!,
-    });
+    // Create a JWT token for the target user
+    const now = Math.floor(Date.now() / 1000);
+    const exp = now + 3600; // 1 hour expiry
 
-    if (linkError || !linkData) {
-      console.error('Link generation error:', linkError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to generate magic link' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
+    const payload = {
+      aud: 'authenticated',
+      exp: exp,
+      iat: now,
+      iss: supabaseUrl,
+      sub: targetUser.user.id,
+      email: targetUser.user.email,
+      phone: '',
+      app_metadata: targetUser.user.app_metadata || {},
+      user_metadata: targetUser.user.user_metadata || {},
+      role: 'authenticated',
+      aal: 'aal1',
+      amr: [{ method: 'password', timestamp: now }],
+      session_id: crypto.randomUUID(),
+    };
 
-    // Extract tokens from the generated link
-    // The link contains tokens in the hash fragment
-    const actionLink = linkData.properties?.action_link;
-    
-    if (!actionLink) {
-      console.error('No action link in response:', linkData);
-      return new Response(
-        JSON.stringify({ error: 'No action link generated' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
+    // Sign the JWT
+    const secret = new TextEncoder().encode(jwtSecret);
+    const accessToken = await new jose.SignJWT(payload)
+      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+      .setIssuedAt(now)
+      .setExpirationTime(exp)
+      .sign(secret);
 
-    // Parse the URL to extract tokens from hash
-    const url = new URL(actionLink);
-    const hash = url.hash.substring(1); // Remove the '#'
-    const params = new URLSearchParams(hash);
-    
-    const accessToken = params.get('access_token');
-    const refreshToken = params.get('refresh_token');
+    // Create a refresh token (longer expiry)
+    const refreshExp = now + 2592000; // 30 days
+    const refreshPayload = {
+      ...payload,
+      exp: refreshExp,
+    };
 
-    if (!accessToken || !refreshToken) {
-      console.error('Tokens not found in URL. Hash:', hash);
-      console.error('Full link data:', JSON.stringify(linkData));
-      return new Response(
-        JSON.stringify({ error: 'Failed to extract tokens from link' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
+    const refreshToken = await new jose.SignJWT(refreshPayload)
+      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+      .setIssuedAt(now)
+      .setExpirationTime(refreshExp)
+      .sign(secret);
 
     return new Response(
       JSON.stringify({
