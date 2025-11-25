@@ -122,7 +122,7 @@ export function HeroReviews() {
       </div>
 
       {/* Desktop Animated Vertical Carousel */}
-      <div className="hidden md:block relative overflow-hidden" style={{ height: '340px' }}>
+      <div className="hidden md:block relative overflow-hidden" style={{ height: '460px' }}>
         <AnimatePresence initial={false}>
           {visibleReviews.map((reviewIndex, position) => (
             <motion.div
@@ -133,13 +133,13 @@ export function HeroReviews() {
                 scale: 0.95
               }}
               animate={{
-                opacity: position === 2 ? 0 : 1,
-                y: position * 160,
+                opacity: position === 2 ? 0.4 : 1,
+                y: position * 150,
                 scale: 1
               }}
               exit={{
                 opacity: 0,
-                y: 340,
+                y: 450,
                 scale: 0.95
               }}
               transition={{
