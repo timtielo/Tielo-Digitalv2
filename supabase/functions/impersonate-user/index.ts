@@ -1,5 +1,5 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
-import * as jose from 'npm:jose@5.2.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,13 +20,10 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // Get the Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const jwtSecret = Deno.env.get('SUPABASE_JWT_SECRET')!;
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Verify the requesting user is an admin
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(
@@ -51,7 +48,6 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Check if user is admin
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
       .select('is_admin')
@@ -68,7 +64,6 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Parse request body
     const body: ImpersonateRequest = await req.json();
 
     if (!body.target_user_id) {
@@ -81,7 +76,6 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Verify target user exists
     const { data: targetUser, error: targetError } = await supabaseAdmin.auth.admin.getUserById(body.target_user_id);
 
     if (targetError || !targetUser.user) {
@@ -94,52 +88,48 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Create a JWT token for the target user
-    const now = Math.floor(Date.now() / 1000);
-    const exp = now + 3600; // 1 hour expiry
+    // Generate a temporary password
+    const tempPassword = crypto.randomUUID();
 
-    const payload = {
-      aud: 'authenticated',
-      exp: exp,
-      iat: now,
-      iss: supabaseUrl,
-      sub: targetUser.user.id,
-      email: targetUser.user.email,
-      phone: '',
-      app_metadata: targetUser.user.app_metadata || {},
-      user_metadata: targetUser.user.user_metadata || {},
-      role: 'authenticated',
-      aal: 'aal1',
-      amr: [{ method: 'password', timestamp: now }],
-      session_id: crypto.randomUUID(),
-    };
+    // Update user's password without requiring them to confirm
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      body.target_user_id,
+      { password: tempPassword }
+    );
 
-    // Sign the JWT
-    const secret = new TextEncoder().encode(jwtSecret);
-    const accessToken = await new jose.SignJWT(payload)
-      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-      .setIssuedAt(now)
-      .setExpirationTime(exp)
-      .sign(secret);
+    if (updateError) {
+      console.error('Error updating password:', updateError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to update user password' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
-    // Create a refresh token (longer expiry)
-    const refreshExp = now + 2592000; // 30 days
-    const refreshPayload = {
-      ...payload,
-      exp: refreshExp,
-    };
+    // Sign in with the temporary password using service role client
+    const { data: signInData, error: signInError } = await supabaseAdmin.auth.signInWithPassword({
+      email: targetUser.user.email!,
+      password: tempPassword,
+    });
 
-    const refreshToken = await new jose.SignJWT(refreshPayload)
-      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-      .setIssuedAt(now)
-      .setExpirationTime(refreshExp)
-      .sign(secret);
+    if (signInError || !signInData.session) {
+      console.error('Error signing in:', signInError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to create session' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     return new Response(
       JSON.stringify({
         success: true,
-        access_token: accessToken,
-        refresh_token: refreshToken,
+        access_token: signInData.session.access_token,
+        refresh_token: signInData.session.refresh_token,
         user: {
           id: targetUser.user.id,
           email: targetUser.user.email,
