@@ -60,12 +60,52 @@ const RichTextEditor = ({ label, value, onChange }: { label: string; value: stri
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = value;
+      styleLinks();
     }
   }, [value]);
 
+  const styleLinks = () => {
+    if (editorRef.current) {
+      const links = editorRef.current.querySelectorAll('a');
+      links.forEach(link => {
+        link.style.color = '#60a5fa';
+        link.style.textDecoration = 'underline';
+        link.style.cursor = 'pointer';
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      });
+    }
+  };
+
   const handleInput = () => {
     if (editorRef.current) {
+      styleLinks();
       onChange(editorRef.current.innerHTML);
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'A') {
+      e.preventDefault();
+      const link = target as HTMLAnchorElement;
+      const currentUrl = link.href;
+      const currentText = link.textContent;
+      const newUrl = prompt('Bewerk URL:', currentUrl);
+      if (newUrl !== null) {
+        if (newUrl.trim() === '') {
+          // Remove link but keep text
+          const textNode = document.createTextNode(currentText || '');
+          link.parentNode?.replaceChild(textNode, link);
+        } else {
+          link.href = newUrl;
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+        if (editorRef.current) {
+          onChange(editorRef.current.innerHTML);
+        }
+      }
     }
   };
 
@@ -73,24 +113,29 @@ const RichTextEditor = ({ label, value, onChange }: { label: string; value: stri
     document.execCommand(command, false, value);
     if (editorRef.current) {
       editorRef.current.focus();
+      styleLinks();
       onChange(editorRef.current.innerHTML);
     }
   };
 
   const insertLink = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      alert('Selecteer eerst tekst om een link toe te voegen');
+      return;
+    }
+
+    const selectedText = selection.toString();
+    if (!selectedText) {
+      alert('Selecteer eerst tekst om een link toe te voegen');
+      return;
+    }
+
     const url = prompt('Voer de URL in:');
     if (url) {
       applyFormat('createLink', url);
-      // Add target="_blank" to the newly created link
       setTimeout(() => {
-        if (editorRef.current) {
-          const links = editorRef.current.querySelectorAll('a:not([target])');
-          links.forEach(link => {
-            link.setAttribute('target', '_blank');
-            link.setAttribute('rel', 'noopener noreferrer');
-          });
-          onChange(editorRef.current.innerHTML);
-        }
+        styleLinks();
       }, 0);
     }
   };
@@ -129,12 +174,13 @@ const RichTextEditor = ({ label, value, onChange }: { label: string; value: stri
           ref={editorRef}
           contentEditable
           onInput={handleInput}
+          onClick={handleClick}
           className="w-full min-h-[120px] bg-transparent text-sm p-3 focus:outline-none text-white"
           style={{ wordBreak: 'break-word' }}
         />
       </div>
       <p className="text-xs text-gray-500 mt-1">
-        Selecteer tekst en klik op de knoppen om op te maken. Links worden automatisch aanklikbaar.
+        Selecteer tekst en klik op Link om een hyperlink toe te voegen. Klik op een bestaande link om deze te bewerken.
       </p>
     </div>
   );
