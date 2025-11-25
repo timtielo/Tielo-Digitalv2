@@ -396,13 +396,17 @@ export function AdminPage() {
       if (websiteError) throw websiteError;
 
       if (editForm.password) {
+        console.log('Starting password update...');
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!session) {
+          console.error('No session found');
           throw new Error('Niet ingelogd');
         }
 
+        console.log('Session found, calling edge function...');
         const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-password`;
+        console.log('API URL:', apiUrl);
 
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -416,11 +420,15 @@ export function AdminPage() {
           })
         });
 
+        console.log('Response status:', response.status);
         const result = await response.json();
+        console.log('Response result:', result);
 
         if (!response.ok) {
           throw new Error(result.error || 'Fout bij bijwerken van wachtwoord');
         }
+
+        console.log('Password updated successfully');
       }
 
       showToast('Gebruikersgegevens succesvol bijgewerkt', 'success');

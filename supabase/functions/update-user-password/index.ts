@@ -20,14 +20,26 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    console.log('Update password function called');
+
     // Get the Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log('Creating Supabase admin client');
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
 
     // Verify the requesting user is an admin
     const authHeader = req.headers.get('Authorization');
+    console.log('Auth header present:', !!authHeader);
+
     if (!authHeader) {
+      console.error('No authorization header');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         {
@@ -38,11 +50,13 @@ Deno.serve(async (req: Request) => {
     }
 
     const token = authHeader.replace('Bearer ', '');
+    console.log('Getting user from token...');
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('Auth error:', authError);
       return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
+        JSON.stringify({ error: 'Invalid token', details: authError?.message }),
         {
           status: 401,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -50,14 +64,21 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log('User authenticated:', user.id);
+
     // Check if user is admin
+    console.log('Checking admin status...');
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
       .select('is_admin')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
+
+    console.log('Profile data:', profile);
+    console.log('Profile error:', profileError);
 
     if (profileError || !profile?.is_admin) {
+      console.error('Not admin or profile error:', profileError);
       return new Response(
         JSON.stringify({ error: 'Forbidden - Admin access required' }),
         {
@@ -67,10 +88,14 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log('User is admin, proceeding...');
+
     // Parse request body
     const body: UpdatePasswordRequest = await req.json();
+    console.log('Request body received:', { user_id: body.user_id, password_length: body.new_password?.length });
 
     if (!body.user_id || !body.new_password) {
+      console.error('Missing user_id or password');
       return new Response(
         JSON.stringify({ error: 'User ID and new password are required' }),
         {
@@ -81,6 +106,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (body.new_password.length < 6) {
+      console.error('Password too short');
       return new Response(
         JSON.stringify({ error: 'Password must be at least 6 characters' }),
         {
@@ -91,12 +117,16 @@ Deno.serve(async (req: Request) => {
     }
 
     // Update the user's password using admin API
-    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+    console.log('Updating password for user:', body.user_id);
+    const { data: updateData, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       body.user_id,
       { password: body.new_password }
     );
 
+    console.log('Update result:', { data: updateData, error: updateError });
+
     if (updateError) {
+      console.error('Update error:', updateError);
       return new Response(
         JSON.stringify({ error: updateError.message }),
         {
@@ -105,6 +135,8 @@ Deno.serve(async (req: Request) => {
         }
       );
     }
+
+    console.log('Password updated successfully');
 
     return new Response(
       JSON.stringify({
