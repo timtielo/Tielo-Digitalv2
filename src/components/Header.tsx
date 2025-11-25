@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
 import { Link } from './Link';
 import { ConsultButton } from './common/ConsultButton';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -67,6 +67,14 @@ export function Header() {
             <ConsultButton>
               Gratis opzetje
             </ConsultButton>
+            <Link
+              href="/login"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              onClick={handleLinkClick}
+            >
+              <LogIn size={16} />
+              Login
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -105,6 +113,16 @@ export function Header() {
                   <ConsultButton>
                     Gratis opzetje
                   </ConsultButton>
+                </div>
+                <div className="py-2 px-4">
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 py-3 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded min-h-[44px]"
+                    onClick={handleLinkClick}
+                  >
+                    <LogIn size={20} />
+                    Login
+                  </Link>
                 </div>
               </nav>
             </motion.div>
