@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2 } from 'lucide-react';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -47,6 +47,7 @@ export function AdminPage() {
     business_type: 'basis' as 'bouw' | 'basis'
   });
   const [confirmAdminAction, setConfirmAdminAction] = useState<{ userId: string; makeAdmin: boolean } | null>(null);
+  const [confirmDeleteUser, setConfirmDeleteUser] = useState<UserWithEmail | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -356,6 +357,28 @@ export function AdminPage() {
     }
   };
 
+  const deleteUser = async () => {
+    if (!confirmDeleteUser) return;
+
+    setUpdating(confirmDeleteUser.id);
+    try {
+      const { error } = await supabase.rpc('delete_user', {
+        target_user_id: confirmDeleteUser.id
+      });
+
+      if (error) throw error;
+
+      showToast('Gebruiker succesvol verwijderd', 'success');
+      setConfirmDeleteUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      showToast(error.message || 'Fout bij verwijderen van gebruiker', 'error');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const filteredUsers = users.filter(u =>
     u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     u.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -493,6 +516,16 @@ export function AdminPage() {
                                 disabled={updating === profile.id || profile.id === user?.id}
                               >
                                 {profile.is_admin ? 'Admin verwijderen' : 'Admin maken'}
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setConfirmDeleteUser(profile)}
+                                disabled={updating === profile.id || profile.id === user?.id}
+                                title="Verwijder gebruiker"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           </TableCell>
@@ -710,6 +743,53 @@ export function AdminPage() {
                 className={confirmAdminAction?.makeAdmin ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
               >
                 {updating ? 'Bezig...' : 'Bevestigen'}
+              </Button>
+            </div>
+          </div>
+        </Dialog>
+
+        <Dialog
+          open={!!confirmDeleteUser}
+          onOpenChange={(open) => !open && setConfirmDeleteUser(null)}
+        >
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4 text-red-600">Gebruiker Verwijderen</h2>
+
+            {confirmDeleteUser && (
+              <div className="space-y-4">
+                <p className="text-gray-600">
+                  Weet je zeker dat je deze gebruiker wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+                </p>
+
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm font-medium text-red-900 mb-2">Te verwijderen gebruiker:</p>
+                  <div className="text-sm text-red-800 space-y-1">
+                    <p><strong>Naam:</strong> {confirmDeleteUser.name || 'Geen naam'}</p>
+                    <p><strong>Email:</strong> {confirmDeleteUser.email}</p>
+                    <p><strong>Bedrijf:</strong> {confirmDeleteUser.business_name || 'Geen bedrijf'}</p>
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-500">
+                  Alle gegevens van deze gebruiker inclusief profiel, portfolio items en dashboard configuratie worden permanent verwijderd.
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setConfirmDeleteUser(null)}
+                disabled={!!updating}
+              >
+                Annuleren
+              </Button>
+              <Button
+                onClick={deleteUser}
+                disabled={!!updating}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {updating ? 'Verwijderen...' : 'Verwijder Gebruiker'}
               </Button>
             </div>
           </div>
