@@ -178,33 +178,36 @@ export function AdminPage() {
 
     setUpdating('creating');
     try {
-      // Create auth user using signUp
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newUserForm.email,
-        password: newUserForm.password,
-        options: {
-          emailRedirectTo: undefined,
-          data: {}
-        }
-      });
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (authError) throw authError;
-
-      if (!authData.user) {
-        throw new Error('Gebruiker aanmaken mislukt');
+      if (!session) {
+        throw new Error('Niet ingelogd');
       }
 
-      // Update the profile with additional details
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .update({
+      // Call the Edge Function to create user
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: newUserForm.email,
+          password: newUserForm.password,
           name: newUserForm.name,
           business_name: newUserForm.business_name,
           business_type: newUserForm.business_type
         })
-        .eq('id', authData.user.id);
+      });
 
-      if (profileError) throw profileError;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Fout bij aanmaken van gebruiker');
+      }
 
       showToast('Nieuwe gebruiker succesvol aangemaakt', 'success');
       closeCreateUserDialog();
