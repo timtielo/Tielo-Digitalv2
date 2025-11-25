@@ -120,7 +120,10 @@ Deno.serve(async (req: Request) => {
     console.log('Updating password for user:', body.user_id);
     const { data: updateData, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       body.user_id,
-      { password: body.new_password }
+      {
+        password: body.new_password,
+        email_confirm: true
+      }
     );
 
     console.log('Update result:', { data: updateData, error: updateError });
@@ -136,7 +139,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log('Password updated successfully');
+    console.log('Password updated successfully for user:', updateData?.user?.email);
 
     return new Response(
       JSON.stringify({
