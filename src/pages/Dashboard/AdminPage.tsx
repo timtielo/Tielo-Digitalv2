@@ -166,6 +166,7 @@ export function AdminPage() {
         refresh_token: session.refresh_token,
         user_id: user?.id
       }));
+      sessionStorage.setItem('is_impersonating', 'true');
 
       // Get the target user info
       const targetUser = users.find(u => u.id === targetUserId);

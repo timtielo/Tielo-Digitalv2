@@ -57,8 +57,9 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
   }, [user]);
 
   const checkImpersonation = () => {
+    const isImpersonatingFlag = sessionStorage.getItem('is_impersonating');
     const adminSession = sessionStorage.getItem('admin_session');
-    if (adminSession) {
+    if (isImpersonatingFlag === 'true' && adminSession) {
       setIsImpersonating(true);
       setImpersonatedUserEmail(user?.email || '');
     }
@@ -81,6 +82,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
 
       // Clear impersonation data
       sessionStorage.removeItem('admin_session');
+      sessionStorage.removeItem('is_impersonating');
 
       // Redirect to admin page
       window.history.pushState({}, '', '/dashboard/admin');

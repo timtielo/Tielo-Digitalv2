@@ -53,6 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    sessionStorage.removeItem('admin_session');
+    sessionStorage.removeItem('is_impersonating');
     await supabase.auth.signOut();
   };
 
