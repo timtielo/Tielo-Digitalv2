@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { supabase } from '../../lib/supabase/client';
@@ -14,6 +14,8 @@ interface Lead {
   message: string | null;
   date: string;
   drive_url: string | null;
+  postcode: string | null;
+  place: string | null;
 }
 
 function LeadsContent() {
@@ -22,6 +24,7 @@ function LeadsContent() {
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<'date' | 'name'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [expandedLeads, setExpandedLeads] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (user) {
@@ -81,6 +84,18 @@ function LeadsContent() {
   const handleBackToDashboard = () => {
     window.history.pushState({}, '', '/dashboard');
     window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const toggleExpanded = (leadId: string) => {
+    setExpandedLeads(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(leadId)) {
+        newSet.delete(leadId);
+      } else {
+        newSet.add(leadId);
+      }
+      return newSet;
+    });
   };
 
   const stats = [
@@ -169,127 +184,156 @@ function LeadsContent() {
               </div>
             </motion.div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden"
-            >
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left p-4">
-                        <button
-                          onClick={() => handleSort('name')}
-                          className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-medium"
-                        >
-                          Naam
-                          {sortField === 'name' && (
-                            <span className="text-blue-400">
-                              {sortDirection === 'asc' ? '↑' : '↓'}
-                            </span>
-                          )}
-                        </button>
-                      </th>
-                      <th className="text-left p-4 text-gray-300 font-medium">Telefoon</th>
-                      <th className="text-left p-4 text-gray-300 font-medium">Email</th>
-                      <th className="text-left p-4 text-gray-300 font-medium">Bericht</th>
-                      <th className="text-left p-4 text-gray-300 font-medium">Drive URL</th>
-                      <th className="text-left p-4">
-                        <button
-                          onClick={() => handleSort('date')}
-                          className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-medium"
-                        >
-                          Datum
-                          {sortField === 'date' && (
-                            <span className="text-blue-400">
-                              {sortDirection === 'asc' ? '↑' : '↓'}
-                            </span>
-                          )}
-                        </button>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leads.map((lead, index) => (
-                      <motion.tr
-                        key={lead.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                      >
-                        <td className="p-4">
-                          <span className="font-medium text-white">{lead.name}</span>
-                        </td>
-                        <td className="p-4">
-                          {lead.phone ? (
-                            <a
-                              href={`tel:${lead.phone}`}
-                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
-                            >
-                              <Phone className="h-4 w-4" />
-                              {lead.phone}
-                            </a>
-                          ) : (
-                            <span className="text-gray-500">-</span>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          {lead.email ? (
-                            <a
-                              href={`mailto:${lead.email}`}
-                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
-                            >
-                              <Mail className="h-4 w-4" />
-                              {lead.email}
-                            </a>
-                          ) : (
-                            <span className="text-gray-500">-</span>
-                          )}
-                        </td>
-                        <td className="p-4 max-w-md">
-                          {lead.message ? (
-                            <div className="text-gray-300 truncate" title={lead.message}>
-                              {lead.message}
-                            </div>
-                          ) : (
-                            <span className="text-gray-500">-</span>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          {lead.drive_url ? (
-                            <a
-                              href={lead.drive_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                              Drive
-                            </a>
-                          ) : (
-                            <span className="text-gray-500">-</span>
-                          )}
-                        </td>
-                        <td className="p-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2 text-gray-300">
+            <div className="space-y-4">
+              <div className="flex justify-end gap-2 mb-4">
+                <button
+                  onClick={() => handleSort('name')}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white transition-all"
+                >
+                  Sorteer op naam
+                  {sortField === 'name' && (
+                    <span className="text-blue-400">
+                      {sortDirection === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => handleSort('date')}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white transition-all"
+                >
+                  Sorteer op datum
+                  {sortField === 'date' && (
+                    <span className="text-blue-400">
+                      {sortDirection === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {leads.map((lead, index) => {
+                const isExpanded = expandedLeads.has(lead.id);
+                return (
+                  <motion.div
+                    key={lead.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all"
+                  >
+                    <div
+                      className="p-6 cursor-pointer"
+                      onClick={() => toggleExpanded(lead.id)}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-white mb-2">{lead.name}</h3>
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
                             <Calendar className="h-4 w-4" />
                             {new Date(lead.date).toLocaleDateString('nl-NL', {
                               day: '2-digit',
-                              month: 'short',
+                              month: 'long',
                               year: 'numeric',
                               hour: '2-digit',
                               minute: '2-digit',
                             })}
                           </div>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
+                        </div>
+                        <button className="text-gray-400 hover:text-white transition-colors">
+                          {isExpanded ? (
+                            <ChevronUp className="h-6 w-6" />
+                          ) : (
+                            <ChevronDown className="h-6 w-6" />
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                        <div className="flex items-center gap-3">
+                          {lead.phone ? (
+                            <a
+                              href={`tel:${lead.phone}`}
+                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Phone className="h-5 w-5" />
+                              <span className="font-medium">{lead.phone}</span>
+                            </a>
+                          ) : (
+                            <div className="flex items-center gap-2 text-gray-500">
+                              <Phone className="h-5 w-5" />
+                              <span>Geen telefoon</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          {lead.email ? (
+                            <a
+                              href={`mailto:${lead.email}`}
+                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Mail className="h-5 w-5" />
+                              <span className="font-medium">{lead.email}</span>
+                            </a>
+                          ) : (
+                            <div className="flex items-center gap-2 text-gray-500">
+                              <Mail className="h-5 w-5" />
+                              <span>Geen email</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {(lead.postcode || lead.place) && (
+                          <div className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5 text-gray-400" />
+                            <span className="text-gray-300 font-medium">
+                              {lead.postcode && lead.place
+                                ? `${lead.postcode}, ${lead.place}`
+                                : lead.postcode || lead.place}
+                            </span>
+                          </div>
+                        )}
+
+                        {lead.drive_url && (
+                          <div className="flex items-center gap-3">
+                            <a
+                              href={lead.drive_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <ExternalLink className="h-5 w-5" />
+                              <span className="font-medium">Open Drive</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+
+                      <AnimatePresence>
+                        {isExpanded && lead.message && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pt-4 border-t border-white/10">
+                              <h4 className="text-sm font-semibold text-gray-400 mb-2">Bericht:</h4>
+                              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+                                {lead.message}
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           )}
 
           <motion.div
