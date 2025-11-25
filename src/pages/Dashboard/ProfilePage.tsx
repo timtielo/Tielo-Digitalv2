@@ -355,21 +355,6 @@ function ProfileContent() {
                       </div>
                     </motion.div>
 
-                    {profile?.important_links && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="pt-6 border-t border-white/10"
-                      >
-                        <h3 className="text-lg font-semibold text-white mb-3">Belangrijke Links</h3>
-                        <div
-                          className="prose prose-invert max-w-none bg-white/5 border border-white/10 rounded-xl p-4 text-gray-200"
-                          dangerouslySetInnerHTML={{ __html: profile.important_links }}
-                        />
-                      </motion.div>
-                    )}
-
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -431,6 +416,23 @@ function ProfileContent() {
                   </form>
                 </div>
               </motion.div>
+
+              {profile?.important_links && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden mt-6"
+                >
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Belangrijke Links</h3>
+                    <div
+                      className="prose prose-invert max-w-none text-gray-200"
+                      dangerouslySetInnerHTML={{ __html: profile.important_links }}
+                    />
+                  </div>
+                </motion.div>
+              )}
             </div>
           )}
         </div>
