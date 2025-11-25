@@ -13,10 +13,10 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    avatarSrc: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
-    name: "Jan de Vries",
-    handle: "Bouwbedrijf De Vries",
-    text: "Perfect platform voor het beheren van mijn portfolio en klantreviews. Alles op één plek!"
+    avatarSrc: "https://www.tgildegevelwerken.nl/tgildegevelwerkenlogo-transparant.svg",
+    name: "Job 't Gilde",
+    handle: "'t Gilde Gevelwerken",
+    text: "Fijn platform voor het beheren van mijn reviews en portfolio!"
   },
   {
     avatarSrc: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
