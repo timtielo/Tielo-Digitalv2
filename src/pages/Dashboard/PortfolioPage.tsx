@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Upload, Check, Briefcase } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag } from 'lucide-react';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { Card, CardContent } from '../../components/ui/Card';
@@ -27,17 +27,25 @@ interface PortfolioItem {
   featured: boolean;
 }
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 export function PortfolioPage() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [items, setItems] = useState<PortfolioItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [imagePreview, setImagePreview] = useState<{ before?: string; after?: string }>({});
   const [imageDimensions, setImageDimensions] = useState<{ before?: { width: number; height: number }; after?: { width: number; height: number } }>({});
+  const [newCategoryName, setNewCategoryName] = useState('');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -53,6 +61,7 @@ export function PortfolioPage() {
   useEffect(() => {
     if (user) {
       fetchItems();
+      fetchCategories();
       subscribeToChanges();
     }
   }, [user]);
@@ -71,6 +80,21 @@ export function PortfolioPage() {
       console.error('Error fetching portfolio items:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('portfolio_categories')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
     }
   };
 
@@ -223,10 +247,55 @@ export function PortfolioPage() {
     }
   };
 
+  const addCategory = async () => {
+    if (!newCategoryName.trim()) {
+      showToast('Voer een categorienaam in', 'error');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('portfolio_categories')
+        .insert([{ user_id: user?.id, name: newCategoryName.trim() }]);
+
+      if (error) throw error;
+
+      showToast('Categorie toegevoegd', 'success');
+      setNewCategoryName('');
+      fetchCategories();
+    } catch (error: any) {
+      console.error('Error adding category:', error);
+      if (error.code === '23505') {
+        showToast('Deze categorie bestaat al', 'error');
+      } else {
+        showToast('Fout bij toevoegen categorie', 'error');
+      }
+    }
+  };
+
+  const deleteCategory = async (id: string, name: string) => {
+    if (!confirm(`Weet je zeker dat je de categorie "${name}" wilt verwijderen?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('portfolio_categories')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      showToast('Categorie verwijderd', 'success');
+      fetchCategories();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      showToast('Fout bij verwijderen categorie', 'error');
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
-      category: 'Groepenkast',
+      category: categories.length > 0 ? categories[0].name : '',
       location: '',
       date: new Date().toISOString().split('T')[0],
       description: '',
@@ -253,10 +322,16 @@ export function PortfolioPage() {
               <h1 className="text-2xl font-bold text-gray-900">Portfolio</h1>
               <p className="text-gray-600 mt-1">Beheer je projecten en referenties</p>
             </div>
-            <Button onClick={openNewDialog}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nieuw Project
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setCategoryDialogOpen(true)}>
+                <Tag className="h-4 w-4 mr-2" />
+                Categorieën
+              </Button>
+              <Button onClick={openNewDialog}>
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuw Project
+              </Button>
+            </div>
           </div>
 
           <Card>
@@ -378,9 +453,13 @@ export function PortfolioPage() {
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
                 >
-                  <option value="Groepenkast">Groepenkast</option>
-                  <option value="Laadpalen">Laadpalen</option>
-                  <option value="Overig">Overig</option>
+                  {categories.length === 0 ? (
+                    <option value="">Geen categorieën - Voeg eerst categorieën toe</option>
+                  ) : (
+                    categories.map(cat => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    ))
+                  )}
                 </Select>
               </div>
 
@@ -537,6 +616,68 @@ export function PortfolioPage() {
                 </Button>
               </div>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Categorieën Beheren</DialogTitle>
+              <DialogClose onClose={() => setCategoryDialogOpen(false)} />
+            </DialogHeader>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Nieuwe categorie..."
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCategory();
+                    }
+                  }}
+                />
+                <Button onClick={addCategory} disabled={!newCategoryName.trim()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Toevoegen
+                </Button>
+              </div>
+
+              <div className="border rounded-lg divide-y">
+                {categories.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <Tag className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm">Nog geen categorieën</p>
+                    <p className="text-xs text-gray-400 mt-1">Voeg je eerste categorie toe</p>
+                  </div>
+                ) : (
+                  categories.map((category) => (
+                    <div key={category.id} className="flex items-center justify-between p-3 hover:bg-gray-50">
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-gray-400" />
+                        <span className="font-medium">{category.name}</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteCategory(category.id, category.name)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+                  Sluiten
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </DashboardLayout>
