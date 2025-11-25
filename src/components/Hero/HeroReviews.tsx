@@ -4,15 +4,9 @@ import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const reviews = [
   {
-    name: 'Iris Achtereekte',
-    role: 'Her Horizon',
-    quote: 'Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp ook bij het uitwerken van mijn businessidee.',
-    rating: 5
-  },
-  {
-    name: "Job 't Gilde",
-    role: "'t Gilde Gevelwerken",
-    quote: 'Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en aanpassingen waren snel gedaan.',
+    name: 'Youssef Fazazi',
+    role: 'Mr. Clogged 24/7',
+    quote: 'Ik twijfelde of ik een eigen website nodig had, maar door de hoge kosten en het gebrek aan direct klantcontact via Werkspot besloot ik de stap te zetten. Tim regelde alles snel en professioneel, nu bellen klanten me direct en ben ik minder afhankelijk.',
     rating: 5
   },
   {
@@ -22,9 +16,15 @@ const reviews = [
     rating: 5
   },
   {
-    name: 'Youssef Fazazi',
-    role: 'Mr. Clogged 24/7',
-    quote: 'Ik twijfelde of ik een eigen website nodig had, maar door de hoge kosten en het gebrek aan direct klantcontact via Werkspot besloot ik de stap te zetten. Tim regelde alles snel en professioneel, nu bellen klanten me direct en ben ik minder afhankelijk.',
+    name: "Job 't Gilde",
+    role: "'t Gilde Gevelwerken",
+    quote: 'Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en aanpassingen waren snel gedaan.',
+    rating: 5
+  },
+  {
+    name: 'Iris Achtereekte',
+    role: 'Her Horizon',
+    quote: 'Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp ook bij het uitwerken van mijn businessidee.',
     rating: 5
   }
 ];
