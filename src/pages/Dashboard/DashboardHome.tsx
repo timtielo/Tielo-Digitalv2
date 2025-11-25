@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase,
   Star,
@@ -11,6 +11,8 @@ import {
   LogOut,
   ExternalLink,
   Link as LinkIcon,
+  UserCog,
+  XCircle,
 } from 'lucide-react';
 import {
   AuroraBackground,
@@ -86,12 +88,49 @@ function DashboardHomeContent() {
   const [modules, setModules] = useState<DashboardModule[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isImpersonating, setIsImpersonating] = useState(false);
+  const [impersonatedUserEmail, setImpersonatedUserEmail] = useState('');
 
   useEffect(() => {
     if (user) {
       fetchUserData();
+      checkImpersonation();
     }
   }, [user]);
+
+  const checkImpersonation = () => {
+    const isImpersonatingFlag = sessionStorage.getItem('is_impersonating');
+    const adminSession = sessionStorage.getItem('admin_session');
+    if (isImpersonatingFlag === 'true' && adminSession) {
+      setIsImpersonating(true);
+      setImpersonatedUserEmail(user?.email || '');
+    }
+  };
+
+  const returnToAdmin = async () => {
+    const adminSessionStr = sessionStorage.getItem('admin_session');
+    if (!adminSessionStr) return;
+
+    try {
+      const adminSession = JSON.parse(adminSessionStr);
+
+      const { error } = await supabase.auth.setSession({
+        access_token: adminSession.access_token,
+        refresh_token: adminSession.refresh_token
+      });
+
+      if (error) throw error;
+
+      sessionStorage.removeItem('admin_session');
+      sessionStorage.removeItem('is_impersonating');
+
+      window.history.pushState({}, '', '/dashboard/admin');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.location.reload();
+    } catch (error) {
+      console.error('Error returning to admin:', error);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -145,6 +184,8 @@ function DashboardHomeContent() {
 
   const handleLogout = async () => {
     try {
+      sessionStorage.removeItem('admin_session');
+      sessionStorage.removeItem('is_impersonating');
       await supabase.auth.signOut();
       window.location.href = '/login';
     } catch (error) {
@@ -176,6 +217,30 @@ function DashboardHomeContent() {
   return (
     <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
       <AuroraBackground />
+
+      <AnimatePresence>
+        {isImpersonating && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-4 right-4 z-50 bg-amber-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
+          >
+            <UserCog className="h-5 w-5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">Impersonating User</p>
+              <p className="text-xs opacity-90 truncate">{impersonatedUserEmail}</p>
+            </div>
+            <button
+              onClick={returnToAdmin}
+              className="flex-shrink-0 hover:bg-amber-600 rounded p-1 transition-colors"
+              title="Return to admin"
+            >
+              <XCircle className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="relative z-10 container mx-auto px-4 py-4">
         <div className="flex justify-end mb-4">
