@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '.
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../components/ui/Toast';
 
 interface Review {
   id: string;
@@ -21,10 +22,12 @@ interface Review {
 
 export function ReviewsPage() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -82,6 +85,7 @@ export function ReviewsPage() {
     e.preventDefault();
     if (!user) return;
 
+    setSaving(true);
     try {
       if (editingReview) {
         const { error } = await supabase
@@ -91,6 +95,7 @@ export function ReviewsPage() {
           .eq('user_id', user.id);
 
         if (error) throw error;
+        showToast('Review succesvol bijgewerkt', 'success');
       } else {
         const { error } = await supabase
           .from('reviews')
@@ -100,13 +105,16 @@ export function ReviewsPage() {
           }]);
 
         if (error) throw error;
+        showToast('Review succesvol toegevoegd', 'success');
       }
 
       setDialogOpen(false);
       resetForm();
     } catch (error) {
       console.error('Error saving review:', error);
-      alert('Fout bij opslaan');
+      showToast('Fout bij opslaan', 'error');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -132,9 +140,10 @@ export function ReviewsPage() {
         .eq('user_id', user.id);
 
       if (error) throw error;
+      showToast('Review succesvol verwijderd', 'success');
     } catch (error) {
       console.error('Error deleting review:', error);
-      alert('Fout bij verwijderen');
+      showToast('Fout bij verwijderen', 'error');
     }
   };
 
@@ -267,8 +276,8 @@ export function ReviewsPage() {
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit">
-                  {editingReview ? 'Bijwerken' : 'Toevoegen'}
+                <Button type="submit" disabled={saving}>
+                  {saving ? 'Opslaan...' : editingReview ? 'Bijwerken' : 'Toevoegen'}
                 </Button>
                 <Button
                   type="button"

@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '.
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../components/ui/Toast';
 
 interface PortfolioItem {
   id: string;
@@ -28,11 +29,13 @@ interface PortfolioItem {
 
 export function PortfolioPage() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -113,9 +116,10 @@ export function PortfolioPage() {
         ...prev,
         [`${type}_image`]: publicUrl,
       }));
+      showToast('Afbeelding succesvol geüpload', 'success');
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Fout bij uploaden van afbeelding');
+      showToast('Fout bij uploaden van afbeelding', 'error');
     } finally {
       setUploading(false);
     }
@@ -125,6 +129,7 @@ export function PortfolioPage() {
     e.preventDefault();
     if (!user) return;
 
+    setSaving(true);
     try {
       if (editingItem) {
         const { error } = await supabase
@@ -137,6 +142,7 @@ export function PortfolioPage() {
           .eq('user_id', user.id);
 
         if (error) throw error;
+        showToast('Project succesvol bijgewerkt', 'success');
       } else {
         const { error } = await supabase
           .from('portfolio_items')
@@ -146,13 +152,16 @@ export function PortfolioPage() {
           }]);
 
         if (error) throw error;
+        showToast('Project succesvol toegevoegd', 'success');
       }
 
       setDialogOpen(false);
       resetForm();
     } catch (error) {
       console.error('Error saving portfolio item:', error);
-      alert('Fout bij opslaan');
+      showToast('Fout bij opslaan', 'error');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -183,9 +192,10 @@ export function PortfolioPage() {
         .eq('user_id', user.id);
 
       if (error) throw error;
+      showToast('Project succesvol verwijderd', 'success');
     } catch (error) {
       console.error('Error deleting portfolio item:', error);
-      alert('Fout bij verwijderen');
+      showToast('Fout bij verwijderen', 'error');
     }
   };
 
@@ -467,8 +477,8 @@ export function PortfolioPage() {
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={uploading}>
-                  {uploading ? 'Uploaden...' : editingItem ? 'Bijwerken' : 'Toevoegen'}
+                <Button type="submit" disabled={uploading || saving}>
+                  {saving ? 'Opslaan...' : uploading ? 'Uploaden...' : editingItem ? 'Bijwerken' : 'Toevoegen'}
                 </Button>
                 <Button
                   type="button"

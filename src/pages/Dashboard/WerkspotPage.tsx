@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../components/ui/Toast';
 
 interface WerkspotData {
   id: string;
@@ -17,12 +18,14 @@ interface WerkspotData {
 
 export function WerkspotPage() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [data, setData] = useState<WerkspotData | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    reviewamount: 0,
-    avgstars: 0,
+    reviewamount: '',
+    avgstars: '',
   });
 
   useEffect(() => {
@@ -45,8 +48,8 @@ export function WerkspotPage() {
       if (werkspotData) {
         setData(werkspotData);
         setFormData({
-          reviewamount: werkspotData.reviewamount || 0,
-          avgstars: werkspotData.avgstars || 0,
+          reviewamount: String(werkspotData.reviewamount || ''),
+          avgstars: String(werkspotData.avgstars || ''),
         });
       }
     } catch (error) {
@@ -82,34 +85,42 @@ export function WerkspotPage() {
     e.preventDefault();
     if (!user) return;
 
+    setSaving(true);
     try {
+      const reviewAmount = parseInt(formData.reviewamount) || 0;
+      const avgStars = parseFloat(formData.avgstars) || 0;
+
       if (data) {
         const { error } = await supabase
           .from('werkspot_data')
           .update({
-            reviewamount: formData.reviewamount,
-            avgstars: formData.avgstars,
+            reviewamount: reviewAmount,
+            avgstars: avgStars,
           })
           .eq('id', data.id)
           .eq('user_id', user.id);
 
         if (error) throw error;
+        showToast('Werkspot gegevens bijgewerkt', 'success');
       } else {
         const { error } = await supabase
           .from('werkspot_data')
           .insert([{
             user_id: user.id,
-            reviewamount: formData.reviewamount,
-            avgstars: formData.avgstars,
+            reviewamount: reviewAmount,
+            avgstars: avgStars,
           }]);
 
         if (error) throw error;
+        showToast('Werkspot gegevens toegevoegd', 'success');
       }
 
       setEditing(false);
     } catch (error) {
       console.error('Error saving werkspot data:', error);
-      alert('Fout bij opslaan');
+      showToast('Fout bij opslaan', 'error');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -142,13 +153,12 @@ export function WerkspotPage() {
                 <CardContent>
                   {editing ? (
                     <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      max="5"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="Bijv. 4.5"
                       value={formData.avgstars}
                       onChange={(e) =>
-                        setFormData({ ...formData, avgstars: parseFloat(e.target.value) || 0 })
+                        setFormData({ ...formData, avgstars: e.target.value })
                       }
                     />
                   ) : (
@@ -172,11 +182,12 @@ export function WerkspotPage() {
                 <CardContent>
                   {editing ? (
                     <Input
-                      type="number"
-                      min="0"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Bijv. 25"
                       value={formData.reviewamount}
                       onChange={(e) =>
-                        setFormData({ ...formData, reviewamount: parseInt(e.target.value) || 0 })
+                        setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })
                       }
                     />
                   ) : (
@@ -199,13 +210,12 @@ export function WerkspotPage() {
                         <Label htmlFor="avgstars">Gemiddelde Sterren (0-5)</Label>
                         <Input
                           id="avgstars"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="5"
+                          type="text"
+                          inputMode="decimal"
+                          placeholder="Bijv. 4.5"
                           value={formData.avgstars}
                           onChange={(e) =>
-                            setFormData({ ...formData, avgstars: parseFloat(e.target.value) || 0 })
+                            setFormData({ ...formData, avgstars: e.target.value })
                           }
                           required
                         />
@@ -215,11 +225,12 @@ export function WerkspotPage() {
                         <Label htmlFor="reviewamount">Aantal Reviews</Label>
                         <Input
                           id="reviewamount"
-                          type="number"
-                          min="0"
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="Bijv. 25"
                           value={formData.reviewamount}
                           onChange={(e) =>
-                            setFormData({ ...formData, reviewamount: parseInt(e.target.value) || 0 })
+                            setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })
                           }
                           required
                         />
@@ -227,7 +238,9 @@ export function WerkspotPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button type="submit">Opslaan</Button>
+                      <Button type="submit" disabled={saving}>
+                        {saving ? 'Opslaan...' : 'Opslaan'}
+                      </Button>
                       <Button
                         type="button"
                         variant="outline"
@@ -235,8 +248,8 @@ export function WerkspotPage() {
                           setEditing(false);
                           if (data) {
                             setFormData({
-                              reviewamount: data.reviewamount || 0,
-                              avgstars: data.avgstars || 0,
+                              reviewamount: String(data.reviewamount || ''),
+                              avgstars: String(data.avgstars || ''),
                             });
                           }
                         }}
