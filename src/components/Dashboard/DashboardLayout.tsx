@@ -8,14 +8,15 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  User
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads';
+  currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile';
 }
 
 const navigation = [
@@ -23,6 +24,7 @@ const navigation = [
   { name: 'Werkspot', href: '/dashboard/werkspot', icon: Star, key: 'werkspot' },
   { name: 'Reviews', href: '/dashboard/reviews', icon: MessageSquare, key: 'reviews' },
   { name: 'Leads', href: '/dashboard/leads', icon: Users, key: 'leads' },
+  { name: 'Profiel', href: '/dashboard/profile', icon: User, key: 'profile' },
 ];
 
 export function DashboardLayout({ children, currentPage }: DashboardLayoutProps) {
@@ -85,21 +87,6 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
             </nav>
 
             <div className="border-t border-gray-200 p-4">
-              <div className="flex items-center gap-3 mb-3 px-2">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary">
-                    {user?.email?.[0].toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {user?.email?.split('@')[0]}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user?.email}
-                  </p>
-                </div>
-              </div>
               <Button
                 variant="outline"
                 className="w-full justify-start gap-2"
