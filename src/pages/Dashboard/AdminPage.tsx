@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { AccountTypesManager } from './AccountTypesManager';
 
 interface UserProfile {
   id: string;
   name: string;
   business_name: string;
   business_type: 'bouw' | 'basis';
+  account_type_id?: string;
   is_admin: boolean;
   created_at: string;
   website_url?: string;
@@ -202,7 +204,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative z-10 w-full max-w-md my-8"
+        className="relative z-10 w-full max-w-2xl my-8"
       >
         <GlassCard className="p-6">
           <div className="flex items-center justify-between mb-6">
@@ -237,16 +239,34 @@ export function AdminPage() {
     password: '',
     name: '',
     business_name: '',
-    business_type: 'basis' as 'bouw' | 'basis'
+    business_type: 'basis' as 'bouw' | 'basis',
+    account_type_id: ''
   });
   const [confirmAdminAction, setConfirmAdminAction] = useState<{ userId: string; makeAdmin: boolean } | null>(null);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState<UserWithEmail | null>(null);
+  const [activeTab, setActiveTab] = useState<'users' | 'account-types'>('users');
+  const [accountTypes, setAccountTypes] = useState<Array<{ id: string; name: string }>>([]);
 
   useEffect(() => {
     if (user) {
       checkAdminStatus();
+      fetchAccountTypes();
     }
   }, [user]);
+
+  const fetchAccountTypes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('account_types')
+        .select('id, name')
+        .order('name');
+
+      if (error) throw error;
+      setAccountTypes(data || []);
+    } catch (error) {
+      console.error('Error fetching account types:', error);
+    }
+  };
 
   const checkAdminStatus = async () => {
     try {
@@ -275,7 +295,12 @@ export function AdminPage() {
     try {
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('*')
+        .select(`
+          *,
+          account_types (
+            name
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -285,6 +310,26 @@ export function AdminPage() {
       showToast('Fout bij laden van gebruikers', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateAccountType = async (userId: string, accountTypeId: string) => {
+    setUpdating(userId);
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({ account_type_id: accountTypeId })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      showToast('Account type succesvol bijgewerkt', 'success');
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating account type:', error);
+      showToast('Fout bij bijwerken van account type', 'error');
+    } finally {
+      setUpdating(null);
     }
   };
 
@@ -477,7 +522,8 @@ export function AdminPage() {
           password: newUserForm.password,
           name: newUserForm.name,
           business_name: newUserForm.business_name,
-          business_type: newUserForm.business_type
+          business_type: newUserForm.business_type,
+          account_type_id: newUserForm.account_type_id || null
         })
       });
 
@@ -494,7 +540,8 @@ export function AdminPage() {
         password: '',
         name: '',
         business_name: '',
-        business_type: 'basis'
+        business_type: 'basis',
+        account_type_id: ''
       });
       fetchUsers();
     } catch (error: any) {
@@ -734,11 +781,38 @@ export function AdminPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-4xl font-bold text-white mb-2">Gebruikersbeheer</h1>
-                <p className="text-gray-400">Beheer account types en toegangsrechten van gebruikers</p>
+                <h1 className="text-4xl font-bold text-white mb-2">Admin Panel</h1>
+                <p className="text-gray-400">Beheer account types en gebruikers</p>
+
+                <div className="flex gap-4 mt-6">
+                  <button
+                    onClick={() => setActiveTab('users')}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                      activeTab === 'users'
+                        ? 'bg-blue-500/20 border border-blue-500/30 text-blue-400'
+                        : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    <Users className="w-5 h-5" />
+                    Gebruikers
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('account-types')}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                      activeTab === 'account-types'
+                        ? 'bg-blue-500/20 border border-blue-500/30 text-blue-400'
+                        : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    <Package className="w-5 h-5" />
+                    Account Types
+                  </button>
+                </div>
               </motion.div>
 
-              {loading ? (
+              {activeTab === 'account-types' ? (
+                <AccountTypesManager />
+              ) : loading ? (
                 <GlassCard className="p-16">
                   <div className="flex justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
@@ -812,13 +886,15 @@ export function AdminPage() {
                             <td className="p-4 text-gray-300">{profile.business_name || '-'}</td>
                             <td className="p-4">
                               <select
-                                value={profile.business_type}
-                                onChange={(e) => updateBusinessType(profile.id, e.target.value as 'bouw' | 'basis')}
+                                value={profile.account_type_id || ''}
+                                onChange={(e) => updateAccountType(profile.id, e.target.value)}
                                 disabled={updating === profile.id}
                                 className="px-3 py-1.5 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white text-sm focus:outline-none focus:border-blue-400/50 disabled:opacity-50"
                               >
-                                <option value="basis">Basis</option>
-                                <option value="bouw">Bouw</option>
+                                <option value="">Geen type</option>
+                                {accountTypes.map(type => (
+                                  <option key={type.id} value={type.id}>{type.name}</option>
+                                ))}
                               </select>
                             </td>
                             <td className="p-4">
@@ -903,38 +979,40 @@ export function AdminPage() {
           title="Gebruiker Bewerken"
         >
             {editingUser && (
-              <div className="space-y-4">
-                <GlassInput
-                  label="E-mailadres"
-                  type="email"
-                  placeholder="gebruiker@example.com"
-                  value={editForm.email}
-                  onChange={(e: any) => setEditForm({ ...editForm, email: e.target.value })}
-                />
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <GlassInput
+                    label="E-mailadres"
+                    type="email"
+                    placeholder="gebruiker@example.com"
+                    value={editForm.email}
+                    onChange={(e: any) => setEditForm({ ...editForm, email: e.target.value })}
+                  />
 
-                <GlassInput
-                  label="Naam"
-                  type="text"
-                  placeholder="Voer naam in"
-                  value={editForm.name}
-                  onChange={(e: any) => setEditForm({ ...editForm, name: e.target.value })}
-                />
+                  <GlassInput
+                    label="Naam"
+                    type="text"
+                    placeholder="Voer naam in"
+                    value={editForm.name}
+                    onChange={(e: any) => setEditForm({ ...editForm, name: e.target.value })}
+                  />
 
-                <GlassInput
-                  label="Bedrijfsnaam"
-                  type="text"
-                  placeholder="Voer bedrijfsnaam in"
-                  value={editForm.business_name}
-                  onChange={(e: any) => setEditForm({ ...editForm, business_name: e.target.value })}
-                />
+                  <GlassInput
+                    label="Bedrijfsnaam"
+                    type="text"
+                    placeholder="Voer bedrijfsnaam in"
+                    value={editForm.business_name}
+                    onChange={(e: any) => setEditForm({ ...editForm, business_name: e.target.value })}
+                  />
 
-                <GlassInput
-                  label="Website URL"
-                  type="url"
-                  placeholder="https://example.com"
-                  value={editForm.website_url}
-                  onChange={(e: any) => setEditForm({ ...editForm, website_url: e.target.value })}
-                />
+                  <GlassInput
+                    label="Website URL"
+                    type="url"
+                    placeholder="https://example.com"
+                    value={editForm.website_url}
+                    onChange={(e: any) => setEditForm({ ...editForm, website_url: e.target.value })}
+                  />
+                </div>
 
                 <RichTextEditor
                   label="Belangrijke Links"
@@ -942,14 +1020,16 @@ export function AdminPage() {
                   onChange={(value) => setEditForm({ ...editForm, important_links: value })}
                 />
 
-                <GlassInput
-                  label="Nieuw Wachtwoord"
-                  type="password"
-                  placeholder="Laat leeg om niet te wijzigen"
-                  value={editForm.password}
-                  onChange={(e: any) => setEditForm({ ...editForm, password: e.target.value })}
-                />
-                <p className="text-xs text-gray-500 -mt-2">Minimaal 6 tekens</p>
+                <div>
+                  <GlassInput
+                    label="Nieuw Wachtwoord"
+                    type="password"
+                    placeholder="Laat leeg om niet te wijzigen"
+                    value={editForm.password}
+                    onChange={(e: any) => setEditForm({ ...editForm, password: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Minimaal 6 tekens</p>
+                </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
@@ -1011,11 +1091,13 @@ export function AdminPage() {
 
               <GlassSelect
                 label="Account Type"
-                value={newUserForm.business_type}
-                onChange={(e: any) => setNewUserForm({ ...newUserForm, business_type: e.target.value })}
+                value={newUserForm.account_type_id}
+                onChange={(e: any) => setNewUserForm({ ...newUserForm, account_type_id: e.target.value })}
               >
-                <option value="basis">Basis</option>
-                <option value="bouw">Bouw</option>
+                <option value="">Geen type</option>
+                {accountTypes.map(type => (
+                  <option key={type.id} value={type.id}>{type.name}</option>
+                ))}
               </GlassSelect>
 
               <div className="flex gap-3 pt-4">

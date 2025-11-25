@@ -58,20 +58,13 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showResetForm, setShowResetForm] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
   const { signIn, user } = useAuth();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const impersonateEmail = urlParams.get('impersonate');
-
-    if (impersonateEmail) {
-      setCredentials(prev => ({ ...prev, email: decodeURIComponent(impersonateEmail) }));
-    }
-  }, []);
-
-  useEffect(() => {
     if (user) {
-      window.history.pushState({}, '', '/dashboard');
+      window.history.replaceState({}, '', '/dashboard');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }, [user]);
@@ -79,14 +72,49 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (isLocked) {
+      setError('Te veel mislukte inlogpogingen. Probeer het over 15 minuten opnieuw.');
+      return;
+    }
+
+    if (!credentials.email || !credentials.password) {
+      setError('Vul alle velden in.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(credentials.email)) {
+      setError('Voer een geldig e-mailadres in.');
+      return;
+    }
+
+    if (credentials.password.length < 6) {
+      setError('Wachtwoord moet minimaal 6 tekens zijn.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error: signInError } = await signIn(credentials.email, credentials.password);
 
       if (signInError) {
-        setError('Ongeldige inloggegevens. Controleer je email en wachtwoord.');
+        const newAttempts = loginAttempts + 1;
+        setLoginAttempts(newAttempts);
+
+        if (newAttempts >= 5) {
+          setIsLocked(true);
+          setTimeout(() => {
+            setIsLocked(false);
+            setLoginAttempts(0);
+          }, 15 * 60 * 1000);
+          setError('Te veel mislukte inlogpogingen. Account vergrendeld voor 15 minuten.');
+        } else {
+          setError(`Ongeldige inloggegevens. ${5 - newAttempts} pogingen over.`);
+        }
       } else {
+        setLoginAttempts(0);
         window.history.pushState({}, '', '/dashboard');
         window.dispatchEvent(new PopStateEvent('popstate'));
       }
@@ -278,11 +306,11 @@ export function Login() {
               >
                 <div className="flex-1 flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                   <Shield className="h-4 w-4 text-blue-400 flex-shrink-0" />
-                  <span className="text-xs text-gray-300">Beveiligde verbinding</span>
+                  <span className="text-xs text-gray-300">Portfolio beheer</span>
                 </div>
                 <div className="flex-1 flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                   <Zap className="h-4 w-4 text-cyan-400 flex-shrink-0" />
-                  <span className="text-xs text-gray-300">Supersnel dashboard</span>
+                  <span className="text-xs text-gray-300">Leads bekijken</span>
                 </div>
               </motion.div>
             </motion.div>

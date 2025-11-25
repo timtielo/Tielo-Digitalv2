@@ -2,8 +2,12 @@ import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
 interface CreateUserRequest {
@@ -12,6 +16,7 @@ interface CreateUserRequest {
   name?: string;
   business_name?: string;
   business_type?: 'bouw' | 'basis';
+  account_type_id?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -23,7 +28,16 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // Get the Supabase client with service role
+    if (req.method !== 'POST') {
+      return new Response(
+        JSON.stringify({ error: 'Method not allowed' }),
+        {
+          status: 405,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
@@ -125,13 +139,19 @@ Deno.serve(async (req: Request) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Update the profile with additional details
+    const updateData: any = {
+      name: body.name || '',
+      business_name: body.business_name || '',
+      business_type: body.business_type || 'basis',
+    };
+
+    if (body.account_type_id) {
+      updateData.account_type_id = body.account_type_id;
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from('user_profiles')
-      .update({
-        name: body.name || '',
-        business_name: body.business_name || '',
-        business_type: body.business_type || 'basis',
-      })
+      .update(updateData)
       .eq('id', newUser.user.id);
 
     if (updateError) {
