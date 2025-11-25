@@ -15,6 +15,7 @@ interface UserProfile {
   name: string;
   business_name: string;
   profile_picture: string | null;
+  profile_picture_url: string | null;
   business_type: 'bouw' | 'basis';
   is_admin: boolean;
 }
@@ -32,7 +33,7 @@ export function ProfilePage() {
   const [formData, setFormData] = useState({
     name: '',
     business_name: '',
-    profile_picture: '',
+    profile_picture_url: '',
   });
 
   useEffect(() => {
@@ -56,10 +57,10 @@ export function ProfilePage() {
         setFormData({
           name: data.name || '',
           business_name: data.business_name || '',
-          profile_picture: data.profile_picture || '',
+          profile_picture_url: data.profile_picture_url || '',
         });
-        if (data.profile_picture) {
-          setImagePreview(data.profile_picture);
+        if (data.profile_picture_url) {
+          setImagePreview(data.profile_picture_url);
         }
       }
     } catch (error) {
@@ -90,8 +91,8 @@ export function ProfilePage() {
     setUploading(true);
     try {
       // Delete old image if exists
-      if (formData.profile_picture) {
-        const oldPath = formData.profile_picture.split('/').pop();
+      if (formData.profile_picture_url) {
+        const oldPath = formData.profile_picture_url.split('/').pop();
         if (oldPath) {
           await supabase.storage
             .from('profile-pictures')
@@ -114,7 +115,7 @@ export function ProfilePage() {
 
       setFormData(prev => ({
         ...prev,
-        profile_picture: publicUrl,
+        profile_picture_url: publicUrl,
       }));
       showToast('Profielfoto succesvol geüpload', 'success');
     } catch (error) {
@@ -137,7 +138,7 @@ export function ProfilePage() {
           .update({
             name: formData.name,
             business_name: formData.business_name,
-            profile_picture: formData.profile_picture,
+            profile_picture_url: formData.profile_picture_url,
             updated_at: new Date().toISOString(),
           })
           .eq('id', user.id);
@@ -151,7 +152,7 @@ export function ProfilePage() {
             id: user.id,
             name: formData.name,
             business_name: formData.business_name,
-            profile_picture: formData.profile_picture,
+            profile_picture_url: formData.profile_picture_url,
           }]);
 
         if (error) throw error;
@@ -168,17 +169,17 @@ export function ProfilePage() {
   };
 
   const handleRemoveImage = async () => {
-    if (!user || !formData.profile_picture) return;
+    if (!user || !formData.profile_picture_url) return;
 
     try {
-      const oldPath = formData.profile_picture.split('/').pop();
+      const oldPath = formData.profile_picture_url.split('/').pop();
       if (oldPath) {
         await supabase.storage
           .from('profile-pictures')
           .remove([`${user.id}/${oldPath}`]);
       }
 
-      setFormData(prev => ({ ...prev, profile_picture: '' }));
+      setFormData(prev => ({ ...prev, profile_picture_url: '' }));
       setImagePreview('');
       setImageDimensions(null);
       showToast('Profielfoto verwijderd', 'success');
@@ -217,10 +218,10 @@ export function ProfilePage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="flex flex-col items-center gap-4 pb-6 border-b">
                     <div className="relative">
-                      {imagePreview || formData.profile_picture ? (
+                      {imagePreview || formData.profile_picture_url ? (
                         <div className="space-y-3">
                           <img
-                            src={imagePreview || formData.profile_picture}
+                            src={imagePreview || formData.profile_picture_url}
                             alt="Profielfoto"
                             className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
                           />

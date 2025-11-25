@@ -31,6 +31,12 @@ interface DashboardModule {
   sort_order: number;
 }
 
+interface UserProfile {
+  name: string;
+  business_name: string;
+  profile_picture_url?: string;
+}
+
 const iconMap: Record<string, any> = {
   Briefcase,
   Star,
@@ -48,6 +54,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
   const [isAdmin, setIsAdmin] = useState(false);
   const [isImpersonating, setIsImpersonating] = useState(false);
   const [impersonatedUserEmail, setImpersonatedUserEmail] = useState('');
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -97,11 +104,16 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
     try {
       const { data: profileData } = await supabase
         .from('user_profiles')
-        .select('is_admin')
+        .select('is_admin, name, business_name, profile_picture_url')
         .eq('id', user?.id)
         .maybeSingle();
 
       setIsAdmin(profileData?.is_admin || false);
+      setUserProfile({
+        name: profileData?.name || '',
+        business_name: profileData?.business_name || '',
+        profile_picture_url: profileData?.profile_picture_url || undefined
+      });
 
       const { data, error } = await supabase
         .from('user_dashboard_config')
@@ -242,7 +254,32 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
               )}
             </nav>
 
-            <div className="border-t border-gray-200 p-4">
+            <div className="border-t border-gray-200 p-4 space-y-4">
+              {userProfile && (
+                <div className="flex items-center gap-3 px-2">
+                  <div className="relative flex-shrink-0">
+                    {userProfile.profile_picture_url ? (
+                      <img
+                        src={userProfile.profile_picture_url}
+                        alt={userProfile.name || 'Profile'}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {userProfile.name || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {userProfile.business_name || 'No business'}
+                    </p>
+                  </div>
+                </div>
+              )}
               <Button
                 variant="outline"
                 className="w-full justify-start gap-2"

@@ -21,6 +21,7 @@ interface UserProfile {
   business_type: 'bouw' | 'basis';
   is_admin: boolean;
   created_at: string;
+  website_url?: string;
 }
 
 interface UserWithEmail extends UserProfile {
@@ -36,7 +37,7 @@ export function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingUser, setEditingUser] = useState<UserWithEmail | null>(null);
-  const [editForm, setEditForm] = useState({ name: '', business_name: '' });
+  const [editForm, setEditForm] = useState({ name: '', business_name: '', website_url: '' });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUserForm, setNewUserForm] = useState({
     email: '',
@@ -244,13 +245,14 @@ export function AdminPage() {
     setEditingUser(user);
     setEditForm({
       name: user.name || '',
-      business_name: user.business_name || ''
+      business_name: user.business_name || '',
+      website_url: user.website_url || ''
     });
   };
 
   const closeEditDialog = () => {
     setEditingUser(null);
-    setEditForm({ name: '', business_name: '' });
+    setEditForm({ name: '', business_name: '', website_url: '' });
   };
 
   const openCreateUserDialog = () => {
@@ -328,13 +330,20 @@ export function AdminPage() {
 
     setUpdating(editingUser.id);
     try {
-      const { error } = await supabase.rpc('update_user_details', {
+      const { error: detailsError } = await supabase.rpc('update_user_details', {
         target_user_id: editingUser.id,
         new_name: editForm.name,
         new_business_name: editForm.business_name
       });
 
-      if (error) throw error;
+      if (detailsError) throw detailsError;
+
+      const { error: websiteError } = await supabase.rpc('update_user_website_url', {
+        target_user_id: editingUser.id,
+        new_website_url: editForm.website_url
+      });
+
+      if (websiteError) throw websiteError;
 
       showToast('Gebruikersgegevens succesvol bijgewerkt', 'success');
       closeEditDialog();
@@ -553,6 +562,18 @@ export function AdminPage() {
                     value={editForm.business_name}
                     onChange={(e) => setEditForm({ ...editForm, business_name: e.target.value })}
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="website_url">Website URL</Label>
+                  <Input
+                    id="website_url"
+                    type="url"
+                    placeholder="https://example.com"
+                    value={editForm.website_url}
+                    onChange={(e) => setEditForm({ ...editForm, website_url: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Alleen admins kunnen dit veld bewerken</p>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
