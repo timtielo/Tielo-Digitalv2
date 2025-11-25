@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Search } from 'lucide-react';
+import { Shield, Search, Edit2, Mail } from 'lucide-react';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -8,6 +8,8 @@ import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
 import { Select } from '../../components/ui/Select';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../../components/ui/Table';
+import { Dialog } from '../../components/ui/Dialog';
+import { Textarea } from '../../components/ui/Textarea';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -21,14 +23,20 @@ interface UserProfile {
   created_at: string;
 }
 
+interface UserWithEmail extends UserProfile {
+  email: string;
+}
+
 export function AdminPage() {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [users, setUsers] = useState<UserWithEmail[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserWithEmail | null>(null);
+  const [editForm, setEditForm] = useState({ name: '', business_name: '' });
 
   useEffect(() => {
     if (user) {
@@ -121,9 +129,49 @@ export function AdminPage() {
     }
   };
 
+  const openEditDialog = (user: UserWithEmail) => {
+    setEditingUser(user);
+    setEditForm({
+      name: user.name || '',
+      business_name: user.business_name || ''
+    });
+  };
+
+  const closeEditDialog = () => {
+    setEditingUser(null);
+    setEditForm({ name: '', business_name: '' });
+  };
+
+  const updateUserDetails = async () => {
+    if (!editingUser) return;
+
+    setUpdating(editingUser.id);
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          name: editForm.name,
+          business_name: editForm.business_name
+        })
+        .eq('id', editingUser.id);
+
+      if (error) throw error;
+
+      showToast('Gebruikersgegevens succesvol bijgewerkt', 'success');
+      closeEditDialog();
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      showToast('Fout bij bijwerken van gebruikersgegevens', 'error');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const filteredUsers = users.filter(u =>
     u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.business_name.toLowerCase().includes(searchTerm.toLowerCase())
+    u.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!isAdmin) {
@@ -185,6 +233,7 @@ export function AdminPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Naam</TableHead>
+                        <TableHead>E-mail</TableHead>
                         <TableHead>Bedrijf</TableHead>
                         <TableHead>Account Type</TableHead>
                         <TableHead>Admin</TableHead>
@@ -195,6 +244,12 @@ export function AdminPage() {
                       {filteredUsers.map((profile) => (
                         <TableRow key={profile.id}>
                           <TableCell className="font-medium">{profile.name || '-'}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-4 w-4 text-gray-400" />
+                              <span className="text-sm">{profile.email}</span>
+                            </div>
+                          </TableCell>
                           <TableCell>{profile.business_name || '-'}</TableCell>
                           <TableCell>
                             <Select
@@ -215,20 +270,30 @@ export function AdminPage() {
                             </span>
                           </TableCell>
                           <TableCell>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => toggleAdminStatus(profile.id, profile.is_admin)}
-                              disabled={updating === profile.id || profile.id === user?.id}
-                            >
-                              {profile.is_admin ? 'Admin verwijderen' : 'Admin maken'}
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditDialog(profile)}
+                                disabled={updating === profile.id}
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => toggleAdminStatus(profile.id, profile.is_admin)}
+                                disabled={updating === profile.id || profile.id === user?.id}
+                              >
+                                {profile.is_admin ? 'Admin verwijderen' : 'Admin maken'}
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
                       {filteredUsers.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center text-gray-500 py-8">
+                          <TableCell colSpan={6} className="text-center text-gray-500 py-8">
                             Geen gebruikers gevonden
                           </TableCell>
                         </TableRow>
@@ -248,6 +313,66 @@ export function AdminPage() {
             </Card>
           )}
         </div>
+
+        {editingUser && (
+          <Dialog
+            isOpen={!!editingUser}
+            onClose={closeEditDialog}
+            title="Gebruiker Bewerken"
+          >
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="email">E-mailadres</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editingUser.email}
+                  disabled
+                  className="bg-gray-50"
+                />
+                <p className="text-xs text-gray-500 mt-1">E-mailadres kan niet worden gewijzigd</p>
+              </div>
+
+              <div>
+                <Label htmlFor="name">Naam</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Voer naam in"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="business_name">Bedrijfsnaam</Label>
+                <Input
+                  id="business_name"
+                  type="text"
+                  placeholder="Voer bedrijfsnaam in"
+                  value={editForm.business_name}
+                  onChange={(e) => setEditForm({ ...editForm, business_name: e.target.value })}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={closeEditDialog}
+                  disabled={updating === editingUser.id}
+                >
+                  Annuleren
+                </Button>
+                <Button
+                  onClick={updateUserDetails}
+                  disabled={updating === editingUser.id}
+                >
+                  {updating === editingUser.id ? 'Opslaan...' : 'Opslaan'}
+                </Button>
+              </div>
+            </div>
+          </Dialog>
+        )}
       </DashboardLayout>
     </ProtectedRoute>
   );
