@@ -31,7 +31,12 @@ const reviews = [
 
 export function HeroReviews() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleReviews, setVisibleReviews] = useState([0, 1, 2]);
+  const [displayedReviews, setDisplayedReviews] = useState([
+    { reviewIndex: 0, id: 0 },
+    { reviewIndex: 1, id: 1 },
+    { reviewIndex: 2, id: 2 }
+  ]);
+  const [nextId, setNextId] = useState(3);
 
   useEffect(() => {
     // Auto-rotate reviews every 5 seconds
@@ -43,13 +48,13 @@ export function HeroReviews() {
   }, []);
 
   useEffect(() => {
-    // Update visible reviews for desktop view
-    const newVisible = [
-      currentIndex,
-      (currentIndex + 1) % reviews.length,
-      (currentIndex + 2) % reviews.length
-    ];
-    setVisibleReviews(newVisible);
+    // Add new review at top, shift others down
+    const nextReviewIndex = (currentIndex + 3) % reviews.length;
+    setDisplayedReviews([
+      { reviewIndex: nextReviewIndex, id: nextId },
+      ...displayedReviews.slice(0, 2)
+    ]);
+    setNextId(prev => prev + 1);
   }, [currentIndex]);
 
   const nextReview = () => {
@@ -124,45 +129,48 @@ export function HeroReviews() {
       {/* Desktop Animated Vertical Carousel */}
       <div className="hidden md:block relative overflow-hidden" style={{ height: '460px' }}>
         <AnimatePresence initial={false}>
-          {visibleReviews.map((reviewIndex, position) => (
-            <motion.div
-              key={`${reviewIndex}-${currentIndex}`}
-              initial={{
-                opacity: 0,
-                y: -100,
-                scale: 0.95
-              }}
-              animate={{
-                opacity: position === 2 ? 0.4 : 1,
-                y: position * 150,
-                scale: 1
-              }}
-              exit={{
-                opacity: 0,
-                y: 450,
-                scale: 0.95
-              }}
-              transition={{
-                duration: 0.6,
-                ease: [0.4, 0, 0.2, 1]
-              }}
-              className="absolute w-full bg-white rounded-xl p-6 shadow-md"
-              style={{ zIndex: 3 - position }}
-            >
-              <div className="flex items-center gap-1 mb-3">
-                {[...Array(reviews[reviewIndex].rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
-                ))}
-              </div>
-              <p className="text-gray-700 mb-4 text-base italic leading-relaxed">
-                "{reviews[reviewIndex].quote}"
-              </p>
-              <div>
-                <p className="font-semibold text-base text-gray-900">{reviews[reviewIndex].name}</p>
-                <p className="text-sm text-gray-500">{reviews[reviewIndex].role}</p>
-              </div>
-            </motion.div>
-          ))}
+          {displayedReviews.map((item, position) => {
+            const review = reviews[item.reviewIndex];
+            return (
+              <motion.div
+                key={item.id}
+                initial={{
+                  opacity: 0,
+                  y: -100,
+                  scale: 0.95
+                }}
+                animate={{
+                  opacity: position === 2 ? 0.4 : 1,
+                  y: position * 150,
+                  scale: 1
+                }}
+                exit={{
+                  opacity: 0,
+                  y: 450,
+                  scale: 0.95
+                }}
+                transition={{
+                  duration: 0.6,
+                  ease: [0.4, 0, 0.2, 1]
+                }}
+                className="absolute w-full bg-white rounded-xl p-6 shadow-md"
+                style={{ zIndex: 3 - position }}
+              >
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 text-base italic leading-relaxed">
+                  "{review.quote}"
+                </p>
+                <div>
+                  <p className="font-semibold text-base text-gray-900">{review.name}</p>
+                  <p className="text-sm text-gray-500">{review.role}</p>
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
     </>
