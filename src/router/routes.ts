@@ -22,6 +22,11 @@ import { Oplossingen } from '../pages/Oplossingen';
 import { OplossingPage } from '../pages/OplossingPage';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
 import { MetselaarShowcase } from '../pages/MetselaarShowcase';
+import { Login } from '../pages/Login';
+import { PortfolioPage } from '../pages/Dashboard/PortfolioPage';
+import { WerkspotPage } from '../pages/Dashboard/WerkspotPage';
+import { ReviewsPage } from '../pages/Dashboard/ReviewsPage';
+import { LeadsPage } from '../pages/Dashboard/LeadsPage';
 
 export interface Route {
   path: string;
@@ -33,6 +38,11 @@ export interface Route {
 
 export const routes: Route[] = [
   { path: '/', component: Home },
+  { path: '/login', component: Login, layout: false },
+  { path: '/dashboard/portfolio', component: PortfolioPage, layout: false },
+  { path: '/dashboard/werkspot', component: WerkspotPage, layout: false },
+  { path: '/dashboard/reviews', component: ReviewsPage, layout: false },
+  { path: '/dashboard/leads', component: LeadsPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },
   { path: '/diensten', component: Services },
