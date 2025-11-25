@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const mobileMenuItems = [
   { name: 'Website', path: '/diensten/websites' },
-  { name: 'Oplossingen', path: '/oplossingen' },
   { name: 'Contact', path: '/contact' }
 ];
 
@@ -64,7 +63,6 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
             <Link href="/diensten/websites" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Website</Link>
-            <Link href="/oplossingen" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Oplossingen</Link>
             <Link href="/contact" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Contact</Link>
             <ConsultButton>
               Gratis opzetje

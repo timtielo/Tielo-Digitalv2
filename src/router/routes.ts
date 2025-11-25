@@ -18,8 +18,6 @@ import { BusinessCard } from '../pages/BusinessCard';
 import { Privacy } from '../pages/Privacy';
 import { Terms } from '../pages/Terms';
 import { Cookies } from '../pages/Cookies';
-import { Oplossingen } from '../pages/Oplossingen';
-import { OplossingPage } from '../pages/OplossingPage';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
 import { MetselaarShowcase } from '../pages/MetselaarShowcase';
 import { Login } from '../pages/Login';
@@ -71,7 +69,5 @@ export const routes: Route[] = [
   { path: '/visitekaartje', component: BusinessCard },
   { path: '/privacy', component: Privacy },
   { path: '/terms', component: Terms },
-  { path: '/cookies', component: Cookies },
-  { path: '/oplossingen', component: Oplossingen },
-  { path: '/oplossingen/:slug', component: OplossingPage, params: ['slug'] }
+  { path: '/cookies', component: Cookies }
 ];
