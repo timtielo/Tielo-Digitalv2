@@ -404,31 +404,57 @@ export function AdminPage() {
           throw new Error('Niet ingelogd');
         }
 
-        console.log('Session found, calling edge function...');
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-password`;
-        console.log('API URL:', apiUrl);
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_id: editingUser.id,
-            new_password: editForm.password
-          })
+        console.log('Session found:', {
+          access_token_length: session.access_token?.length,
+          user_id: session.user?.id
         });
 
-        console.log('Response status:', response.status);
-        const result = await response.json();
-        console.log('Response result:', result);
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-password`;
+        console.log('API URL:', apiUrl);
+        console.log('Request payload:', {
+          user_id: editingUser.id,
+          password_length: editForm.password.length
+        });
 
-        if (!response.ok) {
-          throw new Error(result.error || 'Fout bij bijwerken van wachtwoord');
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+            },
+            body: JSON.stringify({
+              user_id: editingUser.id,
+              new_password: editForm.password
+            })
+          });
+
+          console.log('Response status:', response.status);
+          console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+          const responseText = await response.text();
+          console.log('Response text:', responseText);
+
+          let result;
+          try {
+            result = JSON.parse(responseText);
+          } catch (e) {
+            console.error('Failed to parse response as JSON:', e);
+            throw new Error(`Server response: ${responseText}`);
+          }
+
+          console.log('Response result:', result);
+
+          if (!response.ok) {
+            throw new Error(result.error || result.message || 'Fout bij bijwerken van wachtwoord');
+          }
+
+          console.log('Password updated successfully');
+        } catch (fetchError: any) {
+          console.error('Fetch error:', fetchError);
+          throw new Error(`Verbindingsfout: ${fetchError.message}`);
         }
-
-        console.log('Password updated successfully');
       }
 
       showToast('Gebruikersgegevens succesvol bijgewerkt', 'success');
