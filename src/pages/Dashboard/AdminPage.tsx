@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -463,60 +462,89 @@ export function AdminPage() {
     u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleBackToDashboard = () => {
+    window.history.pushState({}, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   if (!isAdmin) {
     return (
       <ProtectedRoute>
-        <DashboardLayout currentPage="admin">
-          <div className="min-h-screen bg-gray-950 relative">
-            <div className="absolute inset-0">
-              <AuroraBackground />
-            </div>
-            <div className="relative z-10 flex items-center justify-center min-h-[70vh]">
-              <GlassCard className="p-12 text-center max-w-md">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Shield className="h-8 w-8 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-white mb-3">Geen Toegang</h2>
-                <p className="text-gray-400">Je hebt geen admin rechten om deze pagina te bekijken.</p>
-              </GlassCard>
+        <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+          <AuroraBackground />
+          <div className="relative z-10 min-h-screen">
+            <div className="container mx-auto px-4 py-8">
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-8"
+              >
+                <button
+                  onClick={handleBackToDashboard}
+                  className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+                >
+                  ← Terug naar Dashboard
+                </button>
+              </motion.div>
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <GlassCard className="p-12 text-center max-w-md">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Shield className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-white mb-3">Geen Toegang</h2>
+                  <p className="text-gray-400">Je hebt geen admin rechten om deze pagina te bekijken.</p>
+                </GlassCard>
+              </div>
             </div>
           </div>
-        </DashboardLayout>
+        </div>
       </ProtectedRoute>
     );
   }
 
   return (
     <ProtectedRoute>
-      <DashboardLayout currentPage="admin">
-        <div className="min-h-screen bg-gray-950 relative pb-12">
-          <div className="absolute inset-0">
-            <AuroraBackground />
-          </div>
+      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+        <AuroraBackground />
 
-          <div className="relative z-10 space-y-8 p-8">
+        <div className="relative z-10 min-h-screen">
+          <div className="container mx-auto px-4 py-8">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              className="mb-8"
             >
-              <h1 className="text-4xl font-bold text-white mb-2">Gebruikersbeheer</h1>
-              <p className="text-gray-400">Beheer account types en toegangsrechten van gebruikers</p>
+              <button
+                onClick={handleBackToDashboard}
+                className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+              >
+                ← Terug naar Dashboard
+              </button>
             </motion.div>
 
-            {loading ? (
-              <GlassCard className="p-16">
-                <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
-                </div>
-              </GlassCard>
-            ) : (
+            <div className="space-y-8">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
+                transition={{ duration: 0.5 }}
               >
-                <GlassCard>
+                <h1 className="text-4xl font-bold text-white mb-2">Gebruikersbeheer</h1>
+                <p className="text-gray-400">Beheer account types en toegangsrechten van gebruikers</p>
+              </motion.div>
+
+              {loading ? (
+                <GlassCard className="p-16">
+                  <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+                  </div>
+                </GlassCard>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                  <GlassCard>
                   <div className="p-6 border-b border-white/10">
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
@@ -655,17 +683,19 @@ export function AdminPage() {
                         <li><strong className="text-blue-100">Bouw:</strong> Volledige toegang inclusief Portfolio en Werkspot</li>
                       </ul>
                     </div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            )}
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
+            </div>
           </div>
+        </div>
 
-          <Modal
-            isOpen={!!editingUser}
-            onClose={closeEditDialog}
-            title="Gebruiker Bewerken"
-          >
+        <Modal
+          isOpen={!!editingUser}
+          onClose={closeEditDialog}
+          title="Gebruiker Bewerken"
+        >
             {editingUser && (
               <div className="space-y-4">
                 <GlassInput
@@ -869,8 +899,7 @@ export function AdminPage() {
               </div>
             )}
           </Modal>
-        </div>
-      </DashboardLayout>
+      </div>
     </ProtectedRoute>
   );
 }
