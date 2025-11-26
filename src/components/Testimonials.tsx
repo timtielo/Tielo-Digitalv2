@@ -3,6 +3,12 @@ import { Star } from 'lucide-react';
 
 const testimonials = [
   {
+    name: 'Iris Achtereekte',
+    role: 'Eigenaar bij Her Horizon',
+    quote: 'Binnen een week stond mijn hele website herhorizon.nl live. Inclusief logo, teksten en design. Tim dacht mee over de vormgeving en hielp ook bij het uitwerken van mijn businessidee en het scherpstellen van de boodschap richting mijn doelgroep. Daarnaast heeft hij alles technisch goed ingericht: het content management systeem, de Google Business-vermelding, de vindbaarheid in Google en de juiste DNS-instellingen. Wat ik vooral waardeerde, is hoe snel alles geregeld was en hoe duidelijk de communicatie verliep. Ik had veel controle over de inhoud en voelde me echt meegenomen in het proces. Binnen enkele dagen stond alles online! Kortom, een fantastische service die ik van harte aanbeveel!',
+    rating: 5
+  },
+  {
     name: "Job 't Gilde",
     role: "Eigenaar bij 't Gilde Gevelwerken",
     quote: 'Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en enkele aanpassingen waren snel gedaan. Ik kan zelf makkelijk mijn portfolio bijwerken. Daarnaast heeft hij mij geholpen met de DNS instellingen en het logo. De prijs was ook prima. Kortom, snelle en zorgeloze ervaring, dikke aanrader.',
@@ -35,7 +41,7 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
