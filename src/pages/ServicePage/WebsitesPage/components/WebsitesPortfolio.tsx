@@ -4,21 +4,27 @@ import { Quote, Star } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Iris Achtereekte',
-    company: 'Her Horizon',
-    quote: "Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp bij het uitwerken van mijn businessidee. Alles was snel geregeld en de communicatie was duidelijk.",
+    name: 'Youssef Fazazi',
+    company: 'Mr. Clogged 24/7',
+    quote: "Ik twijfelde lang of ik wel een eigen website nodig had. Ik werk al lang via Werkspot en heb al meer dan 600 reviews. Dat betekent ook hoge kosten en soms onnodig betalen. Verder had ik geen online aanwezigheid. Tim heeft er nu voor gezorgd dat ik direct geappt of gebeld kan worden, zonder dat Werkspot daartussen zit. Hij bouwde een professionele website en regel­de alles eromheen: Google Business, WhatsApp-integratie en het complete domeinbeheer. Ik hoefde nergens zelf achteraan. Het proces was snel, duidelijk en de prijs viel positief mee. Dikke aanrader.",
     rating: 5
   },
   {
     name: "Job 't Gilde",
     company: "'t Gilde Gevelwerken",
-    quote: "Ik twijfelde lang of ik wel een eigen website nodig had. Ik werk al lang via Werkspot en heb al meer dan 600 reviews. Dat betekent ook hoge kosten en soms onnodig betalen. Verder had ik geen online aanwezigheid. Tim heeft er nu voor gezorgd dat ik direct geappt of gebeld kan worden, zonder dat Werkspot daartussen zit. Hij bouwde een professionele website en regel­de alles eromheen: Google Business, WhatsApp-integratie en het complete domeinbeheer. Ik hoefde nergens zelf achteraan. Het proces was snel, duidelijk en de prijs viel positief mee. Dikke aanrader.",
+    quote: "Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en enkele aanpassingen waren snel gedaan. Ik kan zelf makkelijk mijn portfolio bijwerken. Daarnaast heeft hij mij geholpen met de DNS instellingen en het logo. De prijs was ook prima. Kortom, snelle en zorgeloze ervaring, dikke aanrader.",
     rating: 5
   },
   {
     name: 'Lars van der Meer',
     company: 'Meer Impact Marketing',
     quote: "Professioneel, supersnel en helemaal naar wens. Binnen een paar dagen was alles geregeld, van ons eerste contact tot het online-gaan van de site. Alles werd volledig geregeld.",
+    rating: 5
+  },
+  {
+    name: 'Iris Achtereekte',
+    company: 'Her Horizon',
+    quote: "Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp bij het uitwerken van mijn businessidee. Alles was snel geregeld en de communicatie was duidelijk.",
     rating: 5
   }
 ];
@@ -32,7 +38,7 @@ export function WebsitesPortfolio() {
             Wat Onze Klanten Zeggen
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
