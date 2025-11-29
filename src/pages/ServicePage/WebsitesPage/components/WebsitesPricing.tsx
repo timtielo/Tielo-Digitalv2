@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight, TrendingUp } from 'lucide-react';
 
 export function WebsitesPricing() {
   const scrollToForm = () => {
@@ -16,6 +16,10 @@ export function WebsitesPricing() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <TrendingUp className="w-4 h-4" />
+            Terugverdiend in een maand
+          </div>
           <h2 className="text-4xl font-bold mb-4 font-rubik">
             Investering
           </h2>
@@ -90,6 +94,17 @@ export function WebsitesPricing() {
                     <span className="text-gray-700">Technische ondersteuning</span>
                   </li>
                 </ul>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-6 mb-6">
+              <div className="bg-blue-50 rounded-lg p-4 text-center">
+                <p className="text-gray-700 font-semibold mb-2">
+                  Zo had metselaar Job in zijn eerste maand twee aanvragen van zo'n €10.000 binnen.
+                </p>
+                <p className="text-sm text-gray-600">
+                  De investering verdien je vaak al terug met één nieuwe klant.
+                </p>
               </div>
             </div>
 

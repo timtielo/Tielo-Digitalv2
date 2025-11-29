@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
 import { Link } from './Link';
 import { ConsultButton } from './common/ConsultButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const mobileMenuItems = [
-  { name: 'Diensten', path: '/diensten/websites' },
-  { name: 'Oplossingen', path: '/oplossingen' },
+  { name: 'Website', path: '/diensten/websites' },
   { name: 'Contact', path: '/contact' }
 ];
 
@@ -44,7 +43,7 @@ export function Header() {
     <header className={`fixed w-full z-50 transition-all duration-300 ${
       isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'
     }`}>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group" onClick={handleLinkClick}>
             <img 
@@ -62,20 +61,28 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/diensten/websites">Diensten</Link>
-            <Link href="/oplossingen">Oplossingen</Link>
-            <Link href="/contact">Contact</Link>
+          <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
+            <Link href="/diensten/websites" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Website</Link>
+            <Link href="/contact" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Contact</Link>
             <ConsultButton>
               Gratis opzetje
             </ConsultButton>
+            <Link
+              href="/login"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              onClick={handleLinkClick}
+            >
+              <LogIn size={16} />
+              Login
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? 'Sluit menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -90,12 +97,12 @@ export function Header() {
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-lg overflow-hidden"
             >
-              <nav className="flex flex-col divide-y divide-gray-100">
+              <nav className="flex flex-col divide-y divide-gray-100" aria-label="Mobile navigation">
                 {mobileMenuItems.map((item) => (
                   <div key={item.name} className="py-2 px-4">
                     <Link
                       href={item.path}
-                      className="block py-2 hover:text-primary transition-colors"
+                      className="block py-3 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded min-h-[44px] flex items-center"
                       onClick={handleLinkClick}
                     >
                       {item.name}
@@ -106,6 +113,16 @@ export function Header() {
                   <ConsultButton>
                     Gratis opzetje
                   </ConsultButton>
+                </div>
+                <div className="py-2 px-4">
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 py-3 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded min-h-[44px]"
+                    onClick={handleLinkClick}
+                  >
+                    <LogIn size={20} />
+                    Login
+                  </Link>
                 </div>
               </nav>
             </motion.div>

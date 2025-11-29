@@ -38,14 +38,14 @@ const features = [
 
 export function OplossingSection() {
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
+    <section className="py-16 sm:py-20 bg-white">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-12 sm:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl font-bold mb-4 font-rubik"
+            className="text-3xl sm:text-4xl font-bold mb-4 font-rubik"
           >
             Een website die jij niet zelf hoeft te bouwen
           </motion.h2>
@@ -54,13 +54,13 @@ export function OplossingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto"
           >
             Ik maak een gratis opzetje en regel daarna alle techniek. Jij hoeft niets te doen.
           </motion.p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <BenefitCard key={index} {...feature} index={index} />
           ))}

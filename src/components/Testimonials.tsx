@@ -15,6 +15,12 @@ const testimonials = [
     rating: 5
   },
   {
+    name: 'Youssef Fazazi',
+    role: 'Eigenaar',
+    quote: 'Ik twijfelde lang of ik wel een eigen website nodig had. Ik werk al lang via Werkspot en heb al meer dan 600 reviews. Dat betekent ook hoge kosten en soms onnodig betalen. Verder had ik geen online aanwezigheid. Tim heeft er nu voor gezorgd dat ik direct geappt of gebeld kan worden, zonder dat Werkspot daartussen zit. Hij bouwde een professionele website en regel­de alles eromheen: Google Business, WhatsApp-integratie en het complete domeinbeheer. Ik hoefde nergens zelf achteraan. Het proces was snel, duidelijk en de prijs viel positief mee. Dikke aanrader.',
+    rating: 5
+  },
+  {
     name: 'Lars van der Meer',
     role: 'Eigenaar bij Meer Impact Marketing',
     quote: 'Tim heeft een geweldige website voor mij gebouwd! Professioneel, supersnel en helemaal naar wens. Dingen waar ik normaal mee worstel, zoals DNS-settings en beveiliging, werden volledig geregeld. De integraties werken perfect, en dankzij het dashboard heb ik eindelijk inzicht in mijn bezoekersaantallen en populairste pagina\'s. Binnen een paar dagen was alles geregeld, van ons eerste contact tot het online-gaan van de site. Het contact verliep soepel, en aanpassingen werden direct doorgevoerd. Ik ben enorm tevreden en heb Tim al aan meerdere mensen in mijn netwerk aanbevolen. Als je een professionele, snelle, en goed presterende website wilt, ben je hier aan het juiste adres!',
@@ -35,7 +41,7 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}

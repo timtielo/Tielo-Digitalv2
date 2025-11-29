@@ -5,20 +5,26 @@ import { AgitateSection } from '../components/Home/AgitateSection';
 import { OplossingSection } from '../components/Home/OplossingSection';
 import { Benefits } from '../components/Home/Benefits';
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
-import { Testimonials } from '../components/Testimonials';
 import { CTASection } from '../components/CTASection';
-import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
+import { SEO } from '../components/SEO';
 import { LocalBusinessSchema } from '../components/SEO/LocalBusinessSchema';
 
 export function Home() {
   return (
     <>
-      <ContentfulSEO
-        internalName="Home page SEO"
-        fallback={{
-          title: "Website voor Bouwbedrijven | Word Zichtbaar Zonder Gedoe | Tielo Digital",
-          description: "Geen gedoe met Werkspot of DNS settings. Gratis website-opzetje voor jouw bouwbedrijf. Ik regel alle techniek: domein, hosting, Google Business, WhatsApp. Jij hoeft alleen je werk te doen."
-        }}
+      <SEO
+        title="Website voor Bouwbedrijven | Word Zichtbaar Zonder Gedoe"
+        description="Geen gedoe met Werkspot of DNS settings. Gratis website-opzetje voor jouw bouwbedrijf. Ik regel alle techniek: domein, hosting, Google Business, WhatsApp. Jij hoeft alleen je werk te doen."
+        keywords={[
+          'Website Bouwbedrijf',
+          'Gratis Website',
+          'Bouwbedrijf Online',
+          'Google Business',
+          'Website Metselaar',
+          'Website Aannemer',
+          'Domein Registratie'
+        ]}
+        canonical="https://www.tielo-digital.nl/"
       />
       <LocalBusinessSchema
         aggregateRating={{
@@ -34,7 +40,6 @@ export function Home() {
       <div id="voorbeelden">
         <WebsiteShowcase />
       </div>
-      <Testimonials />
       <CTASection />
     </>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
 import { BUSINESS_INFO } from '../../config/business';
 
 interface NAPInfoProps {
@@ -23,13 +23,24 @@ export function NAPInfo({
           <span itemProp="addressLocality">{address.addressLocality}</span>,{' '}
           <span itemProp="addressCountry">Nederland</span>
         </div>
-        <a
-          href={`mailto:${BUSINESS_INFO.email}`}
-          itemProp="email"
-          className="hover:text-primary transition-colors"
-        >
-          {BUSINESS_INFO.email}
-        </a>
+        <div className="flex items-center gap-3">
+          <a
+            href={`mailto:${BUSINESS_INFO.email}`}
+            itemProp="email"
+            className="hover:text-primary transition-colors"
+          >
+            {BUSINESS_INFO.email}
+          </a>
+          <a
+            href="https://wa.me/31620948502?text=Hey%20Tim,"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors"
+            aria-label="Chat op WhatsApp"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </a>
+        </div>
       </div>
     );
   }

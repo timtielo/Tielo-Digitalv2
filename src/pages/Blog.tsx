@@ -31,18 +31,20 @@ export function Blog() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SEO 
-        title="Blog - Tielo Digital"
+      <SEO
+        title="Blog"
         description="Ontdek de laatste inzichten over AI, automatisering en digitale transformatie. Praktische tips en strategieën voor jouw bedrijf."
         keywords={[
           'AI Blog',
           'Automatisering Blog',
           'Digitale Transformatie',
           'Tech Nieuws',
-          'Business Innovation'
+          'Business Innovation',
+          'Bouwbedrijf Automatisering',
+          'Website Tips'
         ]}
-        ogType="blog"
-        canonical="https://tielo-digital.nl/blog"
+        ogType="website"
+        canonical="https://www.tielo-digital.nl/blog"
       />
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-4">
