@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Hero } from '../components/Hero';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
 import { AgitateSection } from '../components/Home/AgitateSection';
@@ -10,6 +10,16 @@ import { SEO } from '../components/SEO';
 import { LocalBusinessSchema } from '../components/SEO/LocalBusinessSchema';
 
 export function Home() {
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+
+    if (type === 'recovery') {
+      window.location.href = `/reset-password${window.location.hash}`;
+    } else if (type === 'signup' || type === 'magiclink') {
+      window.location.href = `/login${window.location.hash}`;
+    }
+  }, []);
   return (
     <>
       <SEO

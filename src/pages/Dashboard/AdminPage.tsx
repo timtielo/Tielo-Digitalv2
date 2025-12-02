@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users, Target } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { AccountTypesManager } from './AccountTypesManager';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 
 interface UserProfile {
   id: string;
@@ -727,18 +728,6 @@ export function AdminPage() {
           <AuroraBackground />
           <div className="relative z-10 min-h-screen">
             <div className="container mx-auto px-4 py-8">
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
-                <button
-                  onClick={handleBackToDashboard}
-                  className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
-                >
-                  ← Terug naar Dashboard
-                </button>
-              </motion.div>
               <div className="flex items-center justify-center min-h-[60vh]">
                 <GlassCard className="p-12 text-center max-w-md">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -762,27 +751,35 @@ export function AdminPage() {
 
         <div className="relative z-10 min-h-screen">
           <div className="container mx-auto px-4 py-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <button
-                onClick={handleBackToDashboard}
-                className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
-              >
-                ← Terug naar Dashboard
-              </button>
-            </motion.div>
-
             <div className="space-y-8">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
+                <Breadcrumb items={[{ label: 'Admin' }]} />
                 <h1 className="text-4xl font-bold text-white mb-2">Admin Panel</h1>
                 <p className="text-gray-400">Beheer account types en gebruikers</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      window.history.pushState({}, '', '/dashboard/mcc');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    }}
+                    className="flex items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 hover:border-yellow-500/50 transition-all group"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Target className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="font-semibold text-white">Mission Control</h3>
+                      <p className="text-sm text-gray-400">Beheer doelen</p>
+                    </div>
+                  </motion.button>
+                </div>
 
                 <div className="flex gap-4 mt-6">
                   <button

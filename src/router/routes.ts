@@ -21,6 +21,7 @@ import { Cookies } from '../pages/Cookies';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
 import { MetselaarShowcase } from '../pages/MetselaarShowcase';
 import { Login } from '../pages/Login';
+import { ResetPassword } from '../pages/ResetPassword';
 import { PortfolioPage } from '../pages/Dashboard/PortfolioPage';
 import { WerkspotPage } from '../pages/Dashboard/WerkspotPage';
 import { ReviewsPage } from '../pages/Dashboard/ReviewsPage';
@@ -28,6 +29,7 @@ import { LeadsPage } from '../pages/Dashboard/LeadsPage';
 import { ProfilePage } from '../pages/Dashboard/ProfilePage';
 import { AdminPage } from '../pages/Dashboard/AdminPage';
 import { DashboardHome } from '../pages/Dashboard/DashboardHome';
+import { MissionControlPage } from '../pages/Dashboard/MissionControlPage';
 
 export interface Route {
   path: string;
@@ -40,6 +42,7 @@ export interface Route {
 export const routes: Route[] = [
   { path: '/', component: Home },
   { path: '/login', component: Login, layout: false },
+  { path: '/reset-password', component: ResetPassword, layout: false },
   { path: '/dashboard', component: DashboardHome, layout: false },
   { path: '/dashboard/portfolio', component: PortfolioPage, layout: false },
   { path: '/dashboard/werkspot', component: WerkspotPage, layout: false },
@@ -47,6 +50,7 @@ export const routes: Route[] = [
   { path: '/dashboard/leads', component: LeadsPage, layout: false },
   { path: '/dashboard/profile', component: ProfilePage, layout: false },
   { path: '/dashboard/admin', component: AdminPage, layout: false },
+  { path: '/dashboard/mcc', component: MissionControlPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },
   { path: '/diensten', component: Services },

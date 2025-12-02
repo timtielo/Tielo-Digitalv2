@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Shield, Zap, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase/client';
 import { AuroraBackground } from '../components/ui/aurora-bento-grid';
 
 interface Testimonial {
@@ -22,7 +23,7 @@ const testimonials: Testimonial[] = [
     avatarSrc: "https://www.herhorizon.nl/images/HerHorizontrans.svg",
     name: "Iris Achtereekte",
     handle: "Her Horizon",
-    text: "Fijn om hier inzicht te krijgen in de leads, mijn eigen reviews en informatie over de bezoekers."
+    text: "Top voor inzicht in leads en reviews."
   },
 ];
 
@@ -58,9 +59,11 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showResetForm, setShowResetForm] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSuccess, setResetSuccess] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
-  const { signIn, user } = useAuth();
+  const { signIn, resetPassword, user } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -68,6 +71,28 @@ export function Login() {
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }, [user]);
+
+  useEffect(() => {
+    const handleEmailConfirmation = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const type = hashParams.get('type');
+
+      if (accessToken && (type === 'signup' || type === 'magiclink')) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: hashParams.get('refresh_token') || '',
+        });
+
+        if (!error) {
+          window.history.replaceState({}, '', '/dashboard');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+      }
+    };
+
+    handleEmailConfirmation();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,10 +153,47 @@ export function Login() {
   const handleShowResetForm = () => {
     setShowResetForm(true);
     setError('');
+    setResetSuccess(false);
+    setResetEmail(credentials.email);
   };
 
   const handleBackToLogin = () => {
     setShowResetForm(false);
+    setResetSuccess(false);
+    setError('');
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setResetSuccess(false);
+
+    if (!resetEmail) {
+      setError('Vul een e-mailadres in.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(resetEmail)) {
+      setError('Voer een geldig e-mailadres in.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error: resetError } = await resetPassword(resetEmail);
+
+      if (resetError) {
+        setError('Er is een fout opgetreden. Probeer het later opnieuw.');
+      } else {
+        setResetSuccess(true);
+      }
+    } catch (err) {
+      setError('Er is een fout opgetreden. Probeer het later opnieuw.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -172,7 +234,7 @@ export function Login() {
                 className="text-gray-300 text-center"
               >
                 {showResetForm
-                  ? 'Neem contact op om je wachtwoord te resetten'
+                  ? 'Voer je e-mailadres in om je wachtwoord te resetten'
                   : 'Meld aan met je account om je dashboard te bekijken'}
               </motion.p>
 
@@ -268,34 +330,77 @@ export function Login() {
                 </motion.button>
               </form>
               ) : (
-              <div className="space-y-5 mt-4">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-blue-300 text-center bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 p-6 rounded-2xl"
-                >
-                  <p className="text-sm mb-2">Stuur een email naar:</p>
-                  <a
-                    href="mailto:tim@tielo-digital.nl"
-                    className="text-lg font-semibold text-blue-200 hover:text-blue-100 transition-colors"
+              <form className="space-y-5 mt-4" onSubmit={handleResetPassword}>
+                {!resetSuccess ? (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <label className="text-sm font-medium text-gray-300 block mb-2">
+                        Email Adres
+                      </label>
+                      <GlassInputWrapper>
+                        <input
+                          name="reset-email"
+                          type="email"
+                          placeholder="je@email.nl"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          disabled={loading}
+                          required
+                          className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-white placeholder-gray-400"
+                        />
+                      </GlassInputWrapper>
+                    </motion.div>
+
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-red-300 text-sm text-center bg-red-500/20 backdrop-blur-sm border border-red-500/30 p-3 rounded-2xl"
+                      >
+                        {error}
+                      </motion.div>
+                    )}
+
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      type="submit"
+                      disabled={loading}
+                      className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 py-4 font-medium text-white hover:from-blue-600 hover:to-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
+                    >
+                      {loading ? 'Bezig met versturen...' : 'Reset link versturen'}
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-green-300 text-center bg-green-500/20 backdrop-blur-sm border border-green-500/30 p-6 rounded-2xl"
                   >
-                    tim@tielo-digital.nl
-                  </a>
-                  <p className="text-sm mt-2">om een nieuw wachtwoord aan te vragen</p>
-                </motion.div>
+                    <p className="text-base font-medium mb-2">Email verzonden!</p>
+                    <p className="text-sm">
+                      Controleer je inbox en klik op de link om je wachtwoord te resetten.
+                    </p>
+                  </motion.div>
+                )}
 
                 <motion.button
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.6 }}
                   type="button"
                   onClick={handleBackToLogin}
                   className="w-full text-sm text-gray-400 hover:text-blue-400 transition-colors"
                 >
                   Terug naar inloggen
                 </motion.button>
-              </div>
+              </form>
               )}
 
               <motion.div
