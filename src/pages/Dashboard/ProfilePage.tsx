@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, Upload, Loader2, Camera, Building2, Shield } from 'lucide-react';
+import { User, Upload, Loader2, Camera, Building2, Shield, Lock, Eye, EyeOff } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
@@ -30,6 +30,12 @@ function ProfileContent() {
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    newPassword: '',
+    confirmPassword: '',
+  });
   const linksContainerRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
@@ -37,6 +43,38 @@ function ProfileContent() {
     business_name: '',
     profile_picture_url: '',
   });
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      showToast('Wachtwoorden komen niet overeen', 'error');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      showToast('Wachtwoord moet minimaal 6 tekens zijn', 'error');
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: passwordData.newPassword
+      });
+
+      if (error) throw error;
+
+      showToast('Wachtwoord succesvol gewijzigd', 'success');
+      setPasswordData({ newPassword: '', confirmPassword: '' });
+    } catch (error) {
+      console.error('Error changing password:', error);
+      showToast('Fout bij wijzigen van wachtwoord', 'error');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -225,6 +263,7 @@ function ProfileContent() {
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Mijn Profiel</h1>
               <p className="text-gray-300">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
+              <p className="text-sm text-blue-400 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
             </div>
           </motion.div>
 
@@ -428,6 +467,75 @@ function ProfileContent() {
                 </div>
               </motion.div>
 
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden mt-6"
+              >
+                <div className="p-8">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Lock className="h-5 w-5 text-gray-300" />
+                    <h3 className="text-2xl font-bold text-white">Wachtwoord Wijzigen</h3>
+                  </div>
+
+                  <form onSubmit={handlePasswordChange} className="space-y-6">
+                    <div>
+                      <Label htmlFor="new_password" className="text-gray-300">
+                        Nieuw Wachtwoord *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="new_password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Minimaal 6 tekens"
+                          value={passwordData.newPassword}
+                          onChange={(e) =>
+                            setPasswordData({ ...passwordData, newPassword: e.target.value })
+                          }
+                          required
+                          minLength={6}
+                          className="bg-white/5 border-white/20 text-white placeholder-gray-500 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="confirm_password" className="text-gray-300">
+                        Bevestig Wachtwoord *
+                      </Label>
+                      <Input
+                        id="confirm_password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Herhaal nieuw wachtwoord"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) =>
+                          setPasswordData({ ...passwordData, confirmPassword: e.target.value })
+                        }
+                        required
+                        minLength={6}
+                        className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={changingPassword}
+                      className="bg-gradient-to-r from-purple-500 to-pink-400 hover:from-purple-600 hover:to-pink-500 border-0"
+                    >
+                      {changingPassword ? 'Wijzigen...' : 'Wachtwoord Wijzigen'}
+                    </Button>
+                  </form>
+                </div>
+              </motion.div>
+
               {profile?.important_links && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -439,7 +547,7 @@ function ProfileContent() {
                     <h3 className="text-2xl font-bold text-white mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
-                      className="prose prose-invert max-w-none text-gray-200"
+                      className="prose prose-invert max-w-none text-gray-200 [&_a]:text-base [&_p]:text-base [&_li]:text-base [&_*]:text-base"
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
                   </div>
