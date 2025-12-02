@@ -225,6 +225,7 @@ function ProfileContent() {
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Mijn Profiel</h1>
               <p className="text-gray-300">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
+              <p className="text-sm text-blue-400 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
             </div>
           </motion.div>
 
@@ -439,7 +440,7 @@ function ProfileContent() {
                     <h3 className="text-2xl font-bold text-white mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
-                      className="prose prose-invert max-w-none text-gray-200"
+                      className="prose prose-invert max-w-none text-gray-200 [&_a]:text-base [&_p]:text-base [&_li]:text-base [&_*]:text-base"
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
                   </div>
