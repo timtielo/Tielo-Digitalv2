@@ -155,7 +155,8 @@ function PortfolioContent() {
     };
     reader.readAsDataURL(file);
 
-    await uploadImage(file, editingImage.type);
+    const existingUrl = editingImage.type === 'before' ? formData.before_image : formData.after_image;
+    await uploadImage(file, editingImage.type, existingUrl);
     setEditingImage(null);
   };
 
@@ -163,17 +164,36 @@ function PortfolioContent() {
     setEditingImage(null);
   };
 
-  const uploadImage = async (file: File | Blob, type: 'before' | 'after') => {
+  const uploadImage = async (file: File | Blob, type: 'before' | 'after', existingUrl?: string) => {
     if (!user) return;
 
     setUploading(true);
     try {
       const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
-      const fileName = `${user.id}/${Date.now()}-${type}.${fileExt}`;
+      let fileName = `${user.id}/${Date.now()}-${type}.${fileExt}`;
+
+      if (existingUrl) {
+        try {
+          const urlPath = new URL(existingUrl).pathname;
+          const existingFileName = urlPath.split('/portfolio-images/')[1];
+
+          if (existingFileName) {
+            const { error: deleteError } = await supabase.storage
+              .from('portfolio-images')
+              .remove([existingFileName]);
+
+            if (!deleteError) {
+              fileName = existingFileName;
+            }
+          }
+        } catch (err) {
+          console.warn('Could not delete old file:', err);
+        }
+      }
 
       const { error: uploadError } = await supabase.storage
         .from('portfolio-images')
-        .upload(fileName, file);
+        .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 

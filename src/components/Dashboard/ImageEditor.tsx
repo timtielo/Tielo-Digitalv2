@@ -130,7 +130,7 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
     const ctx = outputCanvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#f9fafb';
     ctx.fillRect(0, 0, targetWidth, targetHeight);
 
     ctx.save();
