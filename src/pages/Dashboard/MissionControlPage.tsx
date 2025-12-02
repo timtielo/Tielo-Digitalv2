@@ -303,20 +303,20 @@ function MissionControlContent() {
         key={category}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-3"
       >
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-white/10">
-            <h3 className={`text-xl font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
+          <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
+            <h3 className={`text-base font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
               {category}
             </h3>
             <button
               onClick={() => addItem(category)}
               disabled={!currentMonthData}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium transition-all disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1 text-sm rounded-lg bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium transition-all disabled:opacity-50"
             >
-              <Plus className="w-4 h-4" />
-              Item toevoegen
+              <Plus className="w-3 h-3" />
+              Toevoegen
             </button>
           </div>
 
@@ -324,16 +324,16 @@ function MissionControlContent() {
             <table className="w-full border-collapse hidden md:table">
               <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
                 <tr className="border-b border-white/10">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Item</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W1</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W2</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W3</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W4</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W5</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">Maand</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">Target</th>
-                  <th className="px-2 py-3 text-center text-sm font-semibold text-gray-300">Status</th>
-                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">Acties</th>
+                  <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Item</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W1</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W2</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W3</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W4</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W5</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Maand</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Target</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Status</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Acties</th>
                 </tr>
               </thead>
               <tbody>
@@ -345,40 +345,40 @@ function MissionControlContent() {
                     transition={{ delay: index * 0.05 }}
                     className={`border-b border-white/5 hover:bg-white/5 transition-colors ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-1.5">
                       <input
                         type="text"
                         value={item.item}
                         onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                        className="w-full min-w-[250px] px-4 py-3 text-base rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-full min-w-[250px] px-3 py-1.5 text-sm rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
                     </td>
                     {item.scores.map((score) => (
-                      <td key={score.week} className="px-2 py-3">
+                      <td key={score.week} className="px-2 py-1.5">
                         <input
                           type="number"
                           value={score.value}
                           onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                          className="w-16 px-2 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                          className="w-16 px-2 py-1.5 text-sm text-center rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                         />
                       </td>
                     ))}
-                    <td className="px-2 py-3 text-center font-bold text-white text-base">
+                    <td className="px-2 py-1.5 text-center font-bold text-white text-sm">
                       {calculateMonthTotal(item.scores)}
                     </td>
-                    <td className="px-2 py-3">
+                    <td className="px-2 py-1.5">
                       <input
                         type="number"
                         value={item.target}
                         onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                        className="w-20 px-2 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-20 px-2 py-1.5 text-sm text-center rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
                     </td>
-                    <td className="px-2 py-3">
+                    <td className="px-2 py-1.5">
                       <select
                         value={item.status}
                         onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                        className="w-full min-w-[130px] px-2 py-3 text-sm rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
+                        className="w-full min-w-[130px] px-2 py-1.5 text-xs rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
                       >
                         {STATUS_OPTIONS.map(option => (
                           <option key={option.value} value={option.value}>
@@ -387,12 +387,12 @@ function MissionControlContent() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-2 py-3 text-center">
+                    <td className="px-2 py-1.5 text-center">
                       <button
                         onClick={() => deleteItem(item.id)}
-                        className="p-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                        className="p-1.5 rounded-md border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </motion.tr>
