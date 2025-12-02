@@ -350,7 +350,7 @@ function MissionControlContent() {
                         type="text"
                         value={item.item}
                         onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-full min-w-[250px] px-4 py-3 text-base rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
                     </td>
                     {item.scores.map((score) => (
@@ -359,11 +359,11 @@ function MissionControlContent() {
                           type="number"
                           value={score.value}
                           onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                          className="w-20 px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                          className="w-24 px-3 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                         />
                       </td>
                     ))}
-                    <td className="px-4 py-3 text-center font-bold text-white">
+                    <td className="px-4 py-3 text-center font-bold text-white text-lg">
                       {calculateMonthTotal(item.scores)}
                     </td>
                     <td className="px-4 py-3">
@@ -371,14 +371,14 @@ function MissionControlContent() {
                         type="number"
                         value={item.target}
                         onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                        className="w-20 px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-24 px-3 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <select
                         value={item.status}
                         onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                        className="w-full px-2 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white text-sm focus:outline-none focus:border-blue-400/50"
+                        className="w-full min-w-[140px] px-3 py-3 text-base rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
                       >
                         {STATUS_OPTIONS.map(option => (
                           <option key={option.value} value={option.value}>
@@ -416,7 +416,7 @@ function MissionControlContent() {
                         type="text"
                         value={item.item}
                         onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                        className="flex-1 px-3 py-2 font-semibold rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
+                        className="flex-1 px-4 py-3 text-base font-semibold rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
                       />
                       <button
                         onClick={() => deleteItem(item.id)}
@@ -436,7 +436,7 @@ function MissionControlContent() {
                             type="number"
                             value={score.value}
                             onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                            className="w-full px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
+                            className="w-full px-3 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
                           />
                         </div>
                       ))}
@@ -447,7 +447,7 @@ function MissionControlContent() {
                         <label className="block text-xs font-medium text-gray-400 mb-1">
                           Maand totaal
                         </label>
-                        <div className="px-2 py-2 text-center font-bold bg-white/10 text-white rounded-lg">
+                        <div className="px-3 py-3 text-base text-center font-bold bg-white/10 text-white rounded-lg">
                           {calculateMonthTotal(item.scores)}
                         </div>
                       </div>
@@ -459,7 +459,7 @@ function MissionControlContent() {
                           type="number"
                           value={item.target}
                           onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                          className="w-full px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
+                          className="w-full px-3 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
                         />
                       </div>
                       <div>
@@ -469,7 +469,7 @@ function MissionControlContent() {
                         <select
                           value={item.status}
                           onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                          className="w-full px-2 py-2 text-xs rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
+                          className="w-full px-3 py-3 text-sm rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
                         >
                           {STATUS_OPTIONS.map(option => (
                             <option key={option.value} value={option.value}>
