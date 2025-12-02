@@ -48,6 +48,7 @@ function PortfolioContent() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [editingImage, setEditingImage] = useState<{ file: File; type: 'before' | 'after' } | null>(null);
   const [aspectRatio, setAspectRatio] = useState<'4:3' | '16:9'>('4:3');
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
@@ -377,10 +378,11 @@ function PortfolioContent() {
         item.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      const matchesFeatured = !showFeaturedOnly || item.featured;
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesFeatured;
     });
-  }, [items, searchQuery, selectedCategory]);
+  }, [items, searchQuery, selectedCategory, showFeaturedOnly]);
 
   const resetForm = () => {
     setFormData({
@@ -660,6 +662,17 @@ function PortfolioContent() {
                   <option key={cat.id} value={cat.name}>{cat.name}</option>
                 ))}
               </Select>
+              <button
+                onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
+                className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 whitespace-nowrap flex items-center gap-2 ${
+                  showFeaturedOnly
+                    ? 'bg-gradient-to-r from-yellow-500 to-amber-400 text-white shadow-lg shadow-yellow-500/50'
+                    : 'bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20'
+                }`}
+              >
+                <Check className="h-4 w-4" />
+                {showFeaturedOnly ? 'Featured' : 'Alle items'}
+              </button>
             </div>
           </motion.div>
 
@@ -701,6 +714,7 @@ function PortfolioContent() {
                     onClick={() => {
                       setSearchQuery('');
                       setSelectedCategory('all');
+                      setShowFeaturedOnly(false);
                     }}
                     variant="outline"
                     className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
