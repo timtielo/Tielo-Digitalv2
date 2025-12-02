@@ -2,7 +2,7 @@ import React from 'react';
 import { SuccesverhalenHero } from '../components/Succesverhalen/SuccesverhalenHero';
 import { SuccesverhalenCTA } from '../components/Succesverhalen/SuccesverhalenCTA';
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
-import { ContentfulSEO } from '../components/SEO/ContentfulSEO';
+import { SEO } from '../components/SEO';
 import { Star, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -33,12 +33,18 @@ const testimonials = [
 export function Succesverhalen() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <ContentfulSEO
-        internalName="Succesverhalen SEO"
-        fallback={{
-          title: "Succesverhalen - Tevreden Klanten | Tielo Digital",
-          description: "Lees wat klanten zeggen over hun ervaring met Tielo Digital. Van websites voor bouwbedrijven tot automatisering van bedrijfsprocessen."
-        }}
+      <SEO
+        title="Succesverhalen - Tevreden Klanten"
+        description="Lees wat klanten zeggen over hun ervaring met Tielo Digital. Van websites voor bouwbedrijven tot automatisering van bedrijfsprocessen. 3 tevreden klanten met 5-sterren reviews."
+        keywords={[
+          'Succesverhalen',
+          'Klant Reviews',
+          'Testimonials',
+          'Tevreden Klanten',
+          'Website Reviews',
+          'Tielo Digital Reviews'
+        ]}
+        canonical="https://www.tielo-digital.nl/succesverhalen"
       />
 
       <SuccesverhalenHero />

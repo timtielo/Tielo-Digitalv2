@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowRight, Brain, Clock, CheckCircle, BarChart, Check } from 'lucide-react';
 import { Link } from '../../components/Link';
-import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
+import { SEO } from '../../components/SEO';
 
 const features = [
   {
@@ -37,12 +37,18 @@ const benefits = [
 export function EmailHandlingPage() {
   return (
     <div className="min-h-screen">
-      <ContentfulSEO 
-        internalName="Email Automatisering SEO"
-        fallback={{
-          title: "Email Automatisering | AI Email Management",
-          description: "Automatiseer je email communicatie met AI. Laat kunstmatige intelligentie je emails schrijven en beheren, terwijl jij alleen nog hoeft te controleren."
-        }}
+      <SEO
+        title="Email Automatisering | AI Email Management"
+        description="Automatiseer je email communicatie met AI. Laat kunstmatige intelligentie je emails schrijven en beheren, terwijl jij alleen nog hoeft te controleren."
+        keywords={[
+          'Email Automatisering',
+          'AI Email',
+          'Email Management',
+          'Automatische Emails',
+          'Email AI',
+          'Communicatie Automatiseren'
+        ]}
+        canonical="https://www.tielo-digital.nl/diensten/email-handling"
       />
 
       {/* Hero Section */}

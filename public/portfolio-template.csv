@@ -1,0 +1,5 @@
+title,category,location,date,description,before_image,after_image,featured
+"Voorbeeld Project 1","Renovatie","Amsterdam","2024-01-15","Een mooi afgerond project met geweldige resultaten","https://example.com/before.jpg","https://example.com/after.jpg","false"
+"Voorbeeld Project 2","Nieuwbouw","Rotterdam","2024-02-20","Professioneel werk met tevreden klant","","","true"
+"Badkamer Renovatie","Renovatie","Utrecht","2024-03-10","Complete badkamerrenovatie inclusief loodgieterswerk en tegelwerk","","","false"
+"Keuken Verbouwing","Verbouwing","Den Haag","2024-04-05","Moderne keuken geïnstalleerd met alle nieuwste apparatuur","","","false"

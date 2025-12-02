@@ -1,0 +1,3 @@
+# Subdomain - Do not index
+User-agent: *
+Disallow: /
