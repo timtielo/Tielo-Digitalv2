@@ -63,6 +63,10 @@ export function WebsitesPricing() {
                     <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700">WhatsApp integratie</span>
                   </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Dashboard voor eigen beheer portfolio en reviews</span>
+                  </li>
                 </ul>
               </div>
 
