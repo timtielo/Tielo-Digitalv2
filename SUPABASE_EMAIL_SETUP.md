@@ -43,7 +43,13 @@ In the Supabase dashboard, go to **Authentication > Email Templates** and config
 <p><a href="{{ .ConfirmationURL }}">Reset Wachtwoord</a></p>
 ```
 
-**Important:** The `{{ .ConfirmationURL }}` should redirect to `/reset-password` which is already configured in the code.
+**CRITICAL FIX:** The `{{ .ConfirmationURL }}` should automatically use the `redirectTo` parameter passed in the code. However, if you're seeing the email redirect to the root URL (`https://www.tielo-digital.nl/`) instead of `/reset-password`, you need to check:
+
+1. Make sure `https://www.tielo-digital.nl/reset-password` is in the **Redirect URLs allow list**
+2. The Site URL should be `https://www.tielo-digital.nl/` (with trailing slash)
+3. In the email template editor, do NOT manually set a redirect URL - let it use `{{ .ConfirmationURL }}`
+
+The code is already configured to pass `/reset-password` as the redirect URL, but Supabase might be ignoring it if it's not in the allow list.
 
 ### 4. Change Email Address Template
 
@@ -109,6 +115,23 @@ To test the email flows:
 
 ## Troubleshooting
 
+### If Password Reset Emails Redirect to Root URL
+
+If you click the password reset link and it goes to `https://www.tielo-digital.nl/#error=access_denied&error_code=otp_expired` or just the root URL:
+
+1. **Add Redirect URL to Allow List**: Go to **Authentication > URL Configuration** and make sure `https://www.tielo-digital.nl/reset-password` is in the **Redirect URLs** list
+2. **Check Site URL**: Make sure Site URL is set to `https://www.tielo-digital.nl/` (with trailing slash)
+3. **Fallback Handler**: The code now includes a fallback - even if the email redirects to the root URL, the homepage will automatically redirect to `/reset-password` with the token intact
+
+### If Tokens Are Expired
+
+The error `otp_expired` or `Email link is invalid or has expired` means:
+- The token has expired (default: 1 hour)
+- The token was already used
+- Request a new password reset email
+
+### General Troubleshooting
+
 If emails are not working:
 
 1. Check that email provider is enabled in Supabase
@@ -116,6 +139,7 @@ If emails are not working:
 3. Check the email templates use the correct variables
 4. Look at the browser console for any errors
 5. Check Supabase logs for authentication errors
+6. Try requesting a new reset email (tokens expire after some time)
 
 ## Important Notes
 
