@@ -21,16 +21,33 @@ export function ResetPassword() {
   const [isValidToken, setIsValidToken] = useState(false);
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsValidToken(true);
+    const checkAndExchangeToken = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const type = hashParams.get('type');
+
+      if (accessToken && type === 'recovery') {
+        const { data, error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: hashParams.get('refresh_token') || '',
+        });
+
+        if (sessionError || !data.session) {
+          setError('Deze link is niet geldig of is verlopen. Vraag een nieuwe reset link aan.');
+        } else {
+          setIsValidToken(true);
+        }
       } else {
-        setError('Deze link is niet geldig of is verlopen. Vraag een nieuwe reset link aan.');
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setIsValidToken(true);
+        } else {
+          setError('Deze link is niet geldig of is verlopen. Vraag een nieuwe reset link aan.');
+        }
       }
     };
 
-    checkSession();
+    checkAndExchangeToken();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Shield, Zap, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase/client';
 import { AuroraBackground } from '../components/ui/aurora-bento-grid';
 
 interface Testimonial {
@@ -70,6 +71,28 @@ export function Login() {
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }, [user]);
+
+  useEffect(() => {
+    const handleEmailConfirmation = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const type = hashParams.get('type');
+
+      if (accessToken && (type === 'signup' || type === 'magiclink')) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: hashParams.get('refresh_token') || '',
+        });
+
+        if (!error) {
+          window.history.replaceState({}, '', '/dashboard');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+      }
+    };
+
+    handleEmailConfirmation();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
