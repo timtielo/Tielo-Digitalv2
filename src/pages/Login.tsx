@@ -22,7 +22,7 @@ const testimonials: Testimonial[] = [
     avatarSrc: "https://www.herhorizon.nl/images/HerHorizontrans.svg",
     name: "Iris Achtereekte",
     handle: "Her Horizon",
-    text: "Fijn om hier inzicht te krijgen in de leads, mijn eigen reviews en informatie over de bezoekers."
+    text: "Top voor inzicht in leads en reviews."
   },
 ];
 
