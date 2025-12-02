@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut, Search, Copy, Download, FileUp, X, AlertCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut, Search, Copy, Download, FileUp, X, AlertCircle, Edit3 } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
@@ -515,6 +515,37 @@ function PortfolioContent() {
     }
   };
 
+  const handleDownloadImage = async (imageUrl: string, filename: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      showToast('Afbeelding gedownload', 'success');
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      showToast('Fout bij downloaden', 'error');
+    }
+  };
+
+  const handleEditExistingImage = async (imageUrl: string, type: 'before' | 'after') => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `${type}-${Date.now()}.jpg`, { type: blob.type });
+      setEditingImage({ file, type });
+    } catch (error) {
+      console.error('Error loading image for editing:', error);
+      showToast('Fout bij laden van afbeelding', 'error');
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
       <AuroraBackground />
@@ -849,18 +880,39 @@ function PortfolioContent() {
                         Afmetingen: {imageDimensions.before.width} × {imageDimensions.before.height}px
                       </p>
                     )}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setFormData({ ...formData, before_image: '' });
-                        setImagePreview(prev => ({ ...prev, before: undefined }));
-                        setImageDimensions(prev => ({ ...prev, before: undefined }));
-                      }}
-                    >
-                      Verwijderen
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditExistingImage(imagePreview.before || formData.before_image, 'before')}
+                        className="flex-1"
+                      >
+                        <Edit3 className="h-3 w-3 mr-1" />
+                        Bewerken
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadImage(imagePreview.before || formData.before_image, 'voor-foto.jpg')}
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setFormData({ ...formData, before_image: '' });
+                          setImagePreview(prev => ({ ...prev, before: undefined }));
+                          setImageDimensions(prev => ({ ...prev, before: undefined }));
+                        }}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -898,18 +950,39 @@ function PortfolioContent() {
                         Afmetingen: {imageDimensions.after.width} × {imageDimensions.after.height}px
                       </p>
                     )}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setFormData({ ...formData, after_image: '' });
-                        setImagePreview(prev => ({ ...prev, after: undefined }));
-                        setImageDimensions(prev => ({ ...prev, after: undefined }));
-                      }}
-                    >
-                      Verwijderen
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditExistingImage(imagePreview.after || formData.after_image, 'after')}
+                        className="flex-1"
+                      >
+                        <Edit3 className="h-3 w-3 mr-1" />
+                        Bewerken
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadImage(imagePreview.after || formData.after_image, 'na-foto.jpg')}
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setFormData({ ...formData, after_image: '' });
+                          setImagePreview(prev => ({ ...prev, after: undefined }));
+                          setImageDimensions(prev => ({ ...prev, after: undefined }));
+                        }}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <label className="mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">

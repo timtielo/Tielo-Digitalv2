@@ -2,7 +2,36 @@
 
 ## Nieuwe Functies
 
-### 1. Dupliceer Portfolio Items
+### 1. Afbeeldingen Downloaden
+
+Je kunt nu eenvoudig afbeeldingen uit je portfolio downloaden.
+
+**Hoe te gebruiken:**
+1. Ga naar je Portfolio pagina in het dashboard
+2. Klik op "Bewerken" bij een project
+3. Bij elke afbeelding (Voor/Na foto) zie je nu drie knoppen:
+   - **Bewerken** - Open de afbeelding in de editor om grootte aan te passen
+   - **Download** (download icoon) - Download de afbeelding naar je computer
+   - **Verwijderen** (prullenbak icoon) - Verwijder de afbeelding
+
+### 2. Afbeeldingen Bewerken
+
+Bewerk bestaande afbeeldingen zonder ze te hoeven verwijderen en opnieuw uploaden.
+
+**Hoe te gebruiken:**
+1. Open het bewerkingsscherm van een project
+2. Klik op de "Bewerken" knop onder een bestaande afbeelding
+3. De afbeelding wordt automatisch geladen in de image editor
+4. Pas de grootte en uitsnede aan naar wens
+5. Sla op om de nieuwe versie te uploaden
+
+**Voordelen:**
+- Geen herhaald uploaden nodig
+- Behoud dezelfde afbeelding met nieuwe afmetingen
+- Snel en eenvoudig formaat aanpassen
+- Directe preview van de wijzigingen
+
+### 3. Dupliceer Portfolio Items
 
 Je kunt nu eenvoudig portfolio items dupliceren met één klik op de dupliceer knop (icoon met twee overlappende vierkanten).
 
@@ -14,7 +43,7 @@ Je kunt nu eenvoudig portfolio items dupliceren met één klik op de dupliceer k
 5. Alle data inclusief afbeeldingen worden gekopieerd
 6. Featured status wordt automatisch uitgeschakeld voor het duplicaat
 
-### 2. CSV Template Downloaden
+### 4. CSV Template Downloaden
 
 Download een CSV template met voorbeelddata om te zien hoe je portfolio items moet formatteren.
 
@@ -34,7 +63,7 @@ Download een CSV template met voorbeelddata om te zien hoe je portfolio items mo
 - `after_image` - URL naar na-foto (optioneel)
 - `featured` - "true" of "false" voor uitgelicht (optioneel, standaard false)
 
-### 3. CSV Import
+### 5. CSV Import
 
 Importeer meerdere portfolio items tegelijk via een CSV bestand.
 
@@ -91,3 +120,9 @@ A: Upload eerst je afbeeldingen naar een hosting service (bijv. je eigen website
 
 **Q: Moet ik categorieën eerst aanmaken?**
 A: Nee! Als je een categorie gebruikt die nog niet bestaat, wordt deze automatisch aangemaakt tijdens het importeren.
+
+**Q: Kan ik een bestaande afbeelding bewerken?**
+A: Ja! Klik op de "Bewerken" knop onder de afbeelding. De image editor wordt automatisch geopend met je bestaande afbeelding.
+
+**Q: Hoe download ik een afbeelding?**
+A: Klik op het download icoon (pijl naar beneden) onder de afbeelding. Het bestand wordt direct naar je computer gedownload.
