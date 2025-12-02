@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 
 interface MCCMonth {
   id: string;
@@ -36,17 +36,23 @@ const MONTHS = [
   'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
 ];
 
-const CATEGORIES = ['LEADS', 'KLANTEN', 'CASH'];
+const CATEGORIES = ['LEADS', 'KLANTEN', 'FANS', 'CASH', 'TEAM', 'BETROKKENHEID'];
 const CATEGORY_COLORS = {
   LEADS: 'bg-yellow-500/10 border-yellow-500/30',
   KLANTEN: 'bg-blue-500/10 border-blue-500/30',
-  CASH: 'bg-green-500/10 border-green-500/30'
+  FANS: 'bg-pink-500/10 border-pink-500/30',
+  CASH: 'bg-green-500/10 border-green-500/30',
+  TEAM: 'bg-purple-500/10 border-purple-500/30',
+  BETROKKENHEID: 'bg-orange-500/10 border-orange-500/30'
 };
 
 const CATEGORY_TEXT_COLORS = {
   LEADS: 'text-yellow-400',
   KLANTEN: 'text-blue-400',
-  CASH: 'text-green-400'
+  FANS: 'text-pink-400',
+  CASH: 'text-green-400',
+  TEAM: 'text-purple-400',
+  BETROKKENHEID: 'text-orange-400'
 };
 
 const STATUS_OPTIONS = [
@@ -502,8 +508,14 @@ function MissionControlContent() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6"
         >
+          <Breadcrumb
+            items={[
+              { label: 'Admin', path: '/dashboard/admin' },
+              { label: 'Mission Control Center' }
+            ]}
+          />
           <h1 className="text-4xl font-bold text-white mb-2">Mission Control Center</h1>
           <p className="text-gray-400">Beheer je maandelijkse doelen en voortgang</p>
         </motion.div>

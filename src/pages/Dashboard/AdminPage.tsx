@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { AccountTypesManager } from './AccountTypesManager';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 
 interface UserProfile {
   id: string;
@@ -727,18 +728,6 @@ export function AdminPage() {
           <AuroraBackground />
           <div className="relative z-10 min-h-screen">
             <div className="container mx-auto px-4 py-8">
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
-                <button
-                  onClick={handleBackToDashboard}
-                  className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
-                >
-                  ← Terug naar Dashboard
-                </button>
-              </motion.div>
               <div className="flex items-center justify-center min-h-[60vh]">
                 <GlassCard className="p-12 text-center max-w-md">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -762,25 +751,13 @@ export function AdminPage() {
 
         <div className="relative z-10 min-h-screen">
           <div className="container mx-auto px-4 py-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <button
-                onClick={handleBackToDashboard}
-                className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
-              >
-                ← Terug naar Dashboard
-              </button>
-            </motion.div>
-
             <div className="space-y-8">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
+                <Breadcrumb items={[{ label: 'Admin' }]} />
                 <h1 className="text-4xl font-bold text-white mb-2">Admin Panel</h1>
                 <p className="text-gray-400">Beheer account types en gebruikers</p>
 
