@@ -325,15 +325,15 @@ function MissionControlContent() {
               <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
                 <tr className="border-b border-white/10">
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Item</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 1</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 2</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 3</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 4</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 5</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Maand</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Target</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Status</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Acties</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W1</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W2</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W3</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W4</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">W5</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">Maand</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">Target</th>
+                  <th className="px-2 py-3 text-center text-sm font-semibold text-gray-300">Status</th>
+                  <th className="px-2 py-3 text-center text-xs font-semibold text-gray-300">Acties</th>
                 </tr>
               </thead>
               <tbody>
@@ -354,31 +354,31 @@ function MissionControlContent() {
                       />
                     </td>
                     {item.scores.map((score) => (
-                      <td key={score.week} className="px-4 py-3">
+                      <td key={score.week} className="px-2 py-3">
                         <input
                           type="number"
                           value={score.value}
                           onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                          className="w-24 px-3 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                          className="w-16 px-2 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                         />
                       </td>
                     ))}
-                    <td className="px-4 py-3 text-center font-bold text-white text-lg">
+                    <td className="px-2 py-3 text-center font-bold text-white text-base">
                       {calculateMonthTotal(item.scores)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 py-3">
                       <input
                         type="number"
                         value={item.target}
                         onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                        className="w-24 px-3 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-20 px-2 py-3 text-base text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 py-3">
                       <select
                         value={item.status}
                         onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                        className="w-full min-w-[140px] px-3 py-3 text-base rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
+                        className="w-full min-w-[130px] px-2 py-3 text-sm rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
                       >
                         {STATUS_OPTIONS.map(option => (
                           <option key={option.value} value={option.value}>
@@ -387,7 +387,7 @@ function MissionControlContent() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-2 py-3 text-center">
                       <button
                         onClick={() => deleteItem(item.id)}
                         className="p-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
