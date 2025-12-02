@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut, Search, Copy, Download, FileUp, X, AlertCircle } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
@@ -13,6 +13,7 @@ import { ImageEditor } from '../../components/Dashboard/ImageEditor';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
+import { generateTemplateCSV, downloadCSV, parseCSV, CSVPortfolioRow, validatePortfolioRow } from '../../utils/csvPortfolio';
 
 interface PortfolioItem {
   id: string;
@@ -49,6 +50,12 @@ function PortfolioContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [editingImage, setEditingImage] = useState<{ file: File; type: 'before' | 'after' } | null>(null);
   const [aspectRatio, setAspectRatio] = useState<'4:3' | '16:9'>('4:3');
+  const [csvDialogOpen, setCsvDialogOpen] = useState(false);
+  const [csvData, setCsvData] = useState<CSVPortfolioRow[]>([]);
+  const [csvErrors, setCsvErrors] = useState<{ row: number; message: string }[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -268,6 +275,35 @@ function PortfolioContent() {
     }
   };
 
+  const handleDuplicate = async (item: PortfolioItem) => {
+    if (!user) return;
+
+    try {
+      const duplicateData = {
+        title: `${item.title} (kopie)`,
+        category: item.category,
+        location: item.location,
+        date: item.date,
+        description: item.description || '',
+        before_image: item.before_image || '',
+        after_image: item.after_image || '',
+        featured: false,
+        user_id: user.id,
+      };
+
+      const { error } = await supabase
+        .from('portfolio_items')
+        .insert([duplicateData]);
+
+      if (error) throw error;
+      showToast('Project gedupliceerd', 'success');
+      await fetchItems();
+    } catch (error) {
+      console.error('Error duplicating portfolio item:', error);
+      showToast('Fout bij dupliceren', 'error');
+    }
+  };
+
   const addCategory = async () => {
     if (!newCategoryName.trim()) {
       showToast('Voer een categorienaam in', 'error');
@@ -361,6 +397,124 @@ function PortfolioContent() {
     }
   };
 
+  const handleDownloadTemplate = () => {
+    const categoryNames = categories.map(c => c.name);
+    const csvContent = generateTemplateCSV(categoryNames);
+    downloadCSV(csvContent, 'portfolio-template.csv');
+    showToast('Template gedownload', 'success');
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const { data, errors } = parseCSV(text);
+
+      setCsvData(data);
+      setCsvErrors(errors);
+      setSelectedRows(new Set(data.map((_, index) => index)));
+
+      if (data.length > 0 || errors.length > 0) {
+        setCsvDialogOpen(true);
+      } else {
+        showToast('Geen geldige data gevonden in CSV', 'error');
+      }
+    };
+
+    reader.onerror = () => {
+      showToast('Fout bij lezen van bestand', 'error');
+    };
+
+    reader.readAsText(file);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleImportCSV = async () => {
+    if (!user) return;
+
+    setImporting(true);
+    const rowsToImport = csvData.filter((_, index) => selectedRows.has(index));
+
+    try {
+      const categoriesToCreate = new Set<string>();
+      const existingCategoryNames = categories.map(c => c.name);
+
+      rowsToImport.forEach(row => {
+        if (!existingCategoryNames.includes(row.category)) {
+          categoriesToCreate.add(row.category);
+        }
+      });
+
+      for (const categoryName of categoriesToCreate) {
+        const { error } = await supabase
+          .from('portfolio_categories')
+          .insert([{ user_id: user.id, name: categoryName }]);
+
+        if (error && error.code !== '23505') {
+          throw error;
+        }
+      }
+
+      if (categoriesToCreate.size > 0) {
+        await fetchCategories();
+      }
+
+      const itemsToInsert = rowsToImport.map(row => ({
+        title: row.title,
+        category: row.category,
+        location: row.location,
+        date: row.date,
+        description: row.description || '',
+        before_image: row.before_image || null,
+        after_image: row.after_image || null,
+        featured: row.featured?.toLowerCase() === 'true',
+        user_id: user.id,
+      }));
+
+      const { error } = await supabase
+        .from('portfolio_items')
+        .insert(itemsToInsert);
+
+      if (error) throw error;
+
+      showToast(`${rowsToImport.length} project(en) geïmporteerd`, 'success');
+      setCsvDialogOpen(false);
+      setCsvData([]);
+      setCsvErrors([]);
+      setSelectedRows(new Set());
+      await fetchItems();
+    } catch (error) {
+      console.error('Error importing CSV:', error);
+      showToast('Fout bij importeren', 'error');
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const toggleRowSelection = (index: number) => {
+    const newSelection = new Set(selectedRows);
+    if (newSelection.has(index)) {
+      newSelection.delete(index);
+    } else {
+      newSelection.add(index);
+    }
+    setSelectedRows(newSelection);
+  };
+
+  const toggleAllRows = () => {
+    if (selectedRows.size === csvData.length) {
+      setSelectedRows(new Set());
+    } else {
+      setSelectedRows(new Set(csvData.map((_, index) => index)));
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
       <AuroraBackground />
@@ -393,6 +547,29 @@ function PortfolioContent() {
                 <p className="text-gray-300">Beheer je projecten en referenties</p>
               </div>
               <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleDownloadTemplate}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  CSV Template
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                >
+                  <FileUp className="h-4 w-4 mr-2" />
+                  Importeer CSV
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
                 <Button
                   variant="outline"
                   onClick={() => setCategoryDialogOpen(true)}
@@ -546,6 +723,15 @@ function PortfolioContent() {
                         >
                           <Pencil className="h-4 w-4 mr-2" />
                           Bewerken
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDuplicate(item)}
+                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                          title="Dupliceer project"
+                        >
+                          <Copy className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
@@ -845,6 +1031,136 @@ function PortfolioContent() {
           onCancel={handleImageEditorCancel}
         />
       )}
+
+      <Dialog open={csvDialogOpen} onOpenChange={setCsvDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>CSV Importeren</DialogTitle>
+            <DialogClose onClose={() => setCsvDialogOpen(false)} />
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4 max-h-[60vh] overflow-y-auto">
+            {csvErrors.length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-red-900 mb-2">Fouten gevonden</h4>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      {csvErrors.map((error, index) => (
+                        <li key={index}>
+                          Rij {error.row}: {error.message}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {csvData.length > 0 && (
+              <>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.size === csvData.length}
+                      onChange={toggleAllRows}
+                      className="w-4 h-4 text-primary rounded focus:ring-primary"
+                    />
+                    <span className="font-semibold">
+                      {selectedRows.size} van {csvData.length} geselecteerd
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {csvData.map((row, index) => {
+                    const validation = validatePortfolioRow(row, categories.map(c => c.name));
+                    const isNewCategory = !categories.some(c => c.name === row.category);
+
+                    return (
+                      <div
+                        key={index}
+                        className={`border rounded-lg p-3 ${
+                          selectedRows.has(index) ? 'bg-blue-50 border-blue-200' : 'bg-white'
+                        } ${!validation.valid ? 'border-yellow-300' : ''}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.has(index)}
+                            onChange={() => toggleRowSelection(index)}
+                            className="w-4 h-4 text-primary rounded focus:ring-primary mt-1"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="font-semibold text-gray-900 truncate">{row.title}</h4>
+                              {isNewCategory && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
+                                  Nieuwe categorie
+                                </span>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 mt-2 text-sm text-gray-600">
+                              <div>
+                                <span className="font-medium">Categorie:</span> {row.category}
+                              </div>
+                              <div>
+                                <span className="font-medium">Locatie:</span> {row.location}
+                              </div>
+                              <div>
+                                <span className="font-medium">Datum:</span> {row.date}
+                              </div>
+                              <div>
+                                <span className="font-medium">Featured:</span>{' '}
+                                {row.featured?.toLowerCase() === 'true' ? 'Ja' : 'Nee'}
+                              </div>
+                            </div>
+                            {row.description && (
+                              <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                                {row.description}
+                              </p>
+                            )}
+                            {(row.before_image || row.after_image) && (
+                              <div className="flex gap-2 mt-2 text-xs text-gray-500">
+                                {row.before_image && <span>Voor-foto: ✓</span>}
+                                {row.after_image && <span>Na-foto: ✓</span>}
+                              </div>
+                            )}
+                            {!validation.valid && (
+                              <div className="mt-2 text-xs text-yellow-700 bg-yellow-50 rounded p-2">
+                                <ul className="list-disc list-inside">
+                                  {validation.errors.map((error, i) => (
+                                    <li key={i}>{error}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex gap-2 pt-4 border-t mt-4">
+            <Button
+              onClick={handleImportCSV}
+              disabled={importing || selectedRows.size === 0}
+              className="flex-1"
+            >
+              {importing ? 'Importeren...' : `Importeer ${selectedRows.size} item(s)`}
+            </Button>
+            <Button variant="outline" onClick={() => setCsvDialogOpen(false)} disabled={importing}>
+              Annuleren
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
