@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 
 interface MCCMonth {
   id: string;
@@ -38,9 +38,15 @@ const MONTHS = [
 
 const CATEGORIES = ['LEADS', 'KLANTEN', 'CASH'];
 const CATEGORY_COLORS = {
-  LEADS: 'bg-yellow-50 border-yellow-200',
-  KLANTEN: 'bg-blue-50 border-blue-200',
-  CASH: 'bg-green-50 border-green-200'
+  LEADS: 'bg-yellow-500/10 border-yellow-500/30',
+  KLANTEN: 'bg-blue-500/10 border-blue-500/30',
+  CASH: 'bg-green-500/10 border-green-500/30'
+};
+
+const CATEGORY_TEXT_COLORS = {
+  LEADS: 'text-yellow-400',
+  KLANTEN: 'text-blue-400',
+  CASH: 'text-green-400'
 };
 
 const STATUS_OPTIONS = [
@@ -287,158 +293,86 @@ function MissionControlContent() {
     const categoryItems = items.filter(item => item.category === category);
 
     return (
-      <div key={category} className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-900">{category}</h3>
-          <Button
-            onClick={() => addItem(category)}
-            variant="outline"
-            size="sm"
-            disabled={!currentMonthData}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Item toevoegen
-          </Button>
-        </div>
+      <motion.div
+        key={category}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <h3 className={`text-xl font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
+              {category}
+            </h3>
+            <button
+              onClick={() => addItem(category)}
+              disabled={!currentMonthData}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium transition-all disabled:opacity-50"
+            >
+              <Plus className="w-4 h-4" />
+              Item toevoegen
+            </button>
+          </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse hidden md:table">
-            <thead className="sticky top-0 bg-white shadow-sm">
-              <tr className="border-b-2 border-gray-200">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Item</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Week 1</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Week 2</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Week 3</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Week 4</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Week 5</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Maand</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Target</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Status</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Acties</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categoryItems.map((item) => (
-                <tr key={item.id} className={`border-b border-gray-100 ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}>
-                  <td className="px-4 py-3">
-                    <input
-                      type="text"
-                      value={item.item}
-                      onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                  </td>
-                  {item.scores.map((score) => (
-                    <td key={score.week} className="px-4 py-3">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse hidden md:table">
+              <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
+                <tr className="border-b border-white/10">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Item</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 1</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 2</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 3</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 4</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Week 5</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Maand</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Target</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Status</th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-300">Acties</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categoryItems.map((item, index) => (
+                  <motion.tr
+                    key={item.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`border-b border-white/5 hover:bg-white/5 transition-colors ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}
+                  >
+                    <td className="px-4 py-3">
                       <input
-                        type="number"
-                        value={score.value}
-                        onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                        className="w-20 px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                        type="text"
+                        value={item.item}
+                        onChange={(e) => updateItem(item.id, 'item', e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
                     </td>
-                  ))}
-                  <td className="px-4 py-3 text-center font-bold">
-                    {calculateMonthTotal(item.scores)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="number"
-                      value={item.target}
-                      onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                      className="w-20 px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <select
-                      value={item.status}
-                      onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                    >
-                      {STATUS_OPTIONS.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <button
-                      onClick={() => deleteItem(item.id)}
-                      className="text-red-600 hover:text-red-800 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Mobile View */}
-          <div className="md:hidden space-y-4">
-            {categoryItems.map((item) => (
-              <Card key={item.id} className={CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <input
-                      type="text"
-                      value={item.item}
-                      onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                      className="flex-1 px-2 py-1 font-semibold border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      onClick={() => deleteItem(item.id)}
-                      className="ml-2 text-red-600 hover:text-red-800 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
                     {item.scores.map((score) => (
-                      <div key={score.week}>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">
-                          Week {score.week}
-                        </label>
+                      <td key={score.week} className="px-4 py-3">
                         <input
                           type="number"
                           value={score.value}
                           onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                          className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="w-20 px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                         />
-                      </div>
+                      </td>
                     ))}
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-200">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Maand totaal
-                      </label>
-                      <div className="px-2 py-1 text-center font-bold bg-white rounded">
-                        {calculateMonthTotal(item.scores)}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Target
-                      </label>
+                    <td className="px-4 py-3 text-center font-bold text-white">
+                      {calculateMonthTotal(item.scores)}
+                    </td>
+                    <td className="px-4 py-3">
                       <input
                         type="number"
                         value={item.target}
                         onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                        className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-20 px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Status
-                      </label>
+                    </td>
+                    <td className="px-4 py-3">
                       <select
                         value={item.status}
                         onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                        className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-2 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white text-sm focus:outline-none focus:border-blue-400/50"
                       >
                         {STATUS_OPTIONS.map(option => (
                           <option key={option.value} value={option.value}>
@@ -446,100 +380,219 @@ function MissionControlContent() {
                           </option>
                         ))}
                       </select>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => deleteItem(item.id)}
+                        className="p-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Mobile View */}
+            <div className="md:hidden space-y-4 p-4">
+              {categoryItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`rounded-xl border ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]} p-4`}
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <input
+                        type="text"
+                        value={item.item}
+                        onChange={(e) => updateItem(item.id, 'item', e.target.value)}
+                        className="flex-1 px-3 py-2 font-semibold rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
+                      />
+                      <button
+                        onClick={() => deleteItem(item.id)}
+                        className="ml-2 p-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {item.scores.map((score) => (
+                        <div key={score.week}>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">
+                            Week {score.week}
+                          </label>
+                          <input
+                            type="number"
+                            value={score.value}
+                            onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
+                            className="w-full px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/10">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-400 mb-1">
+                          Maand totaal
+                        </label>
+                        <div className="px-2 py-2 text-center font-bold bg-white/10 text-white rounded-lg">
+                          {calculateMonthTotal(item.scores)}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-400 mb-1">
+                          Target
+                        </label>
+                        <input
+                          type="number"
+                          value={item.target}
+                          onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
+                          className="w-full px-2 py-2 text-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-400 mb-1">
+                          Status
+                        </label>
+                        <select
+                          value={item.status}
+                          onChange={(e) => updateItem(item.id, 'status', e.target.value)}
+                          className="w-full px-2 py-2 text-xs rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
+                        >
+                          {STATUS_OPTIONS.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-600">Laden...</div>
+      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+        <AuroraBackground />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Mission Control Center</h1>
-        <p className="text-gray-600">Beheer je maandelijkse doelen en voortgang</p>
-      </div>
+    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+      <AuroraBackground />
 
-      <Card className="mb-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigateMonth('prev')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-2">Mission Control Center</h1>
+          <p className="text-gray-400">Beheer je maandelijkse doelen en voortgang</p>
+        </motion.div>
 
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 mb-6"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigateMonth('prev')}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-300 hover:text-white"
               >
-                {MONTHS.map((month, index) => (
-                  <option key={index} value={index + 1}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+                <ChevronLeft className="w-5 h-5" />
+              </button>
 
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                  className="px-4 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                >
+                  {MONTHS.map((month, index) => (
+                    <option key={index} value={index + 1}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                  className="px-4 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                >
+                  {[2024, 2025, 2026, 2027].map(year => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                onClick={() => navigateMonth('next')}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-300 hover:text-white"
               >
-                {[2024, 2025, 2026, 2027].map(year => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
 
-            <button
-              onClick={() => navigateMonth('next')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+            {!currentMonthData && (
+              <button
+                onClick={createMonth}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
+              >
+                <Plus className="w-4 h-4" />
+                Nieuwe maand aanmaken
+              </button>
+            )}
           </div>
+        </motion.div>
 
-          {!currentMonthData && (
-            <Button onClick={createMonth}>
-              <Plus className="w-4 h-4 mr-2" />
-              Nieuwe maand aanmaken
-            </Button>
-          )}
-        </div>
-      </Card>
-
-      {currentMonthData ? (
-        <div className="space-y-8">
-          {CATEGORIES.map(category => renderItemsByCategory(category))}
-        </div>
-      ) : (
-        <Card className="text-center py-12">
-          <p className="text-gray-600 mb-4">
-            Er is nog geen data voor {MONTHS[selectedMonth - 1]} {selectedYear}
-          </p>
-          <Button onClick={createMonth}>
-            <Plus className="w-4 h-4 mr-2" />
-            Maand aanmaken
-          </Button>
-        </Card>
-      )}
+        {currentMonthData ? (
+          <div className="space-y-6">
+            {CATEGORIES.map(category => renderItemsByCategory(category))}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-12 text-center"
+          >
+            <p className="text-gray-400 mb-6 text-lg">
+              Er is nog geen data voor {MONTHS[selectedMonth - 1]} {selectedYear}
+            </p>
+            <button
+              onClick={createMonth}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg mx-auto"
+            >
+              <Plus className="w-4 h-4" />
+              Maand aanmaken
+            </button>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
@@ -547,9 +600,7 @@ function MissionControlContent() {
 export function MissionControlPage() {
   return (
     <ProtectedRoute>
-      <DashboardLayout currentPage="mcc">
-        <MissionControlContent />
-      </DashboardLayout>
+      <MissionControlContent />
     </ProtectedRoute>
   );
 }
