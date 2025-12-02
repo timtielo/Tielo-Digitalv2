@@ -12,7 +12,8 @@ import {
   User,
   Shield,
   UserCog,
-  XCircle
+  XCircle,
+  Target
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -20,7 +21,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin';
+  currentPage: 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc';
 }
 
 interface DashboardModule {
@@ -268,6 +269,20 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                         Admin
                         {currentPage === 'admin' && <ChevronRight className="h-4 w-4 ml-auto" />}
                       </button>
+                      <button
+                        onClick={() => handleNavigation('/dashboard/mcc')}
+                        className={`
+                          w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                          ${currentPage === 'mcc'
+                            ? 'bg-primary text-white'
+                            : 'text-gray-700 hover:bg-gray-100'
+                          }
+                        `}
+                      >
+                        <Target className="h-5 w-5" />
+                        Mission Control
+                        {currentPage === 'mcc' && <ChevronRight className="h-4 w-4 ml-auto" />}
+                      </button>
                     </>
                   )}
                 </>
@@ -328,7 +343,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
               <Menu className="h-6 w-6 text-gray-500" />
             </button>
             <h2 className="text-lg font-semibold text-gray-900 capitalize">
-              {currentPage === 'admin' ? 'Admin' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+              {currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
             </h2>
           </header>
 
