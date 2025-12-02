@@ -384,84 +384,6 @@ function MissionControlContent() {
                     </td>
                   </motion.tr>
                 ))}
-
-        {/* Mobile View */}
-        {categoryItems.map((item, index) => (
-                <tr key={item.id} className="border-b border-white/5">
-                  <td colSpan={11} className="p-2">
-                    <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <input
-                        type="text"
-                        value={item.item}
-                        onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                        className="flex-1 px-2 py-1.5 text-sm font-semibold rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
-                      />
-                      <button
-                        onClick={() => deleteItem(item.id)}
-                        className="p-1.5 rounded-md border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-5 gap-1">
-                      {item.scores.map((score) => (
-                        <div key={score.week}>
-                          <label className="block text-xs text-center text-gray-400 mb-0.5">
-                            W{score.week}
-                          </label>
-                          <input
-                            type="number"
-                            value={score.value}
-                            onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                            className="w-full px-1 py-1.5 text-sm text-center rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-1.5">
-                      <div>
-                        <label className="block text-xs text-center text-gray-400 mb-0.5">
-                          Maand
-                        </label>
-                        <div className="px-2 py-1.5 text-sm text-center font-bold bg-white/10 text-white rounded-md">
-                          {calculateMonthTotal(item.scores)}
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs text-center text-gray-400 mb-0.5">
-                          Target
-                        </label>
-                        <input
-                          type="number"
-                          value={item.target}
-                          onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                          className="w-full px-1 py-1.5 text-sm text-center rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-center text-gray-400 mb-0.5">
-                          Status
-                        </label>
-                        <select
-                          value={item.status}
-                          onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                          className="w-full px-1 py-1.5 text-xs rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
-                        >
-                          {STATUS_OPTIONS.map(option => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
       </React.Fragment>
     );
   };
@@ -561,7 +483,7 @@ function MissionControlContent() {
         {currentMonthData ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse hidden md:table">
+              <table className="w-full border-collapse">
                 <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
                   <tr className="border-b border-white/10">
                     <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Categorie</th>
@@ -577,13 +499,6 @@ function MissionControlContent() {
                     <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Acties</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {CATEGORIES.map(category => renderItemsByCategory(category))}
-                </tbody>
-              </table>
-
-              {/* Mobile View */}
-              <table className="md:hidden w-full">
                 <tbody>
                   {CATEGORIES.map(category => renderItemsByCategory(category))}
                 </tbody>
