@@ -299,45 +299,27 @@ function MissionControlContent() {
     const categoryItems = items.filter(item => item.category === category);
 
     return (
-      <motion.div
-        key={category}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-3"
-      >
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
-            <h3 className={`text-base font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
-              {category}
-            </h3>
-            <button
-              onClick={() => addItem(category)}
-              disabled={!currentMonthData}
-              className="flex items-center gap-1 px-3 py-1 text-sm rounded-lg bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium transition-all disabled:opacity-50"
-            >
-              <Plus className="w-3 h-3" />
-              Toevoegen
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse hidden md:table">
-              <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
-                <tr className="border-b border-white/10">
-                  <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Item</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W1</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W2</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W3</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W4</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W5</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Maand</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Target</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Status</th>
-                  <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Acties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categoryItems.map((item, index) => (
+      <React.Fragment key={category}>
+        {/* Category Header Row */}
+        <tr className={`${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]} border-b border-white/20`}>
+          <td colSpan={11} className="px-4 py-2">
+            <div className="flex items-center justify-between">
+              <h3 className={`text-sm font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
+                {category}
+              </h3>
+              <button
+                onClick={() => addItem(category)}
+                disabled={!currentMonthData}
+                className="flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium transition-all disabled:opacity-50"
+              >
+                <Plus className="w-3 h-3" />
+                Toevoegen
+              </button>
+            </div>
+          </td>
+        </tr>
+        {/* Category Items */}
+        {categoryItems.map((item, index) => (
                   <motion.tr
                     key={item.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -345,6 +327,11 @@ function MissionControlContent() {
                     transition={{ delay: index * 0.05 }}
                     className={`border-b border-white/5 hover:bg-white/5 transition-colors ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}
                   >
+                    <td className="px-4 py-1.5">
+                      <span className={`text-xs font-semibold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
+                        {category}
+                      </span>
+                    </td>
                     <td className="px-4 py-1.5">
                       <input
                         type="text"
@@ -397,20 +384,12 @@ function MissionControlContent() {
                     </td>
                   </motion.tr>
                 ))}
-              </tbody>
-            </table>
 
-            {/* Mobile View */}
-            <div className="md:hidden space-y-4 p-4">
-              {categoryItems.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={`rounded-xl border ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]} p-4`}
-                >
-                  <div className="space-y-4">
+        {/* Mobile View */}
+        {categoryItems.map((item, index) => (
+                <tr key={item.id} className="border-b border-white/5">
+                  <td colSpan={11} className="p-4">
+                    <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <input
                         type="text"
@@ -479,13 +458,11 @@ function MissionControlContent() {
                         </select>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
+                    </div>
+                  </td>
+                </tr>
               ))}
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      </React.Fragment>
     );
   };
 
@@ -582,8 +559,36 @@ function MissionControlContent() {
         </motion.div>
 
         {currentMonthData ? (
-          <div className="space-y-6">
-            {CATEGORIES.map(category => renderItemsByCategory(category))}
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse hidden md:table">
+                <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
+                  <tr className="border-b border-white/10">
+                    <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Categorie</th>
+                    <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Item</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W1</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W2</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W3</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W4</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W5</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Maand</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Target</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Status</th>
+                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Acties</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {CATEGORIES.map(category => renderItemsByCategory(category))}
+                </tbody>
+              </table>
+
+              {/* Mobile View */}
+              <table className="md:hidden w-full">
+                <tbody>
+                  {CATEGORIES.map(category => renderItemsByCategory(category))}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : (
           <motion.div
