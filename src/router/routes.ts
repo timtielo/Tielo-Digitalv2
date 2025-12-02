@@ -21,6 +21,7 @@ import { Cookies } from '../pages/Cookies';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
 import { MetselaarShowcase } from '../pages/MetselaarShowcase';
 import { Login } from '../pages/Login';
+import { ResetPassword } from '../pages/ResetPassword';
 import { PortfolioPage } from '../pages/Dashboard/PortfolioPage';
 import { WerkspotPage } from '../pages/Dashboard/WerkspotPage';
 import { ReviewsPage } from '../pages/Dashboard/ReviewsPage';
@@ -41,6 +42,7 @@ export interface Route {
 export const routes: Route[] = [
   { path: '/', component: Home },
   { path: '/login', component: Login, layout: false },
+  { path: '/reset-password', component: ResetPassword, layout: false },
   { path: '/dashboard', component: DashboardHome, layout: false },
   { path: '/dashboard/portfolio', component: PortfolioPage, layout: false },
   { path: '/dashboard/werkspot', component: WerkspotPage, layout: false },
