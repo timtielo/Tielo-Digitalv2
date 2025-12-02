@@ -13,7 +13,7 @@ export function WebsitesPage() {
     <div className="min-h-screen">
       <SEO
         title="Website voor Bouwbedrijven | Gratis Opzetje"
-        description="Gratis website-opzetje voor bouwbedrijven. Volledig ontzorgd: domein, hosting, DNS, Google Business, WhatsApp integratie. Jij werkt, ik bouw. €750 + €25/maand."
+        description="Gratis website-opzetje voor bouwbedrijven. Volledig ontzorgd: domein, hosting, DNS, Google Business, WhatsApp integratie. Jij werkt, ik bouw. €875 + €30/maand."
         keywords={[
           'Website Bouwbedrijf',
           'Gratis Website',
