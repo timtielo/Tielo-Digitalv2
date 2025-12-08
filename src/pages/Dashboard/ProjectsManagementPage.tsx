@@ -134,14 +134,19 @@ function ProjectsManagementContent() {
         .from('projects')
         .select(`
           *,
-          user_profiles!projects_client_id_fkey (
+          user_profiles (
             email,
             name
           )
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Fetched projects data:', data);
 
       const projectsWithEmail = data?.map(p => ({
         ...p,
@@ -149,9 +154,11 @@ function ProjectsManagementContent() {
         client_name: (p.user_profiles as any)?.name || '',
       })) || [];
 
+      console.log('Processed projects:', projectsWithEmail);
       setProjects(projectsWithEmail);
     } catch (error) {
       console.error('Error fetching projects:', error);
+      alert(`Error loading projects: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
