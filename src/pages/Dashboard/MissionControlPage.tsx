@@ -3,8 +3,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
-import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 
 interface MCCMonth {
   id: string;
@@ -38,21 +37,21 @@ const MONTHS = [
 
 const CATEGORIES = ['LEADS', 'KLANTEN', 'FANS', 'CASH', 'TEAM', 'BETROKKENHEID'];
 const CATEGORY_COLORS = {
-  LEADS: 'bg-yellow-500/10 border-yellow-500/30',
-  KLANTEN: 'bg-blue-500/10 border-blue-500/30',
-  FANS: 'bg-pink-500/10 border-pink-500/30',
-  CASH: 'bg-green-500/10 border-green-500/30',
-  TEAM: 'bg-purple-500/10 border-purple-500/30',
-  BETROKKENHEID: 'bg-orange-500/10 border-orange-500/30'
+  LEADS: 'bg-yellow-50 border-yellow-200',
+  KLANTEN: 'bg-blue-50 border-blue-200',
+  FANS: 'bg-pink-50 border-pink-200',
+  CASH: 'bg-green-50 border-green-200',
+  TEAM: 'bg-purple-50 border-purple-200',
+  BETROKKENHEID: 'bg-orange-50 border-orange-200'
 };
 
 const CATEGORY_TEXT_COLORS = {
-  LEADS: 'text-yellow-400',
-  KLANTEN: 'text-blue-400',
-  FANS: 'text-pink-400',
-  CASH: 'text-green-400',
-  TEAM: 'text-purple-400',
-  BETROKKENHEID: 'text-orange-400'
+  LEADS: 'text-yellow-700',
+  KLANTEN: 'text-blue-700',
+  FANS: 'text-pink-700',
+  CASH: 'text-green-700',
+  TEAM: 'text-purple-700',
+  BETROKKENHEID: 'text-orange-700'
 };
 
 const STATUS_OPTIONS = [
@@ -390,40 +389,31 @@ function MissionControlContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-        <AuroraBackground />
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+      <DashboardLayout currentPage="admin">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
-
-      <div className="relative z-10 container mx-auto px-4 py-8">
+    <DashboardLayout currentPage="admin">
+      <div className="space-y-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <Breadcrumb
-            items={[
-              { label: 'Admin', path: '/dashboard/admin' },
-              { label: 'Mission Control Center' }
-            ]}
-          />
-          <h1 className="text-4xl font-bold text-white mb-2">Mission Control Center</h1>
-          <p className="text-gray-400">Beheer je maandelijkse doelen en voortgang</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mission Control Center</h1>
+          <p className="text-gray-600">Beheer je maandelijkse doelen en voortgang</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 mb-6"
+          className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 mb-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -510,14 +500,14 @@ function MissionControlContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-12 text-center"
+            className="rounded-2xl border border-gray-200 bg-white shadow-sm p-12 text-center"
           >
-            <p className="text-gray-400 mb-6 text-lg">
+            <p className="text-gray-600 mb-6 text-lg">
               Er is nog geen data voor {MONTHS[selectedMonth - 1]} {selectedYear}
             </p>
             <button
               onClick={createMonth}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg mx-auto"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm mx-auto"
             >
               <Plus className="w-4 h-4" />
               Maand aanmaken
@@ -525,7 +515,7 @@ function MissionControlContent() {
           </motion.div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

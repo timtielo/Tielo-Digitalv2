@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft, Shield } from 'lucide-react';
+import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft, Shield, X } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
-import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -27,20 +26,34 @@ interface UserProfile {
   business_name: string;
 }
 
-const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl ${className}`}>
+const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}>
     {children}
   </div>
 );
 
-const GlassInput = ({ label, ...props }: any) => (
+const Input = ({ label, ...props }: any) => (
   <div>
-    {label && <label className="text-sm font-medium text-gray-300 block mb-2">{label}</label>}
-    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm transition-all focus-within:border-blue-400/50 focus-within:bg-white/10">
+    {label && <label className="text-sm font-medium text-gray-700 block mb-2">{label}</label>}
+    <div className="rounded-xl border border-gray-300 bg-gray-50 transition-all focus-within:border-blue-500 focus-within:bg-white">
       <input
         {...props}
-        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder-gray-500"
+        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
       />
+    </div>
+  </div>
+);
+
+const Select = ({ label, children, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-700 block mb-2">{label}</label>}
+    <div className="rounded-xl border border-gray-300 bg-gray-50">
+      <select
+        {...props}
+        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900"
+      >
+        {children}
+      </select>
     </div>
   </div>
 );
@@ -55,7 +68,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -63,18 +76,18 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative z-10 w-full max-w-2xl my-8"
       >
-        <GlassCard className="p-6">
+        <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">{title}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors"
             >
-              ×
+              <X className="h-5 w-5" />
             </button>
           </div>
           {children}
-        </GlassCard>
+        </Card>
       </motion.div>
     </div>
   );
@@ -270,65 +283,59 @@ function ProjectsManagementContent() {
 
   if (!isAdmin && !loading) {
     return (
-      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-        <AuroraBackground />
-        <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <GlassCard className="p-12 text-center max-w-md">
+      <DashboardLayout currentPage="admin">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Card className="p-12 text-center max-w-md">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Shield className="h-8 w-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-3">Geen Toegang</h2>
-            <p className="text-gray-400">Je hebt geen admin rechten om deze pagina te bekijken.</p>
-          </GlassCard>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">Geen Toegang</h2>
+            <p className="text-gray-600">Je hebt geen admin rechten om deze pagina te bekijken.</p>
+          </Card>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
-
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+    <DashboardLayout currentPage="admin">
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
               <Breadcrumb items={[{ label: 'Admin', path: '/dashboard/admin' }, { label: 'Projecten' }]} />
 
-              <div className="flex items-center gap-4 mb-6">
-                <button
-                  onClick={handleBack}
-                  className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <div>
-                  <h1 className="text-4xl font-bold text-white">Projecten Beheer</h1>
-                  <p className="text-gray-400 mt-1">Beheer website projecten en voortgang</p>
-                </div>
-              </div>
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Terug naar Admin
+          </button>
 
-              <div className="flex justify-end">
-                <button
-                  onClick={() => handleOpenDialog()}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg hover:shadow-blue-500/30"
-                >
-                  <Plus className="w-5 h-5" />
-                  Nieuw Project
-                </button>
-              </div>
-            </motion.div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Projecten Beheer</h1>
+              <p className="text-gray-600 mt-1">Beheer website projecten en voortgang</p>
+            </div>
+            <button
+              onClick={() => handleOpenDialog()}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+            >
+              <Plus className="w-5 h-5" />
+              Nieuw Project
+            </button>
+          </div>
+        </motion.div>
 
-            {loading ? (
-              <GlassCard className="p-16">
-                <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
-                </div>
-              </GlassCard>
+        {loading ? (
+          <Card className="p-16">
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          </Card>
             ) : (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -343,182 +350,175 @@ function ProjectsManagementContent() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <GlassCard className="p-6 hover:bg-white/10 transition-all">
+                    <Card className="p-6 hover:bg-gray-50 transition-all">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <Users className="w-5 h-5 text-blue-400" />
-                            <h3 className="text-lg font-semibold text-white">
+                            <Users className="w-5 h-5 text-blue-600" />
+                            <h3 className="text-lg font-semibold text-gray-900">
                               {project.client_name || project.client_email}
                             </h3>
                             {project.is_online && (
-                              <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs font-medium rounded-lg border border-green-500/30">
+                              <span className="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-lg border border-green-200">
                                 Online
                               </span>
                             )}
                             {!project.active && (
-                              <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs font-medium rounded-lg border border-gray-500/30">
+                              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg border border-gray-200">
                                 Inactief
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-400 mb-3">{project.client_email}</p>
+                          <p className="text-sm text-gray-600 mb-3">{project.client_email}</p>
                           <div className="mb-3">
-                            <div className="flex items-center justify-between text-sm text-gray-300 mb-2">
-                              <span className="font-medium text-blue-300">{project.status_label}</span>
-                              <span className="font-semibold text-blue-400">{project.progress}%</span>
+                            <div className="flex items-center justify-between text-sm text-gray-700 mb-2">
+                              <span className="font-medium text-blue-600">{project.status_label}</span>
+                              <span className="font-semibold text-blue-600">{project.progress}%</span>
                             </div>
-                            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                               <div
-                                className="bg-gradient-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                className="bg-gradient-to-r from-blue-600 to-cyan-600 h-2 rounded-full transition-all duration-500"
                                 style={{ width: `${project.progress}%` }}
                               ></div>
                             </div>
                           </div>
-                          <p className="text-sm text-gray-300">{project.status_explanation}</p>
+                          <p className="text-sm text-gray-700">{project.status_explanation}</p>
                         </div>
                         <div className="flex gap-2 ml-4">
                           <button
                             onClick={() => handleNavigateToTasks(project.id)}
-                            className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-blue-500/20 text-blue-400 transition-all"
+                            className="p-2 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
                             title="Beheer taken"
                           >
                             <Rocket className="w-5 h-5" />
                           </button>
                           <button
                             onClick={() => handleOpenDialog(project)}
-                            className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                            className="p-2 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 transition-all"
                             title="Bewerk project"
                           >
                             <Edit2 className="w-5 h-5" />
                           </button>
                           <button
                             onClick={() => handleDeleteProject(project.id)}
-                            className="p-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                            className="p-2 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 transition-all"
                             title="Verwijder project"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
                       </div>
-                    </GlassCard>
+                    </Card>
                   </motion.div>
                 ))}
 
                 {projects.length === 0 && (
-                  <GlassCard className="p-16 text-center">
-                    <Rocket className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                    <p className="text-gray-400 mb-4">Nog geen projecten aangemaakt</p>
+                  <Card className="p-16 text-center">
+                    <Rocket className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 mb-4">Nog geen projecten aangemaakt</p>
                     <button
                       onClick={() => handleOpenDialog()}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
                     >
                       <Plus className="w-5 h-5" />
                       Eerste Project Aanmaken
                     </button>
-                  </GlassCard>
+                  </Card>
                 )}
               </motion.div>
             )}
-
-            {showDialog && (
-              <Modal
-                isOpen={showDialog}
-                onClose={() => setShowDialog(false)}
-                title={editingProject ? 'Project Bewerken' : 'Nieuw Project'}
-              >
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-300 block mb-2">Klant</label>
-                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
-                      <select
-                        value={formData.client_id}
-                        onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white"
-                        disabled={!!editingProject}
-                      >
-                        <option value="">Selecteer een klant</option>
-                        {users.map(user => (
-                          <option key={user.id} value={user.id}>
-                            {user.name} ({user.email})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <GlassInput
-                    label="Voortgang (%)"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.progress}
-                    onChange={(e: any) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
-                  />
-
-                  <GlassInput
-                    label="Status Label"
-                    value={formData.status_label}
-                    onChange={(e: any) => setFormData({ ...formData, status_label: e.target.value })}
-                    placeholder="Bijv. In ontwikkeling"
-                  />
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-300 block mb-2">Status Uitleg</label>
-                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
-                      <textarea
-                        value={formData.status_explanation}
-                        onChange={(e) => setFormData({ ...formData, status_explanation: e.target.value })}
-                        placeholder="Geef een duidelijke uitleg over de huidige status"
-                        rows={3}
-                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder-gray-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.is_online}
-                        onChange={(e) => setFormData({ ...formData, is_online: e.target.checked })}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-300">Website is online</span>
-                    </label>
-
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.active}
-                        onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-300">Project actief</span>
-                    </label>
-                  </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={() => setShowDialog(false)}
-                      className="flex-1 px-4 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all"
-                    >
-                      Annuleren
-                    </button>
-                    <button
-                      onClick={handleSaveProject}
-                      className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
-                    >
-                      {editingProject ? 'Opslaan' : 'Aanmaken'}
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-            )}
-          </div>
-        </div>
       </div>
-    </div>
+
+      {showDialog && (
+        <Modal
+          isOpen={showDialog}
+          onClose={() => setShowDialog(false)}
+          title={editingProject ? 'Project Bewerken' : 'Nieuw Project'}
+        >
+          <div className="space-y-4">
+            <Select
+              label="Klant"
+              value={formData.client_id}
+              onChange={(e: any) => setFormData({ ...formData, client_id: e.target.value })}
+              disabled={!!editingProject}
+            >
+              <option value="">Selecteer een klant</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id}>
+                  {user.name} ({user.email})
+                </option>
+              ))}
+            </Select>
+
+            <Input
+              label="Voortgang (%)"
+              type="number"
+              min="0"
+              max="100"
+              value={formData.progress}
+              onChange={(e: any) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
+            />
+
+            <Input
+              label="Status Label"
+              value={formData.status_label}
+              onChange={(e: any) => setFormData({ ...formData, status_label: e.target.value })}
+              placeholder="Bijv. In ontwikkeling"
+            />
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-2">Status Uitleg</label>
+              <div className="rounded-xl border border-gray-300 bg-gray-50">
+                <textarea
+                  value={formData.status_explanation}
+                  onChange={(e) => setFormData({ ...formData, status_explanation: e.target.value })}
+                  placeholder="Geef een duidelijke uitleg over de huidige status"
+                  rows={3}
+                  className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.is_online}
+                  onChange={(e) => setFormData({ ...formData, is_online: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">Website is online</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.active}
+                  onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">Project actief</span>
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={() => setShowDialog(false)}
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all"
+              >
+                Annuleren
+              </button>
+              <button
+                onClick={handleSaveProject}
+                className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+              >
+                {editingProject ? 'Opslaan' : 'Aanmaken'}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </DashboardLayout>
   );
 }
 
