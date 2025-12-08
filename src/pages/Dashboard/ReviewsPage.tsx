@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, MessageSquare, Star } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
@@ -162,91 +163,77 @@ function ReviewsContent() {
     setDialogOpen(true);
   };
 
-  const handleBackToDashboard = () => {
-    window.history.pushState({}, '', '/dashboard');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
-
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
-
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <button
-              onClick={handleBackToDashboard}
-              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+    <DashboardLayout currentPage="reviews">
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+        >
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Reviews</h1>
+              <p className="text-blue-100">Beheer klantbeoordelingen</p>
+            </div>
+            <Button
+              onClick={openNewDialog}
+              className="bg-white text-blue-600 hover:bg-blue-50 border-0 shadow-lg"
             >
-              ← Terug naar Dashboard
-            </button>
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-4xl font-bold text-white mb-2">Reviews</h1>
-                <p className="text-gray-300">Beheer klantbeoordelingen</p>
-              </div>
-              <Button
-                onClick={openNewDialog}
-                className="bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-600 hover:to-emerald-500 border-0"
-              >
                 <Plus className="h-4 w-4 mr-2" />
                 Nieuwe Review
               </Button>
             </div>
-          </motion.div>
+        </motion.div>
 
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-            </div>
-          ) : reviews.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-20"
-            >
-              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto border border-white/10">
-                <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-2xl font-bold text-white mb-2">Nog geen reviews</h3>
-                <p className="text-gray-400 mb-6">Begin met het toevoegen van je eerste review</p>
-                <Button
-                  onClick={openNewDialog}
-                  className="bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-600 hover:to-emerald-500 border-0"
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : reviews.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20"
+          >
+            <Card className="p-12 max-w-md mx-auto">
+              <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Nog geen reviews</h3>
+              <p className="text-gray-600 mb-6">Begin met het toevoegen van je eerste review</p>
+              <Button
+                onClick={openNewDialog}
+                className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Voeg je eerste review toe
+              </Button>
+            </Card>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <AnimatePresence>
+              {reviews.map((review, index) => (
+                <motion.div
+                  key={review.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ delay: index * 0.05 }}
                 >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Voeg je eerste review toe
-                </Button>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              <AnimatePresence>
-                {reviews.map((review, index) => (
-                  <motion.div
-                    key={review.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="group relative bg-gradient-to-br from-teal-500/20 to-emerald-400/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300"
-                  >
+                  <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-300">
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-400 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center flex-shrink-0">
                             <Star className="h-6 w-6 text-white" fill="white" />
                           </div>
                           <div className="min-w-0">
-                            <h3 className="text-lg font-bold text-white truncate">{review.name}</h3>
-                            <p className="text-xs text-gray-400">
+                            <h3 className="text-lg font-bold text-gray-900 truncate">{review.name}</h3>
+                            <p className="text-xs text-gray-600">
                               {new Date(review.date).toLocaleDateString('nl-NL', {
                                 day: 'numeric',
                                 month: 'long',
@@ -258,17 +245,17 @@ function ReviewsContent() {
                       </div>
 
                       <div className="mb-4 min-h-[100px]">
-                        <p className="text-sm text-gray-200 leading-relaxed line-clamp-4">
+                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-4">
                           "{review.review}"
                         </p>
                       </div>
 
-                      <div className="flex gap-2 pt-4 border-t border-white/10">
+                      <div className="flex gap-2 pt-4 border-t border-gray-200">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(review)}
-                          className="flex-1 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                          className="flex-1 bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                         >
                           <Pencil className="h-4 w-4 mr-2" />
                           Bewerken
@@ -277,18 +264,18 @@ function ReviewsContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDelete(review.id)}
-                          className="bg-red-500/20 backdrop-blur-sm border-red-500/30 text-red-400 hover:bg-red-500/30"
+                          className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -348,7 +335,7 @@ function ReviewsContent() {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardLayout>
   );
 }
 
