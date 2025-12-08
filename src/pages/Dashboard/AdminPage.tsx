@@ -773,8 +773,8 @@ export function AdminPage() {
                 onClick={() => setActiveTab('users')}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
                   activeTab === 'users'
-                    ? 'bg-blue-50 border border-blue-200 text-blue-600'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
                 }`}
               >
                 <Users className="w-5 h-5" />
@@ -784,8 +784,8 @@ export function AdminPage() {
                 onClick={() => setActiveTab('account-types')}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
                   activeTab === 'account-types'
-                    ? 'bg-blue-50 border border-blue-200 text-blue-600'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
                 }`}
               >
                 <Package className="w-5 h-5" />
@@ -796,7 +796,7 @@ export function AdminPage() {
                   window.history.pushState({}, '', '/dashboard/admin/projects');
                   window.dispatchEvent(new PopStateEvent('popstate'));
                 }}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
               >
                 <Rocket className="w-5 h-5" />
                 Projecten

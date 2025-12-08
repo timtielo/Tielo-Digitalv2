@@ -37,21 +37,21 @@ const MONTHS = [
 
 const CATEGORIES = ['LEADS', 'KLANTEN', 'FANS', 'CASH', 'TEAM', 'BETROKKENHEID'];
 const CATEGORY_COLORS = {
-  LEADS: 'bg-yellow-50 border-yellow-200',
-  KLANTEN: 'bg-blue-50 border-blue-200',
-  FANS: 'bg-pink-50 border-pink-200',
-  CASH: 'bg-green-50 border-green-200',
-  TEAM: 'bg-purple-50 border-purple-200',
-  BETROKKENHEID: 'bg-orange-50 border-orange-200'
+  LEADS: 'bg-yellow-100 border-2 border-yellow-400',
+  KLANTEN: 'bg-blue-100 border-2 border-blue-400',
+  FANS: 'bg-pink-100 border-2 border-pink-400',
+  CASH: 'bg-green-100 border-2 border-green-400',
+  TEAM: 'bg-purple-100 border-2 border-purple-400',
+  BETROKKENHEID: 'bg-orange-100 border-2 border-orange-400'
 };
 
 const CATEGORY_TEXT_COLORS = {
-  LEADS: 'text-yellow-700',
-  KLANTEN: 'text-blue-700',
-  FANS: 'text-pink-700',
-  CASH: 'text-green-700',
-  TEAM: 'text-purple-700',
-  BETROKKENHEID: 'text-orange-700'
+  LEADS: 'text-yellow-800',
+  KLANTEN: 'text-blue-800',
+  FANS: 'text-pink-800',
+  CASH: 'text-green-800',
+  TEAM: 'text-purple-800',
+  BETROKKENHEID: 'text-orange-800'
 };
 
 const STATUS_OPTIONS = [

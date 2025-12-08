@@ -23,8 +23,8 @@ interface AccountTypeModule {
   sort_order: number;
 }
 
-const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 ${className}`}>
+const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-2xl border-2 border-gray-300 bg-white shadow-sm p-6 ${className}`}>
     {children}
   </div>
 );
@@ -237,33 +237,33 @@ export function AccountTypesManager() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <GlassCard>
-              <h3 className="text-lg font-semibold text-white mb-4">Nieuw Account Type</h3>
+            <Card>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Nieuw Account Type</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-300 block mb-2">Naam</label>
+                  <label className="text-sm font-medium text-gray-700 block mb-2">Naam</label>
                   <input
                     type="text"
                     value={newTypeName}
                     onChange={(e) => setNewTypeName(e.target.value)}
                     placeholder="bijv. Marketing Plus"
-                    className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50"
+                    className="w-full bg-gray-50 border-2 border-gray-300 rounded-xl px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-300 block mb-2">Beschrijving</label>
+                  <label className="text-sm font-medium text-gray-700 block mb-2">Beschrijving</label>
                   <textarea
                     value={newTypeDescription}
                     onChange={(e) => setNewTypeDescription(e.target.value)}
                     placeholder="Beschrijf wat dit account type inhoudt..."
                     rows={3}
-                    className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 resize-none"
+                    className="w-full bg-gray-50 border-2 border-gray-300 rounded-xl px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
                   />
                 </div>
                 <div className="flex gap-3">
                   <button
                     onClick={createAccountType}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 rounded-xl transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl transition-all shadow-md"
                   >
                     <Check className="w-4 h-4" />
                     Aanmaken
@@ -274,22 +274,22 @@ export function AccountTypesManager() {
                       setNewTypeName('');
                       setNewTypeDescription('');
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-500/20 hover:bg-gray-500/30 border border-gray-500/30 text-gray-400 rounded-xl transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 border-2 border-gray-300 text-gray-700 font-medium rounded-xl transition-all"
                   >
                     <X className="w-4 h-4" />
                     Annuleren
                   </button>
                 </div>
               </div>
-            </GlassCard>
+            </Card>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
-          <GlassCard>
-            <h3 className="text-lg font-semibold text-white mb-4">Account Types</h3>
+          <Card>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Types</h3>
             <div className="space-y-2">
               {accountTypes.map((type) => (
                 <motion.div
@@ -298,18 +298,26 @@ export function AccountTypesManager() {
                   onClick={() => setSelectedType(type.id)}
                   className={`p-4 rounded-xl cursor-pointer transition-all ${
                     selectedType === type.id
-                      ? 'bg-blue-500/20 border border-blue-500/30'
-                      : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                      ? 'bg-blue-600 border-2 border-blue-700 shadow-md'
+                      : 'bg-gray-50 border-2 border-gray-300 hover:bg-gray-100 hover:border-gray-400'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-medium text-white">{type.name}</h4>
+                      <h4 className={`font-semibold ${selectedType === type.id ? 'text-white' : 'text-gray-900'}`}>
+                        {type.name}
+                      </h4>
                       {type.description && (
-                        <p className="text-sm text-gray-400 mt-1">{type.description}</p>
+                        <p className={`text-sm mt-1 ${selectedType === type.id ? 'text-blue-100' : 'text-gray-600'}`}>
+                          {type.description}
+                        </p>
                       )}
                       {type.is_system && (
-                        <span className="inline-block mt-2 text-xs px-2 py-1 bg-gray-500/20 text-gray-400 rounded">
+                        <span className={`inline-block mt-2 text-xs px-2 py-1 rounded font-medium ${
+                          selectedType === type.id
+                            ? 'bg-blue-700 text-blue-200'
+                            : 'bg-gray-200 text-gray-600'
+                        }`}>
                           Systeem Type
                         </span>
                       )}
@@ -320,7 +328,11 @@ export function AccountTypesManager() {
                           e.stopPropagation();
                           deleteAccountType(type.id);
                         }}
-                        className="ml-2 p-1 hover:bg-red-500/20 text-red-400 rounded transition-colors"
+                        className={`ml-2 p-1 rounded transition-colors ${
+                          selectedType === type.id
+                            ? 'hover:bg-red-700 text-red-100'
+                            : 'hover:bg-red-50 text-red-600'
+                        }`}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -329,19 +341,19 @@ export function AccountTypesManager() {
                 </motion.div>
               ))}
             </div>
-          </GlassCard>
+          </Card>
         </div>
 
         <div className="lg:col-span-2">
           {selectedType ? (
-            <GlassCard>
-              <h3 className="text-lg font-semibold text-white mb-4">
+            <Card>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Module Configuratie voor {accountTypes.find(t => t.id === selectedType)?.name}
               </h3>
 
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-300 mb-3">Actieve Modules</h4>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Actieve Modules</h4>
                   <div className="space-y-2">
                     {enabledModules.length > 0 ? (
                       enabledModules.map((tm) => {
@@ -409,14 +421,14 @@ export function AccountTypesManager() {
                   </div>
                 </div>
               </div>
-            </GlassCard>
+            </Card>
           ) : (
-            <GlassCard>
+            <Card>
               <div className="text-center py-12">
                 <Package className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-400">Selecteer een account type om de modules te configureren</p>
               </div>
-            </GlassCard>
+            </Card>
           )}
         </div>
       </div>

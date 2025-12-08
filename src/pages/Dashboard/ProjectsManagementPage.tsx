@@ -27,7 +27,7 @@ interface UserProfile {
 }
 
 const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}>
+  <div className={`rounded-2xl border-2 border-gray-300 bg-white shadow-sm ${className}`}>
     {children}
   </div>
 );
@@ -35,7 +35,7 @@ const Card = ({ children, className = '' }: { children: React.ReactNode; classNa
 const Input = ({ label, ...props }: any) => (
   <div>
     {label && <label className="text-sm font-medium text-gray-700 block mb-2">{label}</label>}
-    <div className="rounded-xl border border-gray-300 bg-gray-50 transition-all focus-within:border-blue-500 focus-within:bg-white">
+    <div className="rounded-xl border-2 border-gray-300 bg-gray-50 transition-all focus-within:border-blue-600 focus-within:bg-white">
       <input
         {...props}
         className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
@@ -47,7 +47,7 @@ const Input = ({ label, ...props }: any) => (
 const Select = ({ label, children, ...props }: any) => (
   <div>
     {label && <label className="text-sm font-medium text-gray-700 block mb-2">{label}</label>}
-    <div className="rounded-xl border border-gray-300 bg-gray-50">
+    <div className="rounded-xl border-2 border-gray-300 bg-gray-50">
       <select
         {...props}
         className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900"
@@ -359,25 +359,25 @@ function ProjectsManagementContent() {
                               {project.client_name || project.client_email}
                             </h3>
                             {project.is_online && (
-                              <span className="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-lg border border-green-200">
+                              <span className="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-lg shadow-sm">
                                 Online
                               </span>
                             )}
                             {!project.active && (
-                              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg border border-gray-200">
+                              <span className="px-3 py-1 bg-gray-400 text-white text-xs font-semibold rounded-lg shadow-sm">
                                 Inactief
                               </span>
                             )}
                           </div>
                           <p className="text-sm text-gray-600 mb-3">{project.client_email}</p>
                           <div className="mb-3">
-                            <div className="flex items-center justify-between text-sm text-gray-700 mb-2">
-                              <span className="font-medium text-blue-600">{project.status_label}</span>
-                              <span className="font-semibold text-blue-600">{project.progress}%</span>
+                            <div className="flex items-center justify-between text-sm text-gray-900 mb-2">
+                              <span className="font-semibold text-blue-700">{project.status_label}</span>
+                              <span className="font-bold text-blue-700">{project.progress}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden border border-gray-400">
                               <div
-                                className="bg-gradient-to-r from-blue-600 to-cyan-600 h-2 rounded-full transition-all duration-500"
+                                className="bg-gradient-to-r from-blue-600 to-cyan-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                                 style={{ width: `${project.progress}%` }}
                               ></div>
                             </div>
