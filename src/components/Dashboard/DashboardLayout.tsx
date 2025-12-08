@@ -253,20 +253,23 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                   {navigation.map((item) => {
                     const Icon = iconMap[item.icon_name] || User;
                     const isActive = currentPage === item.module_key;
+                    const isWerkspot = item.module_key === 'werkspot';
                     return (
                       <button
                         key={item.module_key}
                         onClick={() => handleNavigation(item.route_path)}
                         className={`
                           w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
-                          ${isActive
+                          ${isActive && isWerkspot
+                            ? 'bg-white text-gray-900 shadow-lg shadow-gray-500/20 scale-[1.02] border-2 border-gray-200'
+                            : isActive
                             ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]'
                             : 'text-gray-700 hover:bg-white hover:shadow-md'
                           }
                         `}
                       >
-                        <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-gray-100'}`}>
-                          <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                        <div className={`p-2 rounded-lg ${isActive && isWerkspot ? 'bg-gray-100' : isActive ? 'bg-white/20' : 'bg-gray-100'}`}>
+                          <Icon className={`h-4 w-4 ${isActive && isWerkspot ? 'text-gray-700' : isActive ? 'text-white' : 'text-gray-600'}`} />
                         </div>
                         <span className="flex-1 text-left">{item.display_name}</span>
                         {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
