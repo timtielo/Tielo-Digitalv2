@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, TrendingUp, Edit } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
@@ -131,10 +130,8 @@ function WerkspotContent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
-
-      <div className="relative z-10 min-h-screen">
+    <div className="min-h-screen w-full bg-gray-50 font-sans antialiased">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -143,19 +140,19 @@ function WerkspotContent() {
           >
             <button
               onClick={handleBackToDashboard}
-              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+              className="text-blue-600 hover:text-blue-700 mb-4 flex items-center gap-2 transition-colors"
             >
               ← Terug naar Dashboard
             </button>
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Werkspot Gegevens</h1>
-              <p className="text-gray-300">Beheer je Werkspot statistieken</p>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">Werkspot Gegevens</h1>
+              <p className="text-gray-600">Beheer je Werkspot statistieken</p>
             </div>
           </motion.div>
 
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
           ) : (
             <>
@@ -164,44 +161,44 @@ function WerkspotContent() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-gradient-to-br from-amber-500/20 to-yellow-400/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10"
+                  className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
-                      <Star className="h-8 w-8 text-yellow-400" fill="currentColor" />
+                    <div className="p-4 bg-amber-50 rounded-2xl">
+                      <Star className="h-8 w-8 text-amber-500" fill="currentColor" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-300">Gemiddelde Sterren</p>
-                      <p className="text-5xl font-bold text-white">
+                      <p className="text-sm text-gray-600">Gemiddelde Sterren</p>
+                      <p className="text-5xl font-bold text-gray-900">
                         {editing && formData.avgstars
                           ? parseFloat(formData.avgstars).toFixed(1)
                           : data?.avgstars?.toFixed(1) || '0.0'}
                       </p>
                     </div>
                   </div>
-                  <p className="text-gray-400 text-sm">van de 5.0</p>
+                  <p className="text-gray-500 text-sm">van de 5.0</p>
                 </motion.div>
 
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-gradient-to-br from-blue-500/20 to-cyan-400/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10"
+                  className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
-                      <TrendingUp className="h-8 w-8 text-cyan-400" />
+                    <div className="p-4 bg-blue-50 rounded-2xl">
+                      <TrendingUp className="h-8 w-8 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-300">Aantal Reviews</p>
-                      <p className="text-5xl font-bold text-white">
+                      <p className="text-sm text-gray-600">Aantal Reviews</p>
+                      <p className="text-5xl font-bold text-gray-900">
                         {editing && formData.reviewamount
                           ? formData.reviewamount
                           : data?.reviewamount || 0}
                       </p>
                     </div>
                   </div>
-                  <p className="text-gray-400 text-sm">totaal ontvangen</p>
+                  <p className="text-gray-500 text-sm">totaal ontvangen</p>
                 </motion.div>
               </div>
 
@@ -209,13 +206,13 @@ function WerkspotContent() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
+                className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
               >
                 {editing ? (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="avgstars" className="text-gray-300">
+                        <Label htmlFor="avgstars" className="text-gray-700">
                           Gemiddelde Sterren (0-5)
                         </Label>
                         <Input
@@ -228,12 +225,12 @@ function WerkspotContent() {
                             setFormData({ ...formData, avgstars: e.target.value })
                           }
                           required
-                          className="bg-white/5 border-white/20 text-white"
+                          className="bg-white border-gray-300 text-gray-900"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="reviewamount" className="text-gray-300">
+                        <Label htmlFor="reviewamount" className="text-gray-700">
                           Aantal Reviews
                         </Label>
                         <Input
@@ -246,7 +243,7 @@ function WerkspotContent() {
                             setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })
                           }
                           required
-                          className="bg-white/5 border-white/20 text-white"
+                          className="bg-white border-gray-300 text-gray-900"
                         />
                       </div>
                     </div>
@@ -255,7 +252,7 @@ function WerkspotContent() {
                       <Button
                         type="submit"
                         disabled={saving}
-                        className="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 border-0"
+                        className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0"
                       >
                         {saving ? 'Opslaan...' : 'Opslaan'}
                       </Button>
@@ -271,7 +268,7 @@ function WerkspotContent() {
                             });
                           }
                         }}
-                        className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                        className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                       >
                         Annuleren
                       </Button>
@@ -279,12 +276,12 @@ function WerkspotContent() {
                   </form>
                 ) : (
                   <div className="flex justify-between items-center">
-                    <p className="text-gray-300">
+                    <p className="text-gray-600">
                       Klik op bewerken om je Werkspot gegevens bij te werken
                     </p>
                     <Button
                       onClick={() => setEditing(true)}
-                      className="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 border-0"
+                      className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Bewerken
