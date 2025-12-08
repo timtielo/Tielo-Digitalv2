@@ -13,7 +13,11 @@ interface ProjectTask {
   visible_to_client: boolean;
 }
 
-export const ProjectTasksList: React.FC = () => {
+interface ProjectTasksListProps {
+  limit?: number;
+}
+
+export const ProjectTasksList: React.FC<ProjectTasksListProps> = ({ limit }) => {
   const [tasks, setTasks] = useState<ProjectTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
@@ -117,7 +121,8 @@ export const ProjectTasksList: React.FC = () => {
     );
   }
 
-  const openTasks = tasks.filter(t => t.status !== 'done');
+  const allOpenTasks = tasks.filter(t => t.status !== 'done');
+  const openTasks = limit ? allOpenTasks.slice(0, limit) : allOpenTasks;
   const completedTasks = tasks.filter(t => t.status === 'done');
 
   const tasksByPhase = openTasks.reduce((acc, task) => {
@@ -148,10 +153,10 @@ export const ProjectTasksList: React.FC = () => {
             <p className="text-sm text-gray-600">Klik op een taak om deze af te vinken</p>
           </div>
         </div>
-        {openTasks.length > 0 && (
+        {allOpenTasks.length > 0 && (
           <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full">
             <Sparkles className="w-4 h-4 text-blue-600" />
-            <span className="text-blue-900 font-bold">{openTasks.length} openstaand</span>
+            <span className="text-blue-900 font-bold">{allOpenTasks.length} openstaand</span>
           </div>
         )}
       </div>
@@ -206,7 +211,7 @@ export const ProjectTasksList: React.FC = () => {
           </div>
         ))}
 
-        {completedTasks.length > 0 && (
+        {!limit && completedTasks.length > 0 && (
           <div className="pt-6 mt-6 border-t-2 border-gray-200">
             <button
               onClick={() => setExpandedPhase(expandedPhase ? null : 'completed')}

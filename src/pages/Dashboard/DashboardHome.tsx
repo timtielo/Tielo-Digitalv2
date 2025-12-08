@@ -314,7 +314,7 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <ProjectTasksList />
+              <ProjectTasksList limit={2} />
             </motion.div>
 
             <motion.div
