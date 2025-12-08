@@ -114,7 +114,7 @@ function DashboardHomeContent() {
 
   if (loading) {
     return (
-      <DashboardLayout currentPage="profile">
+      <DashboardLayout currentPage="home">
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -124,7 +124,7 @@ function DashboardHomeContent() {
 
   if (userProfile?.is_admin) {
     return (
-      <DashboardLayout currentPage="profile">
+      <DashboardLayout currentPage="home">
         <div className="space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -260,7 +260,7 @@ function DashboardHomeContent() {
   }
 
   return (
-    <DashboardLayout currentPage="profile">
+    <DashboardLayout currentPage="home">
       <div className="space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
