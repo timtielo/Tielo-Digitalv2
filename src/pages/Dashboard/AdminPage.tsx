@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users, Target } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users, Target, Rocket } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -803,6 +803,16 @@ export function AdminPage() {
                   >
                     <Package className="w-5 h-5" />
                     Account Types
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.history.pushState({}, '', '/dashboard/admin/projects');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    }}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
+                  >
+                    <Rocket className="w-5 h-5" />
+                    Projecten
                   </button>
                 </div>
               </motion.div>

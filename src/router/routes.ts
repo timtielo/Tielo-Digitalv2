@@ -30,6 +30,8 @@ import { ProfilePage } from '../pages/Dashboard/ProfilePage';
 import { AdminPage } from '../pages/Dashboard/AdminPage';
 import { DashboardHome } from '../pages/Dashboard/DashboardHome';
 import { MissionControlPage } from '../pages/Dashboard/MissionControlPage';
+import { ProjectsManagementPage } from '../pages/Dashboard/ProjectsManagementPage';
+import { ProjectTasksManagementPage } from '../pages/Dashboard/ProjectTasksManagementPage';
 
 export interface Route {
   path: string;
@@ -50,6 +52,8 @@ export const routes: Route[] = [
   { path: '/dashboard/leads', component: LeadsPage, layout: false },
   { path: '/dashboard/profile', component: ProfilePage, layout: false },
   { path: '/dashboard/admin', component: AdminPage, layout: false },
+  { path: '/dashboard/admin/projects', component: ProjectsManagementPage, layout: false },
+  { path: '/dashboard/admin/projects/:projectId/tasks', component: ProjectTasksManagementPage, params: ['projectId'], layout: false },
   { path: '/dashboard/mcc', component: MissionControlPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },

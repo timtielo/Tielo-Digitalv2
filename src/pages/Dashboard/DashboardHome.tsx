@@ -22,6 +22,8 @@ import {
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
+import { ProjectProgressCard } from '../../components/Dashboard/ProjectProgressCard';
+import { ProjectTasksList } from '../../components/Dashboard/ProjectTasksList';
 
 interface DashboardModule {
   module_key: string;
@@ -323,6 +325,11 @@ function DashboardHomeContent() {
             Kies een module om te beginnen
           </p>
         </motion.div>
+
+        <div className="max-w-4xl mx-auto mb-8 space-y-6">
+          <ProjectProgressCard />
+          <ProjectTasksList />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
