@@ -276,34 +276,28 @@ function DashboardHomeContent() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center mb-12"
         >
           {userProfile?.profile_picture_url && (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="flex justify-center mb-3"
+              className="flex justify-center mb-6"
             >
               <img
                 src={userProfile.profile_picture_url}
                 alt="Profile"
-                className="w-16 h-16 rounded-full object-cover border-4 border-white/20 shadow-lg"
+                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-2xl ring-4 ring-blue-500/20"
               />
             </motion.div>
           )}
 
-          <h1
-            className="
-              text-4xl md:text-5xl font-extrabold tracking-tight
-              bg-gradient-to-r from-blue-400 via-green-400 to-orange-500
-              bg-clip-text text-transparent
-            "
-          >
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-3">
             Welkom terug{userProfile?.name ? `, ${userProfile.name}` : ''}
           </h1>
           {userProfile?.business_name && (
-            <p className="mt-2 text-xl text-gray-300 font-medium">
+            <p className="text-2xl text-white/80 font-semibold mb-3">
               {userProfile.business_name}
             </p>
           )}
@@ -315,96 +309,104 @@ function DashboardHomeContent() {
               href={userProfile.website_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all text-sm font-medium backdrop-blur-sm"
             >
               <ExternalLink className="h-4 w-4" />
               {userProfile.website_url.replace(/^https?:\/\//, '')}
             </motion.a>
           )}
-          <p className="mt-4 text-lg text-gray-400">
-            Kies een module om te beginnen
-          </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto mb-8 space-y-6">
+        <div className="max-w-6xl mx-auto mb-12 space-y-8">
           <ProjectProgressCard />
           <ProjectTasksList />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3">
-            <BentoGrid>
-              {allModules.map((module) => {
-                const Icon = iconMap[module.icon_name] || User;
-                const gradient = gradientMap[module.module_key] || {
-                  from: 'from-gray-500',
-                  to: 'to-gray-400',
-                  span: 'md:col-span-2',
-                };
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mb-8"
+          >
+            <h2 className="text-3xl font-bold text-white mb-2">Dashboard Modules</h2>
+            <p className="text-white/70">Kies een module om te openen</p>
+          </motion.div>
 
-                return (
-                  <BentoGridItem
-                    key={module.module_key}
-                    className={gradient.span}
-                    gradientFrom={gradient.from}
-                    gradientTo={gradient.to}
-                    onClick={() => handleNavigation(module.route_path)}
-                  >
-                    <div className="mb-2">
-                      <Icon className="w-8 h-8 text-white" />
-                    </div>
-                    <div className="flex flex-col flex-grow">
-                      <h3 className="text-2xl font-bold text-white mb-2">
-                        {module.display_name}
-                      </h3>
-                      <p className="text-gray-200 text-base leading-snug flex-grow">
-                        {module.description}
-                      </p>
-                    </div>
-                    <div className="mt-3">
-                      <span
-                        className="
-                          text-white font-semibold text-base inline-flex items-center
-                          group/link
-                        "
-                      >
-                        Openen
-                        <ArrowRight className="ml-1 w-5 h-5 transition-transform duration-300 group-hover/link:translate-x-1" />
-                      </span>
-                    </div>
-                  </BentoGridItem>
-                );
-              })}
-            </BentoGrid>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <BentoGrid>
+                {allModules.map((module) => {
+                  const Icon = iconMap[module.icon_name] || User;
+                  const gradient = gradientMap[module.module_key] || {
+                    from: 'from-gray-500',
+                    to: 'to-gray-400',
+                    span: 'md:col-span-2',
+                  };
 
-          {userProfile?.important_links && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="lg:col-span-1"
-            >
-              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
-                <div className="flex items-center gap-2 mb-4">
-                  <LinkIcon className="w-6 h-6 text-blue-400 flex-shrink-0" />
-                  <h2 className="text-xl font-bold text-white">Belangrijke Links</h2>
+                  return (
+                    <BentoGridItem
+                      key={module.module_key}
+                      className={gradient.span}
+                      gradientFrom={gradient.from}
+                      gradientTo={gradient.to}
+                      onClick={() => handleNavigation(module.route_path)}
+                    >
+                      <div className="mb-3">
+                        <div className="p-3 bg-white/20 rounded-2xl inline-block backdrop-blur-sm">
+                          <Icon className="w-7 h-7 text-white" />
+                        </div>
+                      </div>
+                      <div className="flex flex-col flex-grow">
+                        <h3 className="text-2xl font-bold text-white mb-2">
+                          {module.display_name}
+                        </h3>
+                        <p className="text-white/90 text-base leading-snug flex-grow">
+                          {module.description}
+                        </p>
+                      </div>
+                      <div className="mt-4">
+                        <span className="text-white font-bold text-base inline-flex items-center group/link">
+                          Openen
+                          <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-300 group-hover/link:translate-x-1" />
+                        </span>
+                      </div>
+                    </BentoGridItem>
+                  );
+                })}
+              </BentoGrid>
+            </div>
+
+            {userProfile?.important_links && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="lg:col-span-1"
+              >
+                <div className="rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur-xl p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto shadow-2xl">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-white/20 rounded-xl">
+                      <LinkIcon className="w-6 h-6 text-white flex-shrink-0" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">Belangrijke Links</h2>
+                  </div>
+                  <div
+                    className="prose prose-invert prose-sm max-w-none text-white/90 [&_a]:text-white [&_a]:font-semibold [&_a]:hover:text-blue-200 [&_a]:transition-colors [&_a]:underline [&_a]:decoration-white/40 [&_a]:underline-offset-2 [&_ul]:space-y-3 [&_li]:text-sm [&_li]:leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
+                    onClick={(e) => {
+                      const target = e.target as HTMLElement;
+                      if (target.tagName === 'A') {
+                        const link = target as HTMLAnchorElement;
+                        link.setAttribute('target', '_blank');
+                        link.setAttribute('rel', 'noopener noreferrer');
+                      }
+                    }}
+                  />
                 </div>
-                <div
-                  className="prose prose-invert prose-sm max-w-none text-gray-200 [&_a]:text-blue-400 [&_a]:hover:text-blue-300 [&_a]:transition-colors [&_a]:underline [&_a]:decoration-blue-400/30 [&_ul]:space-y-2 [&_li]:text-sm"
-                  dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
-                  onClick={(e) => {
-                    const target = e.target as HTMLElement;
-                    if (target.tagName === 'A') {
-                      const link = target as HTMLAnchorElement;
-                      link.setAttribute('target', '_blank');
-                      link.setAttribute('rel', 'noopener noreferrer');
-                    }
-                  }}
-                />
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </div>
