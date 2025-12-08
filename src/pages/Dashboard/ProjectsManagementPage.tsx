@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft } from 'lucide-react';
+import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft, Shield } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 import { supabase } from '../../lib/supabase/client';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Project {
   id: string;
@@ -80,9 +81,11 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 };
 
 function ProjectsManagementContent() {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [formData, setFormData] = useState({
@@ -95,9 +98,34 @@ function ProjectsManagementContent() {
   });
 
   useEffect(() => {
-    fetchProjects();
-    fetchUsers();
-  }, []);
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('is_admin')
+        .eq('id', user?.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data?.is_admin) {
+        setIsAdmin(true);
+        fetchProjects();
+        fetchUsers();
+      } else {
+        setIsAdmin(false);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setLoading(false);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
@@ -219,6 +247,23 @@ function ProjectsManagementContent() {
     window.history.pushState({}, '', '/dashboard/admin');
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
+
+  if (!isAdmin && !loading) {
+    return (
+      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+        <AuroraBackground />
+        <div className="relative z-10 min-h-screen flex items-center justify-center">
+          <GlassCard className="p-12 text-center max-w-md">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-3">Geen Toegang</h2>
+            <p className="text-gray-400">Je hebt geen admin rechten om deze pagina te bekijken.</p>
+          </GlassCard>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">

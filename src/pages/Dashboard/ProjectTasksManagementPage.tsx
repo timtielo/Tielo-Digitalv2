@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Download, ArrowLeft, CheckCircle2, Circle, Clock } from 'lucide-react';
+import { Plus, Edit2, Trash2, Download, ArrowLeft, CheckCircle2, Circle, Clock, Shield } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
 import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 import { supabase } from '../../lib/supabase/client';
+import { useAuth } from '../../contexts/AuthContext';
 import defaultTasksTemplate from '../../../templates/defaultProjectTasks.json';
 
 interface ProjectTask {
@@ -90,10 +91,12 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 };
 
 function ProjectTasksManagementContent() {
+  const { user } = useAuth();
   const [projectId, setProjectId] = useState<string>('');
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<ProjectTask[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<ProjectTask | null>(null);
   const [formData, setFormData] = useState({
@@ -116,11 +119,39 @@ function ProjectTasksManagementContent() {
   }, []);
 
   useEffect(() => {
-    if (projectId) {
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (projectId && isAdmin) {
       fetchProject();
       fetchTasks();
     }
-  }, [projectId]);
+  }, [projectId, isAdmin]);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('is_admin')
+        .eq('id', user?.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data?.is_admin) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setLoading(false);
+    }
+  };
 
   const fetchProject = async () => {
     try {
@@ -268,6 +299,23 @@ function ProjectTasksManagementContent() {
     window.history.pushState({}, '', '/dashboard/admin/projects');
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
+
+  if (!isAdmin && !loading) {
+    return (
+      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+        <AuroraBackground />
+        <div className="relative z-10 min-h-screen flex items-center justify-center">
+          <GlassCard className="p-12 text-center max-w-md">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-3">Geen Toegang</h2>
+            <p className="text-gray-400">Je hebt geen admin rechten om deze pagina te bekijken.</p>
+          </GlassCard>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
