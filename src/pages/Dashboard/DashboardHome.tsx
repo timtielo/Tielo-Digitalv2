@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Briefcase,
   Star,
@@ -8,22 +8,20 @@ import {
   User,
   Shield,
   ArrowRight,
-  LogOut,
   ExternalLink,
   Link as LinkIcon,
-  UserCog,
-  XCircle,
+  TrendingUp,
+  Calendar,
+  CheckCircle,
+  AlertCircle,
 } from 'lucide-react';
-import {
-  AuroraBackground,
-  BentoGrid,
-  BentoGridItem,
-} from '../../components/ui/aurora-bento-grid';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { ProjectProgressCard } from '../../components/Dashboard/ProjectProgressCard';
 import { ProjectTasksList } from '../../components/Dashboard/ProjectTasksList';
+import { Card } from '../../components/ui/Card';
 
 interface DashboardModule {
   module_key: string;
@@ -52,102 +50,17 @@ const iconMap: Record<string, any> = {
   Shield,
 };
 
-const gradientMap: Record<string, { from: string; to: string; span: string }> = {
-  portfolio: {
-    from: 'from-blue-500',
-    to: 'to-cyan-400',
-    span: 'md:col-span-3',
-  },
-  werkspot: {
-    from: 'from-amber-500',
-    to: 'to-yellow-400',
-    span: 'md:col-span-3',
-  },
-  reviews: {
-    from: 'from-teal-500',
-    to: 'to-emerald-400',
-    span: 'md:col-span-2',
-  },
-  leads: {
-    from: 'from-green-500',
-    to: 'to-lime-400',
-    span: 'md:col-span-2',
-  },
-  profile: {
-    from: 'from-orange-500',
-    to: 'to-amber-400',
-    span: 'md:col-span-2',
-  },
-  admin: {
-    from: 'from-red-500',
-    to: 'to-rose-400',
-    span: 'md:col-span-2',
-  },
-};
-
 function DashboardHomeContent() {
   const { user } = useAuth();
   const [modules, setModules] = useState<DashboardModule[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isImpersonating, setIsImpersonating] = useState(false);
-  const [impersonatedUserEmail, setImpersonatedUserEmail] = useState('');
 
   useEffect(() => {
     if (user) {
       fetchUserData();
-      checkImpersonation();
     }
   }, [user]);
-
-  const checkImpersonation = () => {
-    const isImpersonatingFlag = sessionStorage.getItem('is_impersonating');
-    const adminSessionStr = sessionStorage.getItem('admin_session');
-
-    if (isImpersonatingFlag === 'true' && adminSessionStr) {
-      try {
-        const adminSession = JSON.parse(adminSessionStr);
-        // Only show impersonation banner if the current user is different from the admin
-        if (adminSession.user_id && adminSession.user_id !== user?.id) {
-          setIsImpersonating(true);
-          setImpersonatedUserEmail(user?.email || '');
-        } else {
-          // Clear stale impersonation flags
-          sessionStorage.removeItem('is_impersonating');
-          sessionStorage.removeItem('admin_session');
-        }
-      } catch (error) {
-        // Invalid session data, clear it
-        sessionStorage.removeItem('is_impersonating');
-        sessionStorage.removeItem('admin_session');
-      }
-    }
-  };
-
-  const returnToAdmin = async () => {
-    const adminSessionStr = sessionStorage.getItem('admin_session');
-    if (!adminSessionStr) return;
-
-    try {
-      const adminSession = JSON.parse(adminSessionStr);
-
-      const { error } = await supabase.auth.setSession({
-        access_token: adminSession.access_token,
-        refresh_token: adminSession.refresh_token
-      });
-
-      if (error) throw error;
-
-      sessionStorage.removeItem('admin_session');
-      sessionStorage.removeItem('is_impersonating');
-
-      window.history.pushState({}, '', '/dashboard/admin');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      window.location.reload();
-    } catch (error) {
-      console.error('Error returning to admin:', error);
-    }
-  };
 
   const fetchUserData = async () => {
     try {
@@ -199,217 +112,279 @@ function DashboardHomeContent() {
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
-  const handleLogout = async () => {
-    try {
-      sessionStorage.removeItem('admin_session');
-      sessionStorage.removeItem('is_impersonating');
-      await supabase.auth.signOut();
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-gray-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-      </div>
+      <DashboardLayout currentPage="profile">
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </DashboardLayout>
     );
   }
 
-  const allModules = [...modules];
-
   if (userProfile?.is_admin) {
-    allModules.push({
-      module_key: 'admin',
-      display_name: 'Admin',
-      icon_name: 'Shield',
-      route_path: '/dashboard/admin',
-      description: 'Beheer gebruikers en systeem instellingen',
-      sort_order: 999,
-    });
+    return (
+      <DashboardLayout currentPage="profile">
+        <div className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold mb-2">
+                  Welkom terug, {userProfile.name || 'Admin'}
+                </h1>
+                <p className="text-blue-100 text-lg">
+                  Admin Dashboard - Beheer en Overzicht
+                </p>
+              </div>
+              <Shield className="h-16 w-16 text-white/30" />
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+                <div className="flex items-center justify-between mb-4">
+                  <Users className="h-8 w-8 text-blue-600" />
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">Total Users</h3>
+                <p className="text-3xl font-bold text-gray-900">--</p>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-green-500">
+                <div className="flex items-center justify-between mb-4">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">Active Projects</h3>
+                <p className="text-3xl font-bold text-gray-900">--</p>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-amber-500">
+                <div className="flex items-center justify-between mb-4">
+                  <AlertCircle className="h-8 w-8 text-amber-600" />
+                  <Calendar className="h-5 w-5 text-gray-400" />
+                </div>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">Pending Tasks</h3>
+                <p className="text-3xl font-bold text-gray-900">--</p>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-rose-500">
+                <div className="flex items-center justify-between mb-4">
+                  <MessageSquare className="h-8 w-8 text-rose-600" />
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">New Messages</h3>
+                <p className="text-3xl font-bold text-gray-900">--</p>
+              </Card>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card
+                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-rose-500"
+                onClick={() => handleNavigation('/dashboard/admin')}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-rose-100 rounded-xl group-hover:bg-rose-200 transition-colors">
+                    <Shield className="h-8 w-8 text-rose-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      User Management
+                    </h3>
+                    <p className="text-gray-600">
+                      Beheer gebruikers, rollen en toegangsrechten
+                    </p>
+                  </div>
+                  <ArrowRight className="h-6 w-6 text-gray-400 group-hover:text-rose-600 group-hover:translate-x-1 transition-all" />
+                </div>
+              </Card>
+
+              <Card
+                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-teal-500"
+                onClick={() => handleNavigation('/dashboard/mcc')}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-teal-100 rounded-xl group-hover:bg-teal-200 transition-colors">
+                    <CheckCircle className="h-8 w-8 text-teal-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      Mission Control
+                    </h3>
+                    <p className="text-gray-600">
+                      Projecten en taken beheer systeem
+                    </p>
+                  </div>
+                  <ArrowRight className="h-6 w-6 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
+                </div>
+              </Card>
+            </div>
+          </motion.div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
-
-      <AnimatePresence>
-        {isImpersonating && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-4 right-4 z-50 bg-amber-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
-          >
-            <UserCog className="h-5 w-5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold">Impersonating User</p>
-              <p className="text-xs opacity-90 truncate">{impersonatedUserEmail}</p>
-            </div>
-            <button
-              onClick={returnToAdmin}
-              className="flex-shrink-0 hover:bg-amber-600 rounded p-1 transition-colors"
-              title="Return to admin"
-            >
-              <XCircle className="h-5 w-5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="relative z-10 container mx-auto px-4 py-4">
-        <div className="flex justify-end mb-4">
-          <motion.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-xl transition-all duration-300"
-          >
-            <LogOut className="h-4 w-4" />
-            Uitloggen
-          </motion.button>
-        </div>
-
+    <DashboardLayout currentPage="profile">
+      <div className="space-y-8">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl"
         >
-          {userProfile?.profile_picture_url && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center mb-6"
-            >
+          <div className="flex items-start gap-6">
+            {userProfile?.profile_picture_url && (
               <img
                 src={userProfile.profile_picture_url}
                 alt="Profile"
-                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-2xl ring-4 ring-blue-500/20"
+                className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-lg"
               />
-            </motion.div>
-          )}
-
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-3">
-            Welkom terug{userProfile?.name ? `, ${userProfile.name}` : ''}
-          </h1>
-          {userProfile?.business_name && (
-            <p className="text-2xl text-white/80 font-semibold mb-3">
-              {userProfile.business_name}
-            </p>
-          )}
-          {userProfile?.website_url && (
-            <motion.a
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              href={userProfile.website_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all text-sm font-medium backdrop-blur-sm"
-            >
-              <ExternalLink className="h-4 w-4" />
-              {userProfile.website_url.replace(/^https?:\/\//, '')}
-            </motion.a>
-          )}
+            )}
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2">
+                Welkom terug, {userProfile?.name || 'User'}
+              </h1>
+              {userProfile?.business_name && (
+                <p className="text-blue-100 text-lg mb-3">
+                  {userProfile.business_name}
+                </p>
+              )}
+              {userProfile?.website_url && (
+                <a
+                  href={userProfile.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  {userProfile.website_url.replace(/^https?:\/\//, '')}
+                </a>
+              )}
+            </div>
+          </div>
         </motion.div>
 
-        <div className="max-w-6xl mx-auto mb-12 space-y-8">
-          <ProjectProgressCard />
-          <ProjectTasksList />
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <ProjectProgressCard />
+            </motion.div>
 
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mb-8"
-          >
-            <h2 className="text-3xl font-bold text-white mb-2">Dashboard Modules</h2>
-            <p className="text-white/70">Kies een module om te openen</p>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <ProjectTasksList />
+            </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
-              <BentoGrid>
-                {allModules.map((module) => {
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Jouw Dashboard Modules</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {modules.map((module) => {
                   const Icon = iconMap[module.icon_name] || User;
-                  const gradient = gradientMap[module.module_key] || {
-                    from: 'from-gray-500',
-                    to: 'to-gray-400',
-                    span: 'md:col-span-2',
-                  };
-
                   return (
-                    <BentoGridItem
+                    <Card
                       key={module.module_key}
-                      className={gradient.span}
-                      gradientFrom={gradient.from}
-                      gradientTo={gradient.to}
+                      className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-blue-500"
                       onClick={() => handleNavigation(module.route_path)}
                     >
-                      <div className="mb-3">
-                        <div className="p-3 bg-white/20 rounded-2xl inline-block backdrop-blur-sm">
-                          <Icon className="w-7 h-7 text-white" />
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
+                          <Icon className="h-6 w-6 text-blue-600" />
                         </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">
+                            {module.display_name}
+                          </h3>
+                          <p className="text-sm text-gray-600 line-clamp-2">
+                            {module.description}
+                          </p>
+                        </div>
+                        <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
                       </div>
-                      <div className="flex flex-col flex-grow">
-                        <h3 className="text-2xl font-bold text-white mb-2">
-                          {module.display_name}
-                        </h3>
-                        <p className="text-white/90 text-base leading-snug flex-grow">
-                          {module.description}
-                        </p>
-                      </div>
-                      <div className="mt-4">
-                        <span className="text-white font-bold text-base inline-flex items-center group/link">
-                          Openen
-                          <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-300 group-hover/link:translate-x-1" />
-                        </span>
-                      </div>
-                    </BentoGridItem>
+                    </Card>
                   );
                 })}
-              </BentoGrid>
-            </div>
-
-            {userProfile?.important_links && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="lg:col-span-1"
-              >
-                <div className="rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur-xl p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto shadow-2xl">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-white/20 rounded-xl">
-                      <LinkIcon className="w-6 h-6 text-white flex-shrink-0" />
-                    </div>
-                    <h2 className="text-xl font-bold text-white">Belangrijke Links</h2>
-                  </div>
-                  <div
-                    className="prose prose-invert prose-sm max-w-none text-white/90 [&_a]:text-white [&_a]:font-semibold [&_a]:hover:text-blue-200 [&_a]:transition-colors [&_a]:underline [&_a]:decoration-white/40 [&_a]:underline-offset-2 [&_ul]:space-y-3 [&_li]:text-sm [&_li]:leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
-                    onClick={(e) => {
-                      const target = e.target as HTMLElement;
-                      if (target.tagName === 'A') {
-                        const link = target as HTMLAnchorElement;
-                        link.setAttribute('target', '_blank');
-                        link.setAttribute('rel', 'noopener noreferrer');
-                      }
-                    }}
-                  />
-                </div>
-              </motion.div>
-            )}
+              </div>
+            </motion.div>
           </div>
+
+          {userProfile?.important_links && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="lg:col-span-1"
+            >
+              <Card className="p-6 sticky top-24 border-2 border-blue-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <LinkIcon className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900">Belangrijke Links</h2>
+                </div>
+                <div
+                  className="prose prose-sm max-w-none [&_a]:text-blue-600 [&_a]:font-semibold [&_a]:hover:text-blue-800 [&_a]:transition-colors [&_a]:underline [&_a]:decoration-blue-300 [&_a]:underline-offset-2 [&_ul]:space-y-2 [&_li]:text-sm [&_li]:leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
+                    if (target.tagName === 'A') {
+                      const link = target as HTMLAnchorElement;
+                      link.setAttribute('target', '_blank');
+                      link.setAttribute('rel', 'noopener noreferrer');
+                    }
+                  }}
+                />
+              </Card>
+            </motion.div>
+          )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

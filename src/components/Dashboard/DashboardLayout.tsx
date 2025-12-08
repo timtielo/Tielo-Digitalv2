@@ -284,7 +284,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                         className={`
                           w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
                           ${currentPage === 'mcc'
-                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 scale-[1.02]'
+                            ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/30 scale-[1.02]'
                             : 'text-gray-700 hover:bg-white hover:shadow-md'
                           }
                         `}
