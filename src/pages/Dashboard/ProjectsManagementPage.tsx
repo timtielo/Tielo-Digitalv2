@@ -142,7 +142,13 @@ function ProjectsManagementContent() {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+          full: error
+        });
         throw error;
       }
 
@@ -156,9 +162,16 @@ function ProjectsManagementContent() {
 
       console.log('Processed projects:', projectsWithEmail);
       setProjects(projectsWithEmail);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-      alert(`Error loading projects: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (error: any) {
+      console.error('Error fetching projects:', {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code,
+        full: error
+      });
+      const errorMsg = error?.message || error?.details || 'Unknown error';
+      alert(`Error loading projects: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
