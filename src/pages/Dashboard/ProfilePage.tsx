@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Upload, Loader2, Camera, Building2, Shield, Lock, Eye, EyeOff } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
@@ -238,49 +239,33 @@ function ProfileContent() {
     }
   };
 
-  const handleBackToDashboard = () => {
-    window.history.pushState({}, '', '/dashboard');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
-
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
+    <DashboardLayout currentPage="profile">
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+        >
+          <h1 className="text-3xl font-bold mb-2">Mijn Profiel</h1>
+          <p className="text-blue-100">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
+          <p className="text-sm text-blue-200 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
+        </motion.div>
 
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <button
-              onClick={handleBackToDashboard}
-              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-              ← Terug naar Dashboard
-            </button>
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Mijn Profiel</h1>
-              <p className="text-gray-300">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
-              <p className="text-sm text-blue-400 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
-            </div>
-          </motion.div>
-
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-            </div>
-          ) : (
-            <div className="max-w-3xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden"
-              >
+              <Card className="overflow-hidden">
                 <div className="p-8">
                   <form onSubmit={handleSubmit} className="space-y-8">
-                    <div className="flex flex-col items-center gap-6 pb-8 border-b border-white/10">
+                    <div className="flex flex-col items-center gap-6 pb-8 border-b border-gray-200">
                       <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -292,7 +277,7 @@ function ProfileContent() {
                             <img
                               src={imagePreview || formData.profile_picture_url}
                               alt="Profielfoto"
-                              className="w-32 h-32 rounded-full object-cover border-4 border-white/20"
+                              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
                             />
                             <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                               <Camera className="h-8 w-8 text-white" />
@@ -310,9 +295,9 @@ function ProfileContent() {
                             </label>
                           </div>
                         ) : (
-                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-white/30 rounded-full cursor-pointer hover:bg-white/5 transition-colors">
+                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-full cursor-pointer hover:bg-gray-50 transition-colors">
                             <Upload className="h-8 w-8 text-gray-400 mb-1" />
-                            <span className="text-xs text-gray-400 text-center px-2">Upload foto</span>
+                            <span className="text-xs text-gray-600 text-center px-2">Upload foto</span>
                             <input
                               type="file"
                               className="hidden"
@@ -332,7 +317,7 @@ function ProfileContent() {
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="flex items-center gap-2 text-sm text-gray-300"
+                          className="flex items-center gap-2 text-sm text-gray-700"
                         >
                           <Loader2 className="h-4 w-4 animate-spin" />
                           Uploaden...
@@ -340,7 +325,7 @@ function ProfileContent() {
                       )}
 
                       {imageDimensions && (
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-600">
                           Afmetingen: {imageDimensions.width} × {imageDimensions.height}px
                         </p>
                       )}
@@ -351,7 +336,7 @@ function ProfileContent() {
                           variant="outline"
                           size="sm"
                           onClick={handleRemoveImage}
-                          className="bg-red-500/20 backdrop-blur-sm border-red-500/30 text-red-400 hover:bg-red-500/30"
+                          className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
                         >
                           Verwijder foto
                         </Button>
@@ -365,7 +350,7 @@ function ProfileContent() {
                       className="grid md:grid-cols-2 gap-6"
                     >
                       <div>
-                        <Label htmlFor="name" className="text-gray-300">
+                        <Label htmlFor="name" className="text-gray-900">
                           <div className="flex items-center gap-2 mb-2">
                             <User className="h-4 w-4" />
                             Naam *
@@ -380,12 +365,12 @@ function ProfileContent() {
                             setFormData({ ...formData, name: e.target.value })
                           }
                           required
-                          className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                          className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="business_name" className="text-gray-300">
+                        <Label htmlFor="business_name" className="text-gray-900">
                           <div className="flex items-center gap-2 mb-2">
                             <Building2 className="h-4 w-4" />
                             Bedrijfsnaam *
@@ -400,7 +385,7 @@ function ProfileContent() {
                             setFormData({ ...formData, business_name: e.target.value })
                           }
                           required
-                          className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                          className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         />
                       </div>
                     </motion.div>
@@ -465,23 +450,24 @@ function ProfileContent() {
                     </motion.div>
                   </form>
                 </div>
-              </motion.div>
+              </Card>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden mt-6"
-              >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="overflow-hidden">
                 <div className="p-8">
                   <div className="flex items-center gap-2 mb-6">
-                    <Lock className="h-5 w-5 text-gray-300" />
-                    <h3 className="text-2xl font-bold text-white">Wachtwoord Wijzigen</h3>
+                    <Lock className="h-5 w-5 text-gray-700" />
+                    <h3 className="text-2xl font-bold text-gray-900">Wachtwoord Wijzigen</h3>
                   </div>
 
                   <form onSubmit={handlePasswordChange} className="space-y-6">
                     <div>
-                      <Label htmlFor="new_password" className="text-gray-300">
+                      <Label htmlFor="new_password" className="text-gray-900">
                         Nieuw Wachtwoord *
                       </Label>
                       <div className="relative">
@@ -495,12 +481,12 @@ function ProfileContent() {
                           }
                           required
                           minLength={6}
-                          className="bg-white/5 border-white/20 text-white placeholder-gray-500 pr-10"
+                          className="bg-white border-gray-300 text-gray-900 placeholder-gray-500 pr-10"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900 transition-colors"
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -508,7 +494,7 @@ function ProfileContent() {
                     </div>
 
                     <div>
-                      <Label htmlFor="confirm_password" className="text-gray-300">
+                      <Label htmlFor="confirm_password" className="text-gray-900">
                         Bevestig Wachtwoord *
                       </Label>
                       <Input
@@ -521,7 +507,7 @@ function ProfileContent() {
                         }
                         required
                         minLength={6}
-                        className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                        className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                       />
                     </div>
 
@@ -534,30 +520,31 @@ function ProfileContent() {
                     </Button>
                   </form>
                 </div>
-              </motion.div>
+              </Card>
+            </motion.div>
 
-              {profile?.important_links && (
+            {profile?.important_links && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden mt-6"
-                >
+              >
+                <Card className="overflow-hidden">
                   <div className="p-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Belangrijke Links</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
-                      className="prose prose-invert max-w-none text-gray-200 [&_a]:text-base [&_p]:text-base [&_li]:text-base [&_*]:text-base"
+                      className="prose max-w-none text-gray-900 [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800 [&_a]:text-base [&_p]:text-base [&_li]:text-base [&_*]:text-base"
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
                   </div>
-                </motion.div>
-              )}
-            </div>
-          )}
-        </div>
+                </Card>
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 
