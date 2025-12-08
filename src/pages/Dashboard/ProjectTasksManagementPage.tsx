@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, Download, ArrowLeft, CheckCircle2, Circle, Clock } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 import { supabase } from '../../lib/supabase/client';
-import { Button } from '../../components/ui/Button';
-import { Dialog } from '../../components/ui/Dialog';
-import { Input } from '../../components/ui/Input';
-import { Label } from '../../components/ui/Label';
-import { Textarea } from '../../components/ui/Textarea';
-import { Select } from '../../components/ui/Select';
 import defaultTasksTemplate from '../../../templates/defaultProjectTasks.json';
 
 interface ProjectTask {
@@ -40,7 +36,60 @@ const STATUSES = [
   { value: 'done', label: 'Afgerond' }
 ];
 
-export function ProjectTasksManagementPage() {
+const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl ${className}`}>
+    {children}
+  </div>
+);
+
+const GlassInput = ({ label, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-300 block mb-2">{label}</label>}
+    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm transition-all focus-within:border-blue-400/50 focus-within:bg-white/10">
+      <input
+        {...props}
+        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder-gray-500"
+      />
+    </div>
+  </div>
+);
+
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative z-10 w-full max-w-2xl my-8"
+      >
+        <GlassCard className="p-6 max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">{title}</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              ×
+            </button>
+          </div>
+          {children}
+        </GlassCard>
+      </motion.div>
+    </div>
+  );
+};
+
+function ProjectTasksManagementContent() {
   const [projectId, setProjectId] = useState<string>('');
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<ProjectTask[]>([]);
@@ -223,22 +272,22 @@ export function ProjectTasksManagementPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'done':
-        return <CheckCircle2 className="w-5 h-5 text-green-600" />;
+        return <CheckCircle2 className="w-5 h-5 text-green-400" />;
       case 'in_progress':
-        return <Clock className="w-5 h-5 text-blue-600" />;
+        return <Clock className="w-5 h-5 text-blue-400" />;
       default:
-        return <Circle className="w-5 h-5 text-gray-400" />;
+        return <Circle className="w-5 h-5 text-gray-500" />;
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'done':
-        return <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Afgerond</span>;
+        return <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs font-medium rounded-lg border border-green-500/30">Afgerond</span>;
       case 'in_progress':
-        return <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Bezig</span>;
+        return <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs font-medium rounded-lg border border-blue-500/30">Bezig</span>;
       default:
-        return <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded">Te doen</span>;
+        return <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs font-medium rounded-lg border border-gray-500/30">Te doen</span>;
     }
   };
 
@@ -248,245 +297,292 @@ export function ProjectTasksManagementPage() {
   }));
 
   return (
-    <DashboardLayout title="Taken Beheer">
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleBack}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Taken</h1>
-              {project && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Project van {project.client_name || project.client_email}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleApplyTemplate}>
-              <Download className="w-4 h-4 mr-2" />
-              Template Toepassen
-            </Button>
-            <Button onClick={() => handleOpenDialog()}>
-              <Plus className="w-4 h-4 mr-2" />
-              Nieuwe Taak
-            </Button>
-          </div>
-        </div>
+    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+      <AuroraBackground />
 
-        {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
           <div className="space-y-8">
-            {tasksByPhase.map(({ phase, tasks: phaseTasks }) => (
-              <div key={phase} className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-lg">{phase}</span>
-                  <span className="text-sm text-gray-500">({phaseTasks.length})</span>
-                </h2>
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Breadcrumb items={[
+                { label: 'Admin', path: '/dashboard/admin' },
+                { label: 'Projecten', path: '/dashboard/admin/projects' },
+                { label: 'Taken' }
+              ]} />
 
-                {phaseTasks.length === 0 ? (
-                  <p className="text-gray-500 text-sm">Nog geen taken in deze fase</p>
-                ) : (
-                  <div className="space-y-3">
-                    {phaseTasks.map((task) => (
-                      <motion.div
-                        key={task.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="flex-shrink-0 mt-1">
-                          {getStatusIcon(task.status)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 mb-1">{task.title}</h3>
-                          {task.description && (
-                            <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                          )}
-                          <div className="flex flex-wrap gap-2">
-                            {getStatusBadge(task.status)}
-                            {task.required && (
-                              <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
-                                Verplicht
-                              </span>
-                            )}
-                            {task.visible_to_client && (
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded">
-                                Zichtbaar voor klant
-                              </span>
-                            )}
-                            {task.assigned_to_customer && (
-                              <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded">
-                                Toegewezen aan klant
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleOpenDialog(task)}
-                            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                            title="Bewerk taak"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTask(task.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Verwijder taak"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {tasks.length === 0 && (
-              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 mb-4">Nog geen taken aangemaakt voor dit project</p>
-                <div className="flex gap-2 justify-center">
-                  <Button variant="outline" onClick={handleApplyTemplate}>
-                    <Download className="w-4 h-4 mr-2" />
-                    Template Toepassen
-                  </Button>
-                  <Button onClick={() => handleOpenDialog()}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Eerste Taak Aanmaken
-                  </Button>
+              <div className="flex items-center gap-4 mb-6">
+                <button
+                  onClick={handleBack}
+                  className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div>
+                  <h1 className="text-4xl font-bold text-white">Taken Beheer</h1>
+                  {project && (
+                    <p className="text-gray-400 mt-1">
+                      Project van {project.client_name || project.client_email}
+                    </p>
+                  )}
                 </div>
               </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleApplyTemplate}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-medium transition-all"
+                >
+                  <Download className="w-5 h-5" />
+                  Template Toepassen
+                </button>
+                <button
+                  onClick={() => handleOpenDialog()}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg hover:shadow-blue-500/30"
+                >
+                  <Plus className="w-5 h-5" />
+                  Nieuwe Taak
+                </button>
+              </div>
+            </motion.div>
+
+            {loading ? (
+              <GlassCard className="p-16">
+                <div className="flex justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+                </div>
+              </GlassCard>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="space-y-6"
+              >
+                {tasksByPhase.map(({ phase, tasks: phaseTasks }) => (
+                  <GlassCard key={phase} className="p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <h2 className="text-2xl font-bold text-white">{phase}</h2>
+                      <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-lg text-sm font-medium border border-blue-500/30">
+                        {phaseTasks.length} {phaseTasks.length === 1 ? 'taak' : 'taken'}
+                      </span>
+                    </div>
+
+                    {phaseTasks.length === 0 ? (
+                      <p className="text-gray-500 text-sm">Nog geen taken in deze fase</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {phaseTasks.map((task, index) => (
+                          <motion.div
+                            key={task.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.03 }}
+                            className="flex items-start gap-4 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+                          >
+                            <div className="flex-shrink-0 mt-1">
+                              {getStatusIcon(task.status)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-white mb-1">{task.title}</h3>
+                              {task.description && (
+                                <p className="text-sm text-gray-400 mb-2">{task.description}</p>
+                              )}
+                              <div className="flex flex-wrap gap-2">
+                                {getStatusBadge(task.status)}
+                                {task.required && (
+                                  <span className="px-2 py-1 bg-red-500/20 text-red-300 text-xs font-medium rounded-lg border border-red-500/30">
+                                    Verplicht
+                                  </span>
+                                )}
+                                {task.visible_to_client && (
+                                  <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded-lg border border-purple-500/30">
+                                    Zichtbaar
+                                  </span>
+                                )}
+                                {task.assigned_to_customer && (
+                                  <span className="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs font-medium rounded-lg border border-orange-500/30">
+                                    Klant taak
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleOpenDialog(task)}
+                                className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                                title="Bewerk taak"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteTask(task.id)}
+                                className="p-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                                title="Verwijder taak"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                  </GlassCard>
+                ))}
+
+                {tasks.length === 0 && (
+                  <GlassCard className="p-16 text-center">
+                    <Clock className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-4">Nog geen taken aangemaakt voor dit project</p>
+                    <div className="flex gap-3 justify-center">
+                      <button
+                        onClick={handleApplyTemplate}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-medium transition-all"
+                      >
+                        <Download className="w-5 h-5" />
+                        Template Toepassen
+                      </button>
+                      <button
+                        onClick={() => handleOpenDialog()}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
+                      >
+                        <Plus className="w-5 h-5" />
+                        Eerste Taak Aanmaken
+                      </button>
+                    </div>
+                  </GlassCard>
+                )}
+              </motion.div>
+            )}
+
+            {showDialog && (
+              <Modal
+                isOpen={showDialog}
+                onClose={() => setShowDialog(false)}
+                title={editingTask ? 'Taak Bewerken' : 'Nieuwe Taak'}
+              >
+                <div className="space-y-4">
+                  <GlassInput
+                    label="Titel *"
+                    value={formData.title}
+                    onChange={(e: any) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Bijv. Logo aanleveren"
+                  />
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-300 block mb-2">Beschrijving</label>
+                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Uitleg over wat er gedaan moet worden"
+                        rows={3}
+                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-300 block mb-2">Fase *</label>
+                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
+                      <select
+                        value={formData.phase}
+                        onChange={(e) => setFormData({ ...formData, phase: e.target.value })}
+                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white"
+                      >
+                        {PHASES.map(phase => (
+                          <option key={phase} value={phase}>{phase}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-300 block mb-2">Status *</label>
+                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white"
+                      >
+                        {STATUSES.map(status => (
+                          <option key={status.value} value={status.value}>{status.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <GlassInput
+                    label="Sorteervolgorde"
+                    type="number"
+                    value={formData.sort_order}
+                    onChange={(e: any) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
+                  />
+
+                  <div className="space-y-2 pt-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.required}
+                        onChange={(e) => setFormData({ ...formData, required: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-300">Verplichte taak</span>
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.visible_to_client}
+                        onChange={(e) => setFormData({ ...formData, visible_to_client: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-300">Zichtbaar voor klant</span>
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.assigned_to_customer}
+                        onChange={(e) => setFormData({ ...formData, assigned_to_customer: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-300">Toegewezen aan klant</span>
+                    </label>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      onClick={() => setShowDialog(false)}
+                      className="flex-1 px-4 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all"
+                    >
+                      Annuleren
+                    </button>
+                    <button
+                      onClick={handleSaveTask}
+                      disabled={!formData.title}
+                      className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {editingTask ? 'Opslaan' : 'Aanmaken'}
+                    </button>
+                  </div>
+                </div>
+              </Modal>
             )}
           </div>
-        )}
-
-        {showDialog && (
-          <Dialog
-            isOpen={showDialog}
-            onClose={() => setShowDialog(false)}
-            title={editingTask ? 'Taak Bewerken' : 'Nieuwe Taak'}
-          >
-            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-              <div>
-                <Label htmlFor="title">Titel *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Bijv. Logo aanleveren"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="description">Beschrijving</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Uitleg over wat er gedaan moet worden"
-                  rows={3}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phase">Fase *</Label>
-                <select
-                  id="phase"
-                  value={formData.phase}
-                  onChange={(e) => setFormData({ ...formData, phase: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {PHASES.map(phase => (
-                    <option key={phase} value={phase}>{phase}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="status">Status *</Label>
-                <select
-                  id="status"
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {STATUSES.map(status => (
-                    <option key={status.value} value={status.value}>{status.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="sort_order">Sorteervolgorde</Label>
-                <Input
-                  id="sort_order"
-                  type="number"
-                  value={formData.sort_order}
-                  onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="space-y-2 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.required}
-                    onChange={(e) => setFormData({ ...formData, required: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">Verplichte taak</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.visible_to_client}
-                    onChange={(e) => setFormData({ ...formData, visible_to_client: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">Zichtbaar voor klant</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.assigned_to_customer}
-                    onChange={(e) => setFormData({ ...formData, assigned_to_customer: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">Toegewezen aan klant</span>
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={() => setShowDialog(false)}>
-                  Annuleren
-                </Button>
-                <Button onClick={handleSaveTask} disabled={!formData.title}>
-                  {editingTask ? 'Opslaan' : 'Aanmaken'}
-                </Button>
-              </div>
-            </div>
-          </Dialog>
-        )}
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
+  );
+}
+
+export function ProjectTasksManagementPage() {
+  return (
+    <ProtectedRoute>
+      <ProjectTasksManagementContent />
+    </ProtectedRoute>
   );
 }

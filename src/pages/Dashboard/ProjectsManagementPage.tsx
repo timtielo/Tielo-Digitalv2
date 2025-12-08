@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Rocket, Users, ExternalLink } from 'lucide-react';
-import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft } from 'lucide-react';
+import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
+import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 import { supabase } from '../../lib/supabase/client';
-import { Button } from '../../components/ui/Button';
-import { Dialog } from '../../components/ui/Dialog';
-import { Input } from '../../components/ui/Input';
-import { Label } from '../../components/ui/Label';
-import { Textarea } from '../../components/ui/Textarea';
 
 interface Project {
   id: string;
@@ -29,7 +26,60 @@ interface UserProfile {
   business_name: string;
 }
 
-export function ProjectsManagementPage() {
+const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl ${className}`}>
+    {children}
+  </div>
+);
+
+const GlassInput = ({ label, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-300 block mb-2">{label}</label>}
+    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm transition-all focus-within:border-blue-400/50 focus-within:bg-white/10">
+      <input
+        {...props}
+        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder-gray-500"
+      />
+    </div>
+  </div>
+);
+
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative z-10 w-full max-w-2xl my-8"
+      >
+        <GlassCard className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">{title}</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              ×
+            </button>
+          </div>
+          {children}
+        </GlassCard>
+      </motion.div>
+    </div>
+  );
+};
+
+function ProjectsManagementContent() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -165,200 +215,252 @@ export function ProjectsManagementPage() {
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
-  return (
-    <DashboardLayout title="Project Beheer">
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Projecten</h1>
-          <Button onClick={() => handleOpenDialog()}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nieuw Project
-          </Button>
-        </div>
+  const handleBack = () => {
+    window.history.pushState({}, '', '/dashboard/admin');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
-        {loading ? (
-          <div className="grid gap-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+  return (
+    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
+      <AuroraBackground />
+
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <div className="space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Breadcrumb items={[{ label: 'Admin', path: '/dashboard/admin' }, { label: 'Projecten' }]} />
+
+              <div className="flex items-center gap-4 mb-6">
+                <button
+                  onClick={handleBack}
+                  className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div>
+                  <h1 className="text-4xl font-bold text-white">Projecten Beheer</h1>
+                  <p className="text-gray-400 mt-1">Beheer website projecten en voortgang</p>
+                </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {projects.map((project) => (
+
+              <div className="flex justify-end">
+                <button
+                  onClick={() => handleOpenDialog()}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg hover:shadow-blue-500/30"
+                >
+                  <Plus className="w-5 h-5" />
+                  Nieuw Project
+                </button>
+              </div>
+            </motion.div>
+
+            {loading ? (
+              <GlassCard className="p-16">
+                <div className="flex justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+                </div>
+              </GlassCard>
+            ) : (
               <motion.div
-                key={project.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="space-y-4"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Users className="w-5 h-5 text-gray-500" />
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {project.client_name || project.client_email}
-                      </h3>
-                      {project.is_online && (
-                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
-                          Online
-                        </span>
-                      )}
-                      {!project.active && (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded">
-                          Inactief
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">{project.client_email}</p>
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                        <span className="font-medium">{project.status_label}</span>
-                        <span className="font-semibold text-blue-600">{project.progress}%</span>
+                {projects.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <GlassCard className="p-6 hover:bg-white/10 transition-all">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Users className="w-5 h-5 text-blue-400" />
+                            <h3 className="text-lg font-semibold text-white">
+                              {project.client_name || project.client_email}
+                            </h3>
+                            {project.is_online && (
+                              <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs font-medium rounded-lg border border-green-500/30">
+                                Online
+                              </span>
+                            )}
+                            {!project.active && (
+                              <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs font-medium rounded-lg border border-gray-500/30">
+                                Inactief
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-400 mb-3">{project.client_email}</p>
+                          <div className="mb-3">
+                            <div className="flex items-center justify-between text-sm text-gray-300 mb-2">
+                              <span className="font-medium text-blue-300">{project.status_label}</span>
+                              <span className="font-semibold text-blue-400">{project.progress}%</span>
+                            </div>
+                            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="bg-gradient-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${project.progress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-300">{project.status_explanation}</p>
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <button
+                            onClick={() => handleNavigateToTasks(project.id)}
+                            className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-blue-500/20 text-blue-400 transition-all"
+                            title="Beheer taken"
+                          >
+                            <Rocket className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleOpenDialog(project)}
+                            className="p-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                            title="Bewerk project"
+                          >
+                            <Edit2 className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProject(project.id)}
+                            className="p-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                            title="Verwijder project"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all"
-                          style={{ width: `${project.progress}%` }}
-                        ></div>
-                      </div>
+                    </GlassCard>
+                  </motion.div>
+                ))}
+
+                {projects.length === 0 && (
+                  <GlassCard className="p-16 text-center">
+                    <Rocket className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-4">Nog geen projecten aangemaakt</p>
+                    <button
+                      onClick={() => handleOpenDialog()}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Eerste Project Aanmaken
+                    </button>
+                  </GlassCard>
+                )}
+              </motion.div>
+            )}
+
+            {showDialog && (
+              <Modal
+                isOpen={showDialog}
+                onClose={() => setShowDialog(false)}
+                title={editingProject ? 'Project Bewerken' : 'Nieuw Project'}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-300 block mb-2">Klant</label>
+                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
+                      <select
+                        value={formData.client_id}
+                        onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white"
+                        disabled={!!editingProject}
+                      >
+                        <option value="">Selecteer een klant</option>
+                        {users.map(user => (
+                          <option key={user.id} value={user.id}>
+                            {user.name} ({user.email})
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <p className="text-sm text-gray-600">{project.status_explanation}</p>
                   </div>
-                  <div className="flex gap-2 ml-4">
+
+                  <GlassInput
+                    label="Voortgang (%)"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.progress}
+                    onChange={(e: any) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
+                  />
+
+                  <GlassInput
+                    label="Status Label"
+                    value={formData.status_label}
+                    onChange={(e: any) => setFormData({ ...formData, status_label: e.target.value })}
+                    placeholder="Bijv. In ontwikkeling"
+                  />
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-300 block mb-2">Status Uitleg</label>
+                    <div className="rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm">
+                      <textarea
+                        value={formData.status_explanation}
+                        onChange={(e) => setFormData({ ...formData, status_explanation: e.target.value })}
+                        placeholder="Geef een duidelijke uitleg over de huidige status"
+                        rows={3}
+                        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.is_online}
+                        onChange={(e) => setFormData({ ...formData, is_online: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-300">Website is online</span>
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.active}
+                        onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-300">Project actief</span>
+                    </label>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
                     <button
-                      onClick={() => handleNavigateToTasks(project.id)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Beheer taken"
+                      onClick={() => setShowDialog(false)}
+                      className="flex-1 px-4 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium transition-all"
                     >
-                      <Rocket className="w-5 h-5" />
+                      Annuleren
                     </button>
                     <button
-                      onClick={() => handleOpenDialog(project)}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                      title="Bewerk project"
+                      onClick={handleSaveProject}
+                      className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
                     >
-                      <Edit2 className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteProject(project.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Verwijder project"
-                    >
-                      <Trash2 className="w-5 h-5" />
+                      {editingProject ? 'Opslaan' : 'Aanmaken'}
                     </button>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-
-            {projects.length === 0 && (
-              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                <Rocket className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600">Nog geen projecten aangemaakt</p>
-                <Button onClick={() => handleOpenDialog()} className="mt-4">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Eerste Project Aanmaken
-                </Button>
-              </div>
+              </Modal>
             )}
           </div>
-        )}
-
-        {showDialog && (
-          <Dialog
-            isOpen={showDialog}
-            onClose={() => setShowDialog(false)}
-            title={editingProject ? 'Project Bewerken' : 'Nieuw Project'}
-          >
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="client">Klant</Label>
-                <select
-                  id="client"
-                  value={formData.client_id}
-                  onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  disabled={!!editingProject}
-                >
-                  <option value="">Selecteer een klant</option>
-                  {users.map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.name} ({user.email})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="progress">Voortgang (%)</Label>
-                <Input
-                  id="progress"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={formData.progress}
-                  onChange={(e) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="status_label">Status Label</Label>
-                <Input
-                  id="status_label"
-                  value={formData.status_label}
-                  onChange={(e) => setFormData({ ...formData, status_label: e.target.value })}
-                  placeholder="Bijv. In ontwikkeling"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="status_explanation">Status Uitleg</Label>
-                <Textarea
-                  id="status_explanation"
-                  value={formData.status_explanation}
-                  onChange={(e) => setFormData({ ...formData, status_explanation: e.target.value })}
-                  placeholder="Geef een duidelijke uitleg over de huidige status"
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.is_online}
-                    onChange={(e) => setFormData({ ...formData, is_online: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">Website is online</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.active}
-                    onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">Project actief</span>
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={() => setShowDialog(false)}>
-                  Annuleren
-                </Button>
-                <Button onClick={handleSaveProject}>
-                  {editingProject ? 'Opslaan' : 'Aanmaken'}
-                </Button>
-              </div>
-            </div>
-          </Dialog>
-        )}
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
+  );
+}
+
+export function ProjectsManagementPage() {
+  return (
+    <ProtectedRoute>
+      <ProjectsManagementContent />
+    </ProtectedRoute>
   );
 }
