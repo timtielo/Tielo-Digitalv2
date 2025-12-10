@@ -65,20 +65,20 @@ export const ProjectTasksList: React.FC<ProjectTasksListProps> = ({ limit }) => 
   };
 
   const handleToggleTask = async (taskId: string, currentStatus: string) => {
-    if (currentStatus === 'done') return;
-
     try {
       setUpdatingTaskId(taskId);
 
+      const newStatus = currentStatus === 'done' ? 'todo' : 'done';
+
       const { error } = await supabase
         .from('project_tasks')
-        .update({ status: 'done' })
+        .update({ status: newStatus })
         .eq('id', taskId);
 
       if (error) throw error;
 
       setTasks(tasks.map(task =>
-        task.id === taskId ? { ...task, status: 'done' as const } : task
+        task.id === taskId ? { ...task, status: newStatus as any } : task
       ));
     } catch (error) {
       console.error('Error updating task:', error);
@@ -150,7 +150,7 @@ export const ProjectTasksList: React.FC<ProjectTasksListProps> = ({ limit }) => 
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Jouw Taken</h2>
-            <p className="text-sm text-gray-600">Klik op een taak om deze af te vinken</p>
+            <p className="text-sm text-gray-600">Klik op een taak om de status te wijzigen</p>
           </div>
         </div>
         {allOpenTasks.length > 0 && (
@@ -235,18 +235,23 @@ export const ProjectTasksList: React.FC<ProjectTasksListProps> = ({ limit }) => 
                     key={task.id}
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="bg-green-50/50 border-2 border-green-200 rounded-xl p-5 opacity-75"
+                    className="group bg-green-50/50 hover:bg-green-100/50 border-2 border-green-200 hover:border-green-400 rounded-xl p-5 transition-all duration-300 cursor-pointer"
+                    onClick={() => handleToggleTask(task.id, task.status)}
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0 mt-0.5">
-                        <div className="w-7 h-7 bg-green-500 rounded-full flex items-center justify-center">
-                          <CheckCircle2 className="w-5 h-5 text-white" />
-                        </div>
+                        {updatingTaskId === task.id ? (
+                          <div className="w-7 h-7 border-3 border-green-500 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <div className="w-7 h-7 bg-green-500 group-hover:bg-green-600 rounded-full flex items-center justify-center transition-colors">
+                            <CheckCircle2 className="w-5 h-5 text-white" />
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-gray-600 font-bold text-base mb-1.5 line-through">{task.title}</h3>
+                        <h3 className="text-gray-600 group-hover:text-gray-800 font-bold text-base mb-1.5 line-through transition-colors">{task.title}</h3>
                         {task.description && (
-                          <p className="text-gray-500 text-sm leading-relaxed line-through">{task.description}</p>
+                          <p className="text-gray-500 group-hover:text-gray-700 text-sm leading-relaxed line-through transition-colors">{task.description}</p>
                         )}
                         <div className="mt-2">
                           <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
