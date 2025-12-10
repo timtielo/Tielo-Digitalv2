@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft, Shield, X } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 
