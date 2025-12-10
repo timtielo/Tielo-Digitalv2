@@ -640,14 +640,23 @@ function PortfolioContent() {
           </Select>
           <button
             onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
-            className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 whitespace-nowrap flex items-center gap-2 ${
-              showFeaturedOnly
-                ? 'bg-gradient-to-r from-yellow-500 to-amber-400 text-white shadow-lg shadow-yellow-500/50'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-            }`}
+            className="bg-white border border-gray-300 rounded-lg font-medium transition-all duration-300 whitespace-nowrap flex items-center overflow-hidden"
           >
-            <Check className="h-4 w-4" />
-            {showFeaturedOnly ? 'Featured' : 'Alle items'}
+            <span className={`px-4 py-2 transition-all duration-300 ${
+              !showFeaturedOnly
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}>
+              Alle items
+            </span>
+            <span className={`px-4 py-2 transition-all duration-300 flex items-center gap-1.5 ${
+              showFeaturedOnly
+                ? 'bg-gradient-to-r from-yellow-500 to-amber-400 text-white shadow-inner'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}>
+              <Check className="h-4 w-4" />
+              Featured
+            </span>
           </button>
         </div>
 
@@ -714,7 +723,11 @@ function PortfolioContent() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-300">
+                  <Card className={`group relative overflow-hidden transition-all duration-300 ${
+                    item.featured
+                      ? 'ring-4 ring-yellow-400 shadow-xl shadow-yellow-400/30 hover:shadow-2xl hover:shadow-yellow-400/40'
+                      : 'hover:shadow-lg'
+                  }`}>
                     <div className="aspect-video relative overflow-hidden bg-gray-100">
                       {item.after_image || item.before_image ? (
                         <img
@@ -728,9 +741,9 @@ function PortfolioContent() {
                         </div>
                       )}
                       {item.featured && (
-                        <div className="absolute top-3 right-3 bg-yellow-500 px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
-                          <Check className="h-3 w-3 text-white" />
-                          <span className="text-xs font-semibold text-white">Featured</span>
+                        <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-amber-400 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg animate-pulse">
+                          <Check className="h-4 w-4 text-white font-bold" />
+                          <span className="text-sm font-bold text-white">Featured</span>
                         </div>
                       )}
                     </div>
