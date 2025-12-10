@@ -762,7 +762,7 @@ function PortfolioContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(item)}
-                          className="flex-1 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                          className="flex-1 bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100"
                         >
                           <Pencil className="h-4 w-4 mr-2" />
                           Bewerken
@@ -771,7 +771,7 @@ function PortfolioContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDuplicate(item)}
-                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                          className="bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
                           title="Dupliceer project"
                         >
                           <Copy className="h-4 w-4" />

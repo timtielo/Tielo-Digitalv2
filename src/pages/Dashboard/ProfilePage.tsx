@@ -394,23 +394,23 @@ function ProfileContent() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="pt-6 border-t border-white/10"
+                      className="pt-6 border-t border-gray-200"
                     >
-                      <div className="flex items-center gap-2 mb-4 text-gray-300">
+                      <div className="flex items-center gap-2 mb-4 text-gray-700">
                         <Shield className="h-5 w-5" />
                         <span className="font-medium">Account Type</span>
                       </div>
-                      <div className={`p-6 rounded-2xl border ${
+                      <div className={`p-6 rounded-2xl border-2 ${
                         profile?.business_type === 'bouw'
-                          ? 'bg-gradient-to-br from-blue-500/20 to-cyan-400/20 border-blue-500/30'
-                          : 'bg-gradient-to-br from-gray-500/20 to-slate-400/20 border-gray-500/30'
+                          ? 'bg-blue-50 border-blue-300'
+                          : 'bg-gray-100 border-gray-300'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-bold text-white text-lg">
+                            <p className="font-bold text-gray-900 text-lg">
                               {profile?.business_type === 'bouw' ? 'Bouw Profiel' : 'Basis Profiel'}
                             </p>
-                            <p className="text-sm text-gray-300 mt-2">
+                            <p className="text-sm text-gray-700 mt-2">
                               {profile?.business_type === 'bouw'
                                 ? 'Volledige toegang tot alle dashboard functies inclusief Portfolio en Werkspot'
                                 : 'Toegang tot Reviews, Leads en Profiel beheer'}
@@ -418,17 +418,17 @@ function ProfileContent() {
                           </div>
                           <div className={`p-3 rounded-xl ${
                             profile?.business_type === 'bouw'
-                              ? 'bg-blue-500/30'
-                              : 'bg-gray-500/30'
+                              ? 'bg-blue-200'
+                              : 'bg-gray-300'
                           }`}>
                             <Shield className={`h-8 w-8 ${
                               profile?.business_type === 'bouw'
-                                ? 'text-blue-300'
-                                : 'text-gray-300'
+                                ? 'text-blue-700'
+                                : 'text-gray-700'
                             }`} />
                           </div>
                         </div>
-                        <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-white/10">
+                        <p className="text-xs text-gray-600 mt-4 pt-4 border-t border-gray-300">
                           Neem contact op met een beheerder om je account type te wijzigen.
                         </p>
                       </div>
@@ -437,13 +437,36 @@ function ProfileContent() {
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                      className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-0.5">
+                          <svg className="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-amber-800">
+                            Wijzigingen opslaan
+                          </p>
+                          <p className="text-sm text-amber-700 mt-1">
+                            Vergeet niet om je wijzigingen op te slaan voordat je de pagina verlaat
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="flex gap-3 pt-6"
+                      className="flex gap-3 pt-4"
                     >
                       <Button
                         type="submit"
                         disabled={saving || uploading}
-                        className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
+                        className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 border-0 shadow-lg"
                       >
                         {saving ? 'Opslaan...' : 'Profiel Opslaan'}
                       </Button>
@@ -534,7 +557,7 @@ function ProfileContent() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
-                      className="prose max-w-none text-gray-900 [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800 [&_a]:text-base [&_p]:text-base [&_li]:text-base [&_*]:text-base"
+                      className="prose max-w-none [&_*]:!text-gray-900 [&_a]:!text-blue-600 [&_a]:underline [&_a]:hover:!text-blue-800 [&_strong]:!text-gray-900 [&_strong]:font-bold [&_b]:!text-gray-900 [&_b]:font-bold [&_p]:!text-gray-900 [&_li]:!text-gray-900 [&_span]:!text-gray-900 [&_div]:!text-gray-900 [&_h1]:!text-gray-900 [&_h2]:!text-gray-900 [&_h3]:!text-gray-900 [&_h4]:!text-gray-900"
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
                   </div>
