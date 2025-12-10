@@ -651,7 +651,7 @@ function PortfolioContent() {
             </span>
             <span className={`px-4 py-2 transition-all duration-300 flex items-center gap-1.5 ${
               showFeaturedOnly
-                ? 'bg-gradient-to-r from-yellow-500 to-amber-400 text-white shadow-inner'
+                ? 'bg-blue-600 text-white shadow-inner'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}>
               <Check className="h-4 w-4" />
@@ -725,7 +725,7 @@ function PortfolioContent() {
                 >
                   <Card className={`group relative overflow-hidden transition-all duration-300 ${
                     item.featured
-                      ? 'ring-4 ring-yellow-400 shadow-xl shadow-yellow-400/30 hover:shadow-2xl hover:shadow-yellow-400/40'
+                      ? 'ring-4 ring-blue-500 shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40'
                       : 'hover:shadow-lg'
                   }`}>
                     <div className="aspect-video relative overflow-hidden bg-gray-100">
@@ -741,7 +741,7 @@ function PortfolioContent() {
                         </div>
                       )}
                       {item.featured && (
-                        <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-amber-400 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg animate-pulse">
+                        <div className="absolute top-3 right-3 bg-blue-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-blue-600/50 animate-pulse">
                           <Check className="h-4 w-4 text-white font-bold" />
                           <span className="text-sm font-bold text-white">Featured</span>
                         </div>
