@@ -202,7 +202,7 @@ export function AccountTypesManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -213,17 +213,17 @@ export function AccountTypesManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Package className="w-7 h-7" />
             Account Types Beheer
           </h2>
-          <p className="text-gray-400 mt-1">
+          <p className="text-gray-600 mt-1">
             Maak custom account types en configureer welke modules elke type krijgt
           </p>
         </div>
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 text-green-400 rounded-xl transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 border-2 border-green-300 text-green-700 rounded-xl transition-all font-medium"
         >
           <Plus className="w-4 h-4" />
           Nieuw Type
@@ -298,25 +298,25 @@ export function AccountTypesManager() {
                   onClick={() => setSelectedType(type.id)}
                   className={`p-4 rounded-xl cursor-pointer transition-all ${
                     selectedType === type.id
-                      ? 'bg-blue-600 border-2 border-blue-700 shadow-md'
+                      ? 'bg-blue-100 border-2 border-blue-500 shadow-md'
                       : 'bg-gray-50 border-2 border-gray-300 hover:bg-gray-100 hover:border-gray-400'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className={`font-semibold ${selectedType === type.id ? 'text-white' : 'text-gray-900'}`}>
+                      <h4 className="font-semibold text-gray-900">
                         {type.name}
                       </h4>
                       {type.description && (
-                        <p className={`text-sm mt-1 ${selectedType === type.id ? 'text-blue-100' : 'text-gray-600'}`}>
+                        <p className="text-sm mt-1 text-gray-600">
                           {type.description}
                         </p>
                       )}
                       {type.is_system && (
                         <span className={`inline-block mt-2 text-xs px-2 py-1 rounded font-medium ${
                           selectedType === type.id
-                            ? 'bg-blue-700 text-blue-200'
-                            : 'bg-gray-200 text-gray-600'
+                            ? 'bg-blue-200 text-blue-800'
+                            : 'bg-gray-200 text-gray-700'
                         }`}>
                           Systeem Type
                         </span>
@@ -328,11 +328,7 @@ export function AccountTypesManager() {
                           e.stopPropagation();
                           deleteAccountType(type.id);
                         }}
-                        className={`ml-2 p-1 rounded transition-colors ${
-                          selectedType === type.id
-                            ? 'hover:bg-red-700 text-red-100'
-                            : 'hover:bg-red-50 text-red-600'
-                        }`}
+                        className="ml-2 p-1 rounded transition-colors hover:bg-red-100 text-red-600"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -353,7 +349,7 @@ export function AccountTypesManager() {
 
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Actieve Modules</h4>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Actieve Modules</h4>
                   <div className="space-y-2">
                     {enabledModules.length > 0 ? (
                       enabledModules.map((tm) => {
@@ -363,23 +359,23 @@ export function AccountTypesManager() {
                         return (
                           <div
                             key={tm.module_key}
-                            className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl"
+                            className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-300 rounded-xl"
                           >
-                            <GripVertical className="w-4 h-4 text-gray-400" />
+                            <GripVertical className="w-4 h-4 text-gray-500" />
                             <div className="flex-1">
-                              <div className="font-medium text-white">{module.display_name}</div>
-                              <div className="text-sm text-gray-400">{module.description}</div>
+                              <div className="font-medium text-gray-900">{module.display_name}</div>
+                              <div className="text-sm text-gray-600">{module.description}</div>
                             </div>
                             <div className="flex items-center gap-2">
                               <input
                                 type="number"
                                 value={tm.sort_order}
                                 onChange={(e) => updateModuleOrder(tm.module_key, parseInt(e.target.value))}
-                                className="w-16 bg-white/5 border border-white/20 rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-blue-400/50"
+                                className="w-16 bg-white border-2 border-gray-300 rounded px-2 py-1 text-gray-900 text-sm focus:outline-none focus:border-blue-500"
                               />
                               <button
                                 onClick={() => toggleModule(tm.module_key, false)}
-                                className="p-2 hover:bg-red-500/20 text-red-400 rounded transition-colors"
+                                className="p-2 hover:bg-red-100 text-red-600 rounded transition-colors"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -388,13 +384,13 @@ export function AccountTypesManager() {
                         );
                       })
                     ) : (
-                      <p className="text-gray-400 text-sm">Geen modules actief</p>
+                      <p className="text-gray-600 text-sm">Geen modules actief</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-medium text-gray-300 mb-3">Beschikbare Modules</h4>
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Beschikbare Modules</h4>
                   <div className="space-y-2">
                     {typeModules.filter(tm => !tm.enabled).map((tm) => {
                       const module = modules.find(m => m.module_key === tm.module_key);
@@ -403,15 +399,15 @@ export function AccountTypesManager() {
                       return (
                         <div
                           key={tm.module_key}
-                          className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors"
+                          className="flex items-center justify-between p-3 bg-gray-50 border-2 border-gray-300 rounded-xl hover:bg-gray-100 transition-colors"
                         >
                           <div>
-                            <div className="font-medium text-white">{module.display_name}</div>
-                            <div className="text-sm text-gray-400">{module.description}</div>
+                            <div className="font-medium text-gray-900">{module.display_name}</div>
+                            <div className="text-sm text-gray-600">{module.description}</div>
                           </div>
                           <button
                             onClick={() => toggleModule(tm.module_key, true)}
-                            className="p-2 hover:bg-green-500/20 text-green-400 rounded transition-colors"
+                            className="p-2 hover:bg-green-100 text-green-600 rounded transition-colors"
                           >
                             <Plus className="w-4 h-4" />
                           </button>
@@ -425,8 +421,8 @@ export function AccountTypesManager() {
           ) : (
             <Card>
               <div className="text-center py-12">
-                <Package className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                <p className="text-gray-400">Selecteer een account type om de modules te configureren</p>
+                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">Selecteer een account type om de modules te configureren</p>
               </div>
             </Card>
           )}
