@@ -178,7 +178,7 @@ function ReviewsContent() {
             </div>
             <Button
               onClick={openNewDialog}
-              className="bg-white text-blue-700 hover:bg-white/95 border-2 border-white font-semibold shadow-lg"
+              className="!bg-gray-900 !text-white hover:!bg-gray-800 !border-0 font-semibold shadow-xl"
             >
                 <Plus className="h-4 w-4 mr-2" />
                 Nieuwe Review
