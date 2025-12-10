@@ -50,17 +50,67 @@ const iconMap: Record<string, any> = {
   Shield,
 };
 
+interface AdminMetrics {
+  totalUsers: number;
+  activeProjects: number;
+  pendingTasks: number;
+  newLeads: number;
+}
+
 function DashboardHomeContent() {
   const { user } = useAuth();
   const [modules, setModules] = useState<DashboardModule[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [adminMetrics, setAdminMetrics] = useState<AdminMetrics>({
+    totalUsers: 0,
+    activeProjects: 0,
+    pendingTasks: 0,
+    newLeads: 0,
+  });
 
   useEffect(() => {
     if (user) {
       fetchUserData();
     }
   }, [user]);
+
+  const fetchAdminMetrics = async () => {
+    try {
+      const { count: usersCount } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_admin', false);
+
+      const { count: projectsCount } = await supabase
+        .from('projects')
+        .select('*', { count: 'exact', head: true })
+        .eq('active', true);
+
+      const { count: tasksCount } = await supabase
+        .from('project_tasks')
+        .select('*', { count: 'exact', head: true })
+        .in('status', ['todo', 'in_progress']);
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { count: leadsCount } = await supabase
+        .from('leads')
+        .select('*', { count: 'exact', head: true })
+        .gte('date', sevenDaysAgo.toISOString())
+        .eq('archived', false);
+
+      setAdminMetrics({
+        totalUsers: usersCount || 0,
+        activeProjects: projectsCount || 0,
+        pendingTasks: tasksCount || 0,
+        newLeads: leadsCount || 0,
+      });
+    } catch (error) {
+      console.error('Error fetching admin metrics:', error);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -71,6 +121,10 @@ function DashboardHomeContent() {
         .maybeSingle();
 
       setUserProfile(profileData);
+
+      if (profileData?.is_admin) {
+        await fetchAdminMetrics();
+      }
 
       const { data, error } = await supabase
         .from('user_dashboard_config')
@@ -150,13 +204,20 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+              <Card
+                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-blue-500 hover:scale-105"
+                onClick={() => handleNavigation('/dashboard/admin')}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <Users className="h-8 w-8 text-blue-600" />
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Total Users</h3>
-                <p className="text-3xl font-bold text-gray-900">--</p>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">Total Clients</h3>
+                {loading ? (
+                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.totalUsers}</p>
+                )}
               </Card>
             </motion.div>
 
@@ -165,13 +226,20 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-green-500">
+              <Card
+                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-green-500 hover:scale-105"
+                onClick={() => handleNavigation('/dashboard/mcc')}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <CheckCircle className="h-8 w-8 text-green-600" />
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
                 <h3 className="text-sm font-medium text-gray-600 mb-1">Active Projects</h3>
-                <p className="text-3xl font-bold text-gray-900">--</p>
+                {loading ? (
+                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.activeProjects}</p>
+                )}
               </Card>
             </motion.div>
 
@@ -180,13 +248,20 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-amber-500">
+              <Card
+                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-amber-500 hover:scale-105"
+                onClick={() => handleNavigation('/dashboard/mcc')}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <AlertCircle className="h-8 w-8 text-amber-600" />
                   <Calendar className="h-5 w-5 text-gray-400" />
                 </div>
                 <h3 className="text-sm font-medium text-gray-600 mb-1">Pending Tasks</h3>
-                <p className="text-3xl font-bold text-gray-900">--</p>
+                {loading ? (
+                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.pendingTasks}</p>
+                )}
               </Card>
             </motion.div>
 
@@ -195,13 +270,20 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-rose-500">
+              <Card
+                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-rose-500 hover:scale-105"
+                onClick={() => handleNavigation('/dashboard/leads')}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <MessageSquare className="h-8 w-8 text-rose-600" />
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">New Messages</h3>
-                <p className="text-3xl font-bold text-gray-900">--</p>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">New Leads (7d)</h3>
+                {loading ? (
+                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.newLeads}</p>
+                )}
               </Card>
             </motion.div>
           </div>
