@@ -14,7 +14,8 @@ import {
   UserCog,
   XCircle,
   Target,
-  Home
+  Home,
+  ListTodo
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -22,7 +23,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'home' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc';
+  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc';
 }
 
 interface DashboardModule {
@@ -250,6 +251,24 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                     <span className="flex-1 text-left">Home</span>
                     {currentPage === 'home' && <ChevronRight className="h-4 w-4 ml-auto" />}
                   </button>
+                  {!isAdmin && (
+                    <button
+                      onClick={() => handleNavigation('/dashboard/tasks')}
+                      className={`
+                        w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
+                        ${currentPage === 'tasks'
+                          ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]'
+                          : 'text-gray-700 hover:bg-white hover:shadow-md'
+                        }
+                      `}
+                    >
+                      <div className={`p-2 rounded-lg ${currentPage === 'tasks' ? 'bg-white/20' : 'bg-gray-100'}`}>
+                        <ListTodo className={`h-4 w-4 ${currentPage === 'tasks' ? 'text-white' : 'text-gray-600'}`} />
+                      </div>
+                      <span className="flex-1 text-left">Taken</span>
+                      {currentPage === 'tasks' && <ChevronRight className="h-4 w-4 ml-auto" />}
+                    </button>
+                  )}
                   {navigation.map((item) => {
                     const Icon = iconMap[item.icon_name] || User;
                     const isActive = currentPage === item.module_key;
@@ -388,11 +407,11 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                 </button>
                 <ChevronRight className="h-4 w-4" />
                 <span className="text-gray-900 font-medium capitalize">
-                  {currentPage === 'home' ? 'Home' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
                 </span>
               </div>
               <h2 className="text-2xl font-bold text-gray-900">
-                {currentPage === 'home' ? 'Home' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
               </h2>
             </div>
           </header>

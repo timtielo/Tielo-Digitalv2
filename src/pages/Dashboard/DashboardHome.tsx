@@ -313,7 +313,18 @@ function DashboardHomeContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
+              className="space-y-4"
             >
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">Jouw Taken</h2>
+                <button
+                  onClick={() => handleNavigation('/dashboard/tasks')}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 text-blue-700 rounded-xl transition-all font-medium"
+                >
+                  Alle taken bekijken
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
               <ProjectTasksList limit={2} />
             </motion.div>
 
