@@ -725,7 +725,7 @@ function PortfolioContent() {
                 >
                   <Card className={`group relative overflow-hidden transition-all duration-300 ${
                     item.featured
-                      ? 'ring-4 ring-blue-500 shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40'
+                      ? 'ring-4 ring-blue-500 hover:shadow-lg'
                       : 'hover:shadow-lg'
                   }`}>
                     <div className="aspect-video relative overflow-hidden bg-gray-100">
@@ -741,7 +741,7 @@ function PortfolioContent() {
                         </div>
                       )}
                       {item.featured && (
-                        <div className="absolute top-3 right-3 bg-blue-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-blue-600/50 animate-pulse">
+                        <div className="absolute top-3 right-3 bg-blue-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
                           <Check className="h-4 w-4 text-white font-bold" />
                           <span className="text-sm font-bold text-white">Featured</span>
                         </div>
