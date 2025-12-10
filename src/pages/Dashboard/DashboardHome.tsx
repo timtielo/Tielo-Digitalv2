@@ -228,7 +228,7 @@ function DashboardHomeContent() {
             >
               <Card
                 className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-green-500 hover:scale-105"
-                onClick={() => handleNavigation('/dashboard/mcc')}
+                onClick={() => handleNavigation('/dashboard/admin/projects')}
               >
                 <div className="flex items-center justify-between mb-4">
                   <CheckCircle className="h-8 w-8 text-green-600" />
@@ -250,7 +250,7 @@ function DashboardHomeContent() {
             >
               <Card
                 className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-amber-500 hover:scale-105"
-                onClick={() => handleNavigation('/dashboard/mcc')}
+                onClick={() => handleNavigation('/dashboard/tasks')}
               >
                 <div className="flex items-center justify-between mb-4">
                   <AlertCircle className="h-8 w-8 text-amber-600" />
