@@ -1,4 +1,4 @@
-# Portfolio Dashboard Features
+ # Portfolio Dashboard Features
 
 ## Nieuwe Functies
 
@@ -103,7 +103,7 @@ Als je CSV een categorie bevat die nog niet bestaat, wordt deze automatisch aang
 
 ```csv
 title,category,location,date,description,before_image,after_image,featured
-"Badkamer Renovatie","Renovatie","Amsterdam","2024-01-15","Complete renovatie met nieuwe tegels","","","false"
+"Badkamer Renovatie","Renovatie","Amsterdam","2024-01-15","Complete renovatie met nieuwe tegels","Doe-dit-in-online-dashboard","","false"
 "Nieuwe Keuken","Nieuwbouw","Rotterdam","2024-02-20","Moderne keuken installatie","","","true"
 ```
 
