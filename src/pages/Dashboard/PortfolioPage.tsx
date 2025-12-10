@@ -579,17 +579,15 @@ function PortfolioContent() {
             </div>
             <div className="flex gap-3">
               <Button
-                variant="outline"
                 onClick={handleDownloadTemplate}
-                className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+                className="bg-white/90 backdrop-blur-sm border-2 border-white text-blue-700 hover:bg-white font-semibold shadow-md"
               >
                 <Download className="h-4 w-4 mr-2" />
                 CSV Template
               </Button>
               <Button
-                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+                className="bg-white/90 backdrop-blur-sm border-2 border-white text-blue-700 hover:bg-white font-semibold shadow-md"
               >
                 <FileUp className="h-4 w-4 mr-2" />
                 Importeer CSV
@@ -602,16 +600,15 @@ function PortfolioContent() {
                 className="hidden"
               />
               <Button
-                variant="outline"
                 onClick={() => setCategoryDialogOpen(true)}
-                className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+                className="bg-white/90 backdrop-blur-sm border-2 border-white text-blue-700 hover:bg-white font-semibold shadow-md"
               >
                 <Tag className="h-4 w-4 mr-2" />
                 Categorieën
               </Button>
               <Button
                 onClick={openNewDialog}
-                className="bg-white text-blue-600 hover:bg-blue-50 border-0 shadow-lg"
+                className="bg-white text-blue-700 hover:bg-white/95 border-2 border-white font-semibold shadow-lg"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Nieuw Project
