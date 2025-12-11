@@ -24,6 +24,7 @@ import { useToast } from '../ui/Toast';
 import { supabase } from '../../lib/supabase/client';
 import { RichTextEditor } from './RichTextEditor';
 import { TipTapRenderer } from './TipTapRenderer';
+import { ImageEditor } from './ImageEditor';
 
 interface BlogPost {
   id?: string;
@@ -55,6 +56,9 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showSEO, setShowSEO] = useState(false);
+  const [imageEditorOpen, setImageEditorOpen] = useState(false);
+  const [imageToEdit, setImageToEdit] = useState<File | null>(null);
+  const [imageEditMode, setImageEditMode] = useState<'featured' | 'inline'>('featured');
 
   const [formData, setFormData] = useState<BlogPost>({
     title: '',
@@ -129,65 +133,100 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
   const handleImageUpload = async (file: File): Promise<string> => {
     if (!user) throw new Error('Not authenticated');
 
-    setUploading(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${user.id}/blog/inline/${fileName}`;
+    return new Promise((resolve, reject) => {
+      setImageToEdit(file);
+      setImageEditMode('inline');
+      setImageEditorOpen(true);
 
-      const { error: uploadError } = await supabase.storage
-        .from('blog-images')
-        .upload(filePath, file);
+      const handleEditorSave = async (blob: Blob) => {
+        setUploading(true);
+        try {
+          const fileExt = file.name.split('.').pop() || 'jpg';
+          const fileName = `${Date.now()}.${fileExt}`;
+          const filePath = `${user.id}/blog/inline/${fileName}`;
 
-      if (uploadError) throw uploadError;
+          const { error: uploadError } = await supabase.storage
+            .from('blog-images')
+            .upload(filePath, blob);
 
-      const { data } = supabase.storage
-        .from('blog-images')
-        .getPublicUrl(filePath);
+          if (uploadError) throw uploadError;
 
-      return data.publicUrl;
-    } finally {
-      setUploading(false);
-    }
+          const { data } = supabase.storage
+            .from('blog-images')
+            .getPublicUrl(filePath);
+
+          setImageEditorOpen(false);
+          setImageToEdit(null);
+          resolve(data.publicUrl);
+        } catch (error) {
+          reject(error);
+        } finally {
+          setUploading(false);
+        }
+      };
+
+      (window as any).__inlineImageEditorSaveHandler = handleEditorSave;
+    });
   };
 
   const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
+    setImageToEdit(file);
+    setImageEditMode('featured');
+    setImageEditorOpen(true);
+  };
+
+  const handleImageEditorSave = async (blob: Blob) => {
+    if (!user) return;
+
     setUploading(true);
     try {
-      if (formData.featured_image_url) {
-        const oldPath = formData.featured_image_url.split('/').pop();
-        if (oldPath) {
-          await supabase.storage
-            .from('blog-images')
-            .remove([`${user.id}/blog/featured/${oldPath}`]);
+      if (imageEditMode === 'featured') {
+        if (formData.featured_image_url) {
+          const oldPath = formData.featured_image_url.split('/').pop();
+          if (oldPath) {
+            await supabase.storage
+              .from('blog-images')
+              .remove([`${user.id}/blog/featured/${oldPath}`]);
+          }
+        }
+
+        const fileExt = imageToEdit?.name.split('.').pop() || 'jpg';
+        const fileName = `featured-${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/blog/featured/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('blog-images')
+          .upload(filePath, blob);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from('blog-images')
+          .getPublicUrl(filePath);
+
+        setFormData(prev => ({ ...prev, featured_image_url: data.publicUrl }));
+        showToast('Afbeelding geüpload', 'success');
+        setImageEditorOpen(false);
+        setImageToEdit(null);
+      } else if (imageEditMode === 'inline') {
+        if ((window as any).__inlineImageEditorSaveHandler) {
+          await (window as any).__inlineImageEditorSaveHandler(blob);
         }
       }
-
-      const fileExt = file.name.split('.').pop();
-      const fileName = `featured-${Date.now()}.${fileExt}`;
-      const filePath = `${user.id}/blog/featured/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('blog-images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('blog-images')
-        .getPublicUrl(filePath);
-
-      setFormData(prev => ({ ...prev, featured_image_url: data.publicUrl }));
-      showToast('Afbeelding geüpload', 'success');
     } catch (error) {
       console.error('Error uploading image:', error);
       showToast('Fout bij uploaden afbeelding', 'error');
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleImageEditorCancel = () => {
+    setImageEditorOpen(false);
+    setImageToEdit(null);
   };
 
   const handleAddCategory = async () => {
@@ -668,6 +707,15 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
           </div>
         </motion.div>
       </div>
+
+      {imageEditorOpen && imageToEdit && (
+        <ImageEditor
+          imageFile={imageToEdit}
+          aspectRatio={imageEditMode === 'featured' ? '16:9' : '4:3'}
+          onSave={handleImageEditorSave}
+          onCancel={handleImageEditorCancel}
+        />
+      )}
     </AnimatePresence>
   );
 }
