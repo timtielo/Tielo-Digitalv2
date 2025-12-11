@@ -557,7 +557,7 @@ function ProfileContent() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
-                      className="prose max-w-none text-gray-900 bg-white [&_*]:!text-gray-900 [&_a]:!text-blue-600 [&_a]:!underline [&_a:hover]:!text-blue-800 [&_strong]:!text-gray-900 [&_strong]:!font-bold [&_b]:!text-gray-900 [&_b]:!font-bold [&_p]:!text-gray-900 [&_li]:!text-gray-900 [&_span]:!text-gray-900 [&_div]:!text-gray-900 [&_h1]:!text-gray-900 [&_h2]:!text-gray-900 [&_h3]:!text-gray-900 [&_h4]:!text-gray-900 [&_h5]:!text-gray-900 [&_h6]:!text-gray-900 [&_ul]:!text-gray-900 [&_ol]:!text-gray-900"
+                      className="text-gray-900 [&_*]:text-gray-900 [&_a]:!text-blue-600 [&_a]:!underline [&_a:hover]:!text-blue-800 [&_strong]:!text-gray-900 [&_strong]:!font-bold [&_strong]:!bg-transparent [&_b]:!text-gray-900 [&_b]:!font-bold [&_b]:!bg-transparent [&_p]:text-gray-900 [&_li]:text-gray-900 [&_span]:text-gray-900 [&_span]:bg-transparent [&_div]:text-gray-900 [&_h1]:text-gray-900 [&_h2]:text-gray-900 [&_h3]:text-gray-900 [&_h4]:text-gray-900 [&_h5]:text-gray-900 [&_h6]:text-gray-900 [&_ul]:text-gray-900 [&_ol]:text-gray-900"
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
                   </div>
