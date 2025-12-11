@@ -1,16 +1,22 @@
 import React from 'react';
 import { PolicyLayout } from '../components/Legal/PolicyLayout';
-import { SupabaseSEO } from '../components/SEO/SupabaseSEO';
+import { SEO } from '../components/SEO';
 
 export function Cookies() {
   return (
     <>
-      <SupabaseSEO 
-        internalName="Cookies SEO"
-        fallback={{
-          title: "Cookie Beleid - Tielo Digital",
-          description: "Lees ons cookiebeleid en hoe wij cookies gebruiken op onze website. Transparant en volgens de AVG-richtlijnen."
-        }}
+      <SEO
+        title="Cookie Beleid - Hoe Wij Cookies Gebruiken"
+        description="Cookie beleid Tielo Digital: Uitleg over welke cookies we gebruiken, waarom en hoe je ze kunt beheren. AVG-compliant. Google Analytics, Tag Manager en marketing cookies. Update: 3 januari 2025."
+        keywords={[
+          'Cookie Beleid',
+          'Cookies Policy',
+          'Cookie Instellingen',
+          'AVG Cookies',
+          'Privacy Cookies',
+          'Google Analytics'
+        ]}
+        canonical="https://www.tielo-digital.nl/cookies"
       />
       <PolicyLayout title="Cookie Beleid" lastUpdated="3 januari 2025">
         <section className="mb-8">

@@ -60,6 +60,7 @@ export function SEO({
       <meta property="og:image" content={defaultOgImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
       <meta property="og:type" content={ogType} />
       <meta property="og:url" content={fullCanonical} />
       <meta property="og:locale" content="nl_NL" />
@@ -82,6 +83,7 @@ export function SEO({
       <meta property="twitter:domain" content="tielo-digital.nl" />
       <meta property="twitter:url" content={fullCanonical} />
       <meta name="twitter:image" content={defaultOgImage} />
+      <meta name="twitter:image:alt" content={title} />
 
       <meta name="geo.region" content="NL-UT" />
       <meta name="geo.placename" content={local?.addressLocality || BUSINESS_INFO.address.addressLocality} />

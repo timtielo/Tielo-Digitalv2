@@ -1,16 +1,22 @@
 import React from 'react';
 import { PolicyLayout } from '../components/Legal/PolicyLayout';
-import { SupabaseSEO } from '../components/SEO/SupabaseSEO';
+import { SEO } from '../components/SEO';
 
 export function Privacy() {
   return (
     <>
-      <SupabaseSEO 
-        internalName="Privacy Policy SEO"
-        fallback={{
-          title: "Privacy Policy - Tielo Digital",
-          description: "Lees ons privacybeleid en hoe wij omgaan met jouw gegevens. Transparant en duidelijk uitgelegd."
-        }}
+      <SEO
+        title="Privacy Policy - Hoe Wij Omgaan met Jouw Gegevens"
+        description="Privacyverklaring Tielo Digital: Transparant over hoe we jouw gegevens verzamelen, gebruiken en beschermen. AVG-compliant. Laatste update: 3 januari 2025."
+        keywords={[
+          'Privacy Policy',
+          'Privacyverklaring',
+          'AVG',
+          'Gegevensbescherming',
+          'GDPR',
+          'Tielo Digital Privacy'
+        ]}
+        canonical="https://www.tielo-digital.nl/privacy"
       />
       <PolicyLayout title="Privacy Policy" lastUpdated="3 januari 2025">
         <section className="mb-8">

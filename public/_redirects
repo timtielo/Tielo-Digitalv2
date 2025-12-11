@@ -1,1 +1,6 @@
+# Block subdomains from indexing
+https://meerimpactmarketing.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
+https://i-lizard.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
+
+# SPA fallback
 /* /index.html 200

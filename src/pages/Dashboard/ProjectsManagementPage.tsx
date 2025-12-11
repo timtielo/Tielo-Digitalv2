@@ -1,0 +1,532 @@
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Plus, Edit2, Trash2, Rocket, Users, ArrowLeft, Shield, X } from 'lucide-react';
+import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
+import { supabase } from '../../lib/supabase/client';
+import { useAuth } from '../../contexts/AuthContext';
+
+interface Project {
+  id: string;
+  client_id: string;
+  progress: number;
+  status_label: string;
+  status_explanation: string;
+  is_online: boolean;
+  active: boolean;
+  created_at: string;
+  client_email?: string;
+  client_name?: string;
+}
+
+interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  business_name: string;
+}
+
+const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-2xl border-2 border-gray-300 bg-white shadow-sm ${className}`}>
+    {children}
+  </div>
+);
+
+const Input = ({ label, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-700 block mb-2">{label}</label>}
+    <div className="rounded-xl border-2 border-gray-300 bg-gray-50 transition-all focus-within:border-blue-600 focus-within:bg-white">
+      <input
+        {...props}
+        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+      />
+    </div>
+  </div>
+);
+
+const Select = ({ label, children, ...props }: any) => (
+  <div>
+    {label && <label className="text-sm font-medium text-gray-700 block mb-2">{label}</label>}
+    <div className="rounded-xl border-2 border-gray-300 bg-gray-50">
+      <select
+        {...props}
+        className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900"
+      >
+        {children}
+      </select>
+    </div>
+  </div>
+);
+
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative z-10 w-full max-w-2xl my-8"
+      >
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          {children}
+        </Card>
+      </motion.div>
+    </div>
+  );
+};
+
+function ProjectsManagementContent() {
+  const { user } = useAuth();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [formData, setFormData] = useState({
+    client_id: '',
+    progress: 0,
+    status_label: '',
+    status_explanation: '',
+    is_online: false,
+    active: true,
+  });
+
+  useEffect(() => {
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('is_admin')
+        .eq('id', user?.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data?.is_admin) {
+        setIsAdmin(true);
+        fetchProjects();
+        fetchUsers();
+      } else {
+        setIsAdmin(false);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          user_profiles (
+            email,
+            name
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+          full: error
+        });
+        throw error;
+      }
+
+      console.log('Fetched projects data:', data);
+
+      const projectsWithEmail = data?.map(p => ({
+        ...p,
+        client_email: (p.user_profiles as any)?.email || '',
+        client_name: (p.user_profiles as any)?.name || '',
+      })) || [];
+
+      console.log('Processed projects:', projectsWithEmail);
+      setProjects(projectsWithEmail);
+    } catch (error: any) {
+      console.error('Error fetching projects:', {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code,
+        full: error
+      });
+      const errorMsg = error?.message || error?.details || 'Unknown error';
+      alert(`Error loading projects: ${errorMsg}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('id, email, name, business_name')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const handleOpenDialog = (project?: Project) => {
+    if (project) {
+      setEditingProject(project);
+      setFormData({
+        client_id: project.client_id,
+        progress: project.progress,
+        status_label: project.status_label,
+        status_explanation: project.status_explanation,
+        is_online: project.is_online,
+        active: project.active,
+      });
+    } else {
+      setEditingProject(null);
+      setFormData({
+        client_id: '',
+        progress: 0,
+        status_label: 'In voorbereiding',
+        status_explanation: 'Het project is aangemaakt en wordt momenteel voorbereid.',
+        is_online: false,
+        active: true,
+      });
+    }
+    setShowDialog(true);
+  };
+
+  const handleSaveProject = async () => {
+    try {
+      if (editingProject) {
+        const { error } = await supabase
+          .from('projects')
+          .update(formData)
+          .eq('id', editingProject.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('projects')
+          .insert([formData]);
+
+        if (error) throw error;
+      }
+
+      setShowDialog(false);
+      fetchProjects();
+    } catch (error) {
+      console.error('Error saving project:', error);
+      alert('Er is een fout opgetreden bij het opslaan van het project');
+    }
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    if (!confirm('Weet je zeker dat je dit project wilt verwijderen?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectId);
+
+      if (error) throw error;
+      fetchProjects();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('Er is een fout opgetreden bij het verwijderen van het project');
+    }
+  };
+
+  const handleNavigateToTasks = (projectId: string) => {
+    window.history.pushState({}, '', `/dashboard/admin/projects/${projectId}/tasks`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const handleBack = () => {
+    window.history.pushState({}, '', '/dashboard/admin');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  if (!isAdmin && !loading) {
+    return (
+      <DashboardLayout currentPage="admin">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Card className="p-12 text-center max-w-md">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">Geen Toegang</h2>
+            <p className="text-gray-600">Je hebt geen admin rechten om deze pagina te bekijken.</p>
+          </Card>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout currentPage="admin">
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+              <Breadcrumb items={[{ label: 'Admin', path: '/dashboard/admin' }, { label: 'Projecten' }]} />
+
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Terug naar Admin
+          </button>
+
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Projecten Beheer</h1>
+              <p className="text-gray-600 mt-1">Beheer website projecten en voortgang</p>
+            </div>
+            <button
+              onClick={() => handleOpenDialog()}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+            >
+              <Plus className="w-5 h-5" />
+              Nieuw Project
+            </button>
+          </div>
+        </motion.div>
+
+        {loading ? (
+          <Card className="p-16">
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          </Card>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="space-y-4"
+              >
+                {projects.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Card className="p-6 hover:bg-gray-50 transition-all">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Users className="w-5 h-5 text-blue-600" />
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {project.client_name || project.client_email}
+                            </h3>
+                            {project.is_online && (
+                              <span className="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-lg shadow-sm">
+                                Online
+                              </span>
+                            )}
+                            {!project.active && (
+                              <span className="px-3 py-1 bg-gray-400 text-white text-xs font-semibold rounded-lg shadow-sm">
+                                Inactief
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3">{project.client_email}</p>
+                          <div className="mb-3">
+                            <div className="flex items-center justify-between text-sm text-gray-900 mb-2">
+                              <span className="font-semibold text-blue-700">{project.status_label}</span>
+                              <span className="font-bold text-blue-700">{project.progress}%</span>
+                            </div>
+                            <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden border border-gray-400">
+                              <div
+                                className="bg-gradient-to-r from-blue-600 to-cyan-600 h-3 rounded-full transition-all duration-500 shadow-sm"
+                                style={{ width: `${project.progress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-700">{project.status_explanation}</p>
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <button
+                            onClick={() => handleNavigateToTasks(project.id)}
+                            className="p-2 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
+                            title="Beheer taken"
+                          >
+                            <Rocket className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleOpenDialog(project)}
+                            className="p-2 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 transition-all"
+                            title="Bewerk project"
+                          >
+                            <Edit2 className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProject(project.id)}
+                            className="p-2 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 transition-all"
+                            title="Verwijder project"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+
+                {projects.length === 0 && (
+                  <Card className="p-16 text-center">
+                    <Rocket className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 mb-4">Nog geen projecten aangemaakt</p>
+                    <button
+                      onClick={() => handleOpenDialog()}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Eerste Project Aanmaken
+                    </button>
+                  </Card>
+                )}
+              </motion.div>
+            )}
+      </div>
+
+      {showDialog && (
+        <Modal
+          isOpen={showDialog}
+          onClose={() => setShowDialog(false)}
+          title={editingProject ? 'Project Bewerken' : 'Nieuw Project'}
+        >
+          <div className="space-y-4">
+            <Select
+              label="Klant"
+              value={formData.client_id}
+              onChange={(e: any) => setFormData({ ...formData, client_id: e.target.value })}
+              disabled={!!editingProject}
+            >
+              <option value="">Selecteer een klant</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id}>
+                  {user.name} ({user.email})
+                </option>
+              ))}
+            </Select>
+
+            <Input
+              label="Voortgang (%)"
+              type="number"
+              min="0"
+              max="100"
+              value={formData.progress}
+              onChange={(e: any) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
+            />
+
+            <Input
+              label="Status Label"
+              value={formData.status_label}
+              onChange={(e: any) => setFormData({ ...formData, status_label: e.target.value })}
+              placeholder="Bijv. In ontwikkeling"
+            />
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-2">Status Uitleg</label>
+              <div className="rounded-xl border border-gray-300 bg-gray-50">
+                <textarea
+                  value={formData.status_explanation}
+                  onChange={(e) => setFormData({ ...formData, status_explanation: e.target.value })}
+                  placeholder="Geef een duidelijke uitleg over de huidige status"
+                  rows={3}
+                  className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.is_online}
+                  onChange={(e) => setFormData({ ...formData, is_online: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">Website is online</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.active}
+                  onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">Project actief</span>
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={() => setShowDialog(false)}
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all"
+              >
+                Annuleren
+              </button>
+              <button
+                onClick={handleSaveProject}
+                className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+              >
+                {editingProject ? 'Opslaan' : 'Aanmaken'}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </DashboardLayout>
+  );
+}
+
+export function ProjectsManagementPage() {
+  return (
+    <ProtectedRoute>
+      <ProjectsManagementContent />
+    </ProtectedRoute>
+  );
+}

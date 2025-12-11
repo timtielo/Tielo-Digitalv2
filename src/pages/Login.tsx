@@ -1,86 +1,445 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
+import { Eye, EyeOff, Shield, Zap, Lock } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase/client';
+
+interface Testimonial {
+  avatarSrc: string;
+  name: string;
+  handle: string;
+  text: string;
+}
+
+const testimonials: Testimonial[] = [
+  {
+    avatarSrc: "https://www.tgildegevelwerken.nl/tgildegevelwerkenlogo-transparant.svg",
+    name: "Job 't Gilde",
+    handle: "'t Gilde Gevelwerken",
+    text: "Fijn platform voor het beheren van mijn reviews en portfolio!"
+  },
+  {
+    avatarSrc: "https://www.herhorizon.nl/images/HerHorizontrans.svg",
+    name: "Iris Achtereekte",
+    handle: "Her Horizon",
+    text: "Top voor inzicht in leads en reviews."
+  },
+];
+
+const InputWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div className="rounded-xl border border-gray-300 bg-white transition-colors focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
+    {children}
+  </div>
+);
+
+const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial; delay: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    transition={{ delay: delay * 0.1, duration: 0.5 }}
+    className="flex items-start gap-3 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 w-72"
+  >
+    <img
+      src={testimonial.avatarSrc}
+      className="h-10 w-10 object-cover rounded-xl flex-shrink-0"
+      alt="avatar"
+    />
+    <div className="text-sm leading-snug">
+      <p className="font-medium text-gray-900">{testimonial.name}</p>
+      <p className="text-gray-600 text-xs">{testimonial.handle}</p>
+      <p className="mt-1 text-gray-700">{testimonial.text}</p>
+    </div>
+  </motion.div>
+);
 
 export function Login() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showResetForm, setShowResetForm] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSuccess, setResetSuccess] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const { signIn, resetPassword, user } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      window.history.replaceState({}, '', '/dashboard');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const handleEmailConfirmation = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const type = hashParams.get('type');
+
+      if (accessToken && (type === 'signup' || type === 'magiclink')) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: hashParams.get('refresh_token') || '',
+        });
+
+        if (!error) {
+          window.history.replaceState({}, '', '/dashboard');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+      }
+    };
+
+    handleEmailConfirmation();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    // Check credentials
-    if (credentials.email === 'Tim' && credentials.password === 'Tim') {
-      // Successful login
-      window.history.pushState({}, '', '/blog-management');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    } else {
-      setError('Ongeldige inloggegevens');
+    if (isLocked) {
+      setError('Te veel mislukte inlogpogingen. Probeer het over 15 minuten opnieuw.');
+      return;
+    }
+
+    if (!credentials.email || !credentials.password) {
+      setError('Vul alle velden in.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(credentials.email)) {
+      setError('Voer een geldig e-mailadres in.');
+      return;
+    }
+
+    if (credentials.password.length < 6) {
+      setError('Wachtwoord moet minimaal 6 tekens zijn.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error: signInError } = await signIn(credentials.email, credentials.password);
+
+      if (signInError) {
+        const newAttempts = loginAttempts + 1;
+        setLoginAttempts(newAttempts);
+
+        if (newAttempts >= 5) {
+          setIsLocked(true);
+          setTimeout(() => {
+            setIsLocked(false);
+            setLoginAttempts(0);
+          }, 15 * 60 * 1000);
+          setError('Te veel mislukte inlogpogingen. Account vergrendeld voor 15 minuten.');
+        } else {
+          setError(`Ongeldige inloggegevens. ${5 - newAttempts} pogingen over.`);
+        }
+      } else {
+        setLoginAttempts(0);
+        window.history.pushState({}, '', '/dashboard');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    } catch (err) {
+      setError('Er is een fout opgetreden. Probeer het later opnieuw.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleShowResetForm = () => {
+    setShowResetForm(true);
+    setError('');
+    setResetSuccess(false);
+    setResetEmail(credentials.email);
+  };
+
+  const handleBackToLogin = () => {
+    setShowResetForm(false);
+    setResetSuccess(false);
+    setError('');
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setResetSuccess(false);
+
+    if (!resetEmail) {
+      setError('Vul een e-mailadres in.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(resetEmail)) {
+      setError('Voer een geldig e-mailadres in.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error: resetError } = await resetPassword(resetEmail);
+
+      if (resetError) {
+        setError('Er is een fout opgetreden. Probeer het later opnieuw.');
+      } else {
+        setResetSuccess(true);
+      }
+    } catch (err) {
+      setError('Er is een fout opgetreden. Probeer het later opnieuw.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm"
-      >
-        <div>
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Lock className="h-6 w-6 text-primary" />
-          </div>
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Login voor Blog Management
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">Gebruikersnaam</label>
-              <input
-                id="email"
-                name="email"
-                type="text"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Gebruikersnaam"
-                value={credentials.email}
-                onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Wachtwoord</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Wachtwoord"
-                value={credentials.password}
-                onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
+      <div className="relative z-10 min-h-screen flex flex-col md:flex-row">
+        <section className="flex-1 flex items-center justify-center p-8">
+          <div className="w-full max-w-md">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col gap-6"
             >
-              Login
-            </button>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 }}
+                className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center shadow-lg"
+              >
+                <Lock className="h-8 w-8 text-white" />
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-4xl md:text-5xl font-bold text-gray-900 text-center leading-tight"
+              >
+                Welkom <span className="font-light">Terug</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-gray-600 text-center"
+              >
+                {showResetForm
+                  ? 'Voer je e-mailadres in om je wachtwoord te resetten'
+                  : 'Meld aan met je account om je dashboard te bekijken'}
+              </motion.p>
+
+              {!showResetForm ? (
+              <form className="space-y-5 mt-4" onSubmit={handleSubmit}>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                    Email Adres
+                  </label>
+                  <InputWrapper>
+                    <input
+                      name="email"
+                      type="email"
+                      placeholder="je@email.nl"
+                      value={credentials.email}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
+                      disabled={loading}
+                      required
+                      className="w-full bg-transparent text-sm p-4 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                    />
+                  </InputWrapper>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                    Wachtwoord
+                  </label>
+                  <InputWrapper>
+                    <div className="relative">
+                      <input
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Voer je wachtwoord in"
+                        value={credentials.password}
+                        onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                        disabled={loading}
+                        required
+                        className="w-full bg-transparent text-sm p-4 pr-12 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-3 flex items-center"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
+                        ) : (
+                          <Eye className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
+                        )}
+                      </button>
+                    </div>
+                  </InputWrapper>
+                </motion.div>
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-red-700 text-sm text-center bg-red-50 border border-red-200 p-3 rounded-xl"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                >
+                  {loading ? 'Bezig met inloggen...' : 'Inloggen'}
+                </motion.button>
+
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  type="button"
+                  onClick={handleShowResetForm}
+                  className="w-full text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                >
+                  Wachtwoord vergeten?
+                </motion.button>
+              </form>
+              ) : (
+              <form className="space-y-5 mt-4" onSubmit={handleResetPassword}>
+                {!resetSuccess ? (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <label className="text-sm font-medium text-gray-700 block mb-2">
+                        Email Adres
+                      </label>
+                      <InputWrapper>
+                        <input
+                          name="reset-email"
+                          type="email"
+                          placeholder="je@email.nl"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          disabled={loading}
+                          required
+                          className="w-full bg-transparent text-sm p-4 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                        />
+                      </InputWrapper>
+                    </motion.div>
+
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-red-700 text-sm text-center bg-red-50 border border-red-200 p-3 rounded-xl"
+                      >
+                        {error}
+                      </motion.div>
+                    )}
+
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      type="submit"
+                      disabled={loading}
+                      className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                    >
+                      {loading ? 'Bezig met versturen...' : 'Reset link versturen'}
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-green-700 text-center bg-green-50 border border-green-200 p-6 rounded-xl"
+                  >
+                    <p className="text-base font-semibold mb-2">Email verzonden!</p>
+                    <p className="text-sm">
+                      Controleer je inbox en klik op de link om je wachtwoord te resetten.
+                    </p>
+                  </motion.div>
+                )}
+
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  type="button"
+                  onClick={handleBackToLogin}
+                  className="w-full text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                >
+                  Terug naar inloggen
+                </motion.button>
+              </form>
+              )}
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="flex items-center gap-3 mt-6"
+              >
+                <div className="flex-1 flex items-center gap-2 bg-blue-50 rounded-xl p-3 border border-blue-100">
+                  <Shield className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                  <span className="text-xs text-gray-700 font-medium">Portfolio beheer</span>
+                </div>
+                <div className="flex-1 flex items-center gap-2 bg-cyan-50 rounded-xl p-3 border border-cyan-100">
+                  <Zap className="h-4 w-4 text-cyan-600 flex-shrink-0" />
+                  <span className="text-xs text-gray-700 font-medium">Leads bekijken</span>
+                </div>
+              </motion.div>
+            </motion.div>
           </div>
-        </form>
-      </motion.div>
+        </section>
+
+        <section className="hidden lg:flex flex-1 relative p-8 items-end justify-center bg-gradient-to-br from-blue-50 to-cyan-50">
+          <div className="absolute inset-8 rounded-3xl overflow-hidden bg-gradient-to-br from-blue-100 to-cyan-100">
+            <img
+              src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=1200&h=1600&fit=crop&q=80"
+              alt="Construction site"
+              className="w-full h-full object-cover opacity-20"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent"></div>
+          </div>
+
+          <div className="relative z-10 flex flex-col gap-4 w-full max-w-2xl pb-8">
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard
+                key={index}
+                testimonial={testimonial}
+                delay={10 + index}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

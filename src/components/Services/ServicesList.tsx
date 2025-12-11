@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ServiceCard } from '../ServiceCard';
-import { services } from '../Services';
+import { ArrowRight, Brain } from 'lucide-react';
+import { Link } from '../Link';
 
 export function ServicesList() {
   useEffect(() => {
@@ -16,21 +16,77 @@ export function ServicesList() {
   }, []);
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-12 md:py-20 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.id}
-              id={service.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <ServiceCard {...service} showMoreInfo />
-            </motion.div>
-          ))}
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 font-rubik">
+              Maatwerk Oplossingen
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+              Heb je specifieke behoeften die standaard oplossingen niet dekken? Ik ontwikkel custom oplossingen op maat
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white rounded-xl p-6 md:p-8 lg:p-12 shadow-sm"
+          >
+            <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center">
+              <div className="relative order-2 md:order-1">
+                <img
+                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&h=600"
+                  alt="Maatwerk Oplossingen"
+                  className="rounded-lg shadow-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg"></div>
+              </div>
+              <div className="order-1 md:order-2">
+                <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                  <Brain className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 md:mb-4">
+                  Custom oplossingen voor jouw specifieke behoeften
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4 md:mb-6">
+                  Elk bedrijf is uniek en heeft soms specifieke uitdagingen die standaard software niet kan oplossen.
+                  Ik bedenk en bouw custom oplossingen die perfect aansluiten bij jouw bedrijfsprocessen.
+                </p>
+                <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                  <div>
+                    <p className="text-sm sm:text-base font-semibold text-gray-900 mb-2">Voorbeelden van automatiseringen:</p>
+                    <ul className="space-y-2 md:space-y-3">
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Automatische review verzoeken na een klus</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Facturen automatisch versturen en archiveren</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Facturen automatisch boeken in je administratie</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span>Offerte-aanvragen direct naar je WhatsApp</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <Link
+                  href="/diensten/custom"
+                  className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all duration-200"
+                >
+                  Meer informatie
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

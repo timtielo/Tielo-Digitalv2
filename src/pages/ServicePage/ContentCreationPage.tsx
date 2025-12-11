@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, ArrowRight, PenTool, Target, BarChart, Sparkles, Check } from 'lucide-react';
 import { Link } from '../../components/Link';
-import { ContentfulSEO } from '../../components/SEO/ContentfulSEO';
+import { SEO } from '../../components/SEO';
 
 const features = [
   {
@@ -37,12 +37,18 @@ const benefits = [
 export function ContentCreationPage() {
   return (
     <div className="min-h-screen">
-      <ContentfulSEO 
-        internalName="AI Content Creation SEO"
-        fallback={{
-          title: "AI Content Creation | Blog & Social Media Content",
-          description: "Laat AI je content schrijven. Van blog artikelen tot social media posts - creëer hoogwaardige content die converteert en je merk versterkt."
-        }}
+      <SEO
+        title="AI Content Creation | Blog & Social Media Content"
+        description="Laat AI je content schrijven. Van blog artikelen tot social media posts - creëer hoogwaardige content die converteert en je merk versterkt."
+        keywords={[
+          'AI Content Creation',
+          'Content Schrijven',
+          'Blog Artikelen AI',
+          'Social Media Content',
+          'Content Marketing',
+          'SEO Content'
+        ]}
+        canonical="https://www.tielo-digital.nl/diensten/content-creation"
       />
 
       {/* Hero Section */}

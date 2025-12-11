@@ -4,7 +4,7 @@ import { Bot } from 'lucide-react';
 
 export function ServicesHero() {
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-[#fff5f0] to-white relative overflow-hidden">
+    <section className="pt-24 pb-12 md:pt-32 md:pb-20 bg-gradient-to-br from-[#fff5f0] to-white relative overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -16,11 +16,11 @@ export function ServicesHero() {
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Bot className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 font-rubik">
-              AI & Automatisering Oplossingen
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 font-rubik">
+              Onze Diensten
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Ontdek hoe onze diensten jouw bedrijf kunnen transformeren met slimme AI-oplossingen en efficiënte automatisering
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 md:mb-8 max-w-2xl mx-auto">
+              Professionele websites en maatwerk oplossingen voor bouwbedrijven
             </p>
           </motion.div>
         </div>

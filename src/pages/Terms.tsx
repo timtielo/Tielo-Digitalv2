@@ -1,16 +1,22 @@
 import React from 'react';
 import { PolicyLayout } from '../components/Legal/PolicyLayout';
-import { SupabaseSEO } from '../components/SEO/SupabaseSEO';
+import { SEO } from '../components/SEO';
 
 export function Terms() {
   return (
     <>
-      <SupabaseSEO 
-        internalName="Terms SEO"
-        fallback={{
-          title: "Algemene Voorwaarden - Tielo Digital",
-          description: "Lees onze algemene voorwaarden voor het gebruik van onze diensten. Duidelijke afspraken voor een goede samenwerking."
-        }}
+      <SEO
+        title="Algemene Voorwaarden - Duidelijke Afspraken"
+        description="Algemene voorwaarden Tielo Digital: Heldere afspraken over onze dienstverlening, websitebouw voor bouwbedrijven, garanties en verantwoordelijkheden. Laatste update: 3 januari 2025."
+        keywords={[
+          'Algemene Voorwaarden',
+          'Terms',
+          'Servicevoorwaarden',
+          'Gebruiksvoorwaarden',
+          'Tielo Digital Terms',
+          'Website Voorwaarden'
+        ]}
+        canonical="https://www.tielo-digital.nl/terms"
       />
       <PolicyLayout title="Algemene Voorwaarden" lastUpdated="3 januari 2025">
         <section className="mb-8">
