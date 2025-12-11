@@ -15,7 +15,8 @@ import {
   XCircle,
   Target,
   Home,
-  ListTodo
+  ListTodo,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -23,7 +24,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc';
+  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs';
 }
 
 interface DashboardModule {
@@ -47,6 +48,7 @@ const iconMap: Record<string, any> = {
   Users,
   User,
   Shield,
+  FileText,
 };
 
 export function DashboardLayout({ children, currentPage }: DashboardLayoutProps) {
