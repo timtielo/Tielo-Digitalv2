@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, ChevronDown, ChevronUp, Search, Archive, ArchiveRestore, Image as ImageIcon } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, Search, Archive, ArchiveRestore, Image as ImageIcon } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { Card } from '../../components/ui/Card';
@@ -29,7 +29,6 @@ function LeadsContent() {
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<'date' | 'name'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [expandedLeads, setExpandedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [showArchived, setShowArchived] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -128,19 +127,6 @@ function LeadsContent() {
       setSortField(field);
       setSortDirection('desc');
     }
-  };
-
-
-  const toggleExpanded = (leadId: string) => {
-    setExpandedLeads(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(leadId)) {
-        newSet.delete(leadId);
-      } else {
-        newSet.add(leadId);
-      }
-      return newSet;
-    });
   };
 
   const stats = [
@@ -269,7 +255,6 @@ function LeadsContent() {
             </div>
 
             {filteredLeads.map((lead, index) => {
-              const isExpanded = expandedLeads.has(lead.id);
               return (
                 <motion.div
                   key={lead.id}
@@ -278,15 +263,12 @@ function LeadsContent() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card className="overflow-hidden hover:shadow-lg transition-all">
-                    <div
-                      className="p-6 cursor-pointer"
-                      onClick={() => toggleExpanded(lead.id)}
-                    >
-                      <div className="flex justify-between items-start mb-4">
+                    <div className="p-4">
+                      <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
-                          <h3 className="text-2xl font-bold text-gray-900 mb-2">{lead.name}</h3>
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="h-4 w-4" />
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">{lead.name}</h3>
+                          <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                            <Calendar className="h-3.5 w-3.5" />
                             {new Date(lead.date).toLocaleDateString('nl-NL', {
                               day: '2-digit',
                               month: 'long',
@@ -296,133 +278,114 @@ function LeadsContent() {
                             })}
                           </div>
                         </div>
-                        <button className="text-gray-400 hover:text-gray-900 transition-colors">
-                          {isExpanded ? (
-                            <ChevronUp className="h-6 w-6" />
-                          ) : (
-                            <ChevronDown className="h-6 w-6" />
-                          )}
-                        </button>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-4 mb-4">
-                        <div className="flex items-center gap-3">
+                      <div className="grid md:grid-cols-2 gap-2 mb-3">
+                        <div className="flex items-center gap-2">
                           {lead.phone ? (
                             <a
                               href={`tel:${lead.phone}`}
-                              className="text-blue-600 hover:text-blue-700 flex items-center gap-2 transition-colors font-medium"
+                              className="text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition-colors text-sm"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Phone className="h-5 w-5" />
+                              <Phone className="h-4 w-4" />
                               <span>{lead.phone}</span>
                             </a>
                           ) : (
-                            <div className="flex items-center gap-2 text-gray-500">
-                              <Phone className="h-5 w-5" />
+                            <div className="flex items-center gap-1.5 text-gray-500 text-sm">
+                              <Phone className="h-4 w-4" />
                               <span>Geen telefoon</span>
                             </div>
                           )}
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           {lead.email ? (
                             <a
                               href={`mailto:${lead.email}`}
-                              className="text-blue-600 hover:text-blue-700 flex items-center gap-2 transition-colors font-medium"
+                              className="text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition-colors text-sm"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Mail className="h-5 w-5" />
-                              <span>{lead.email}</span>
+                              <Mail className="h-4 w-4" />
+                              <span className="truncate">{lead.email}</span>
                             </a>
                           ) : (
-                            <div className="flex items-center gap-2 text-gray-500">
-                              <Mail className="h-5 w-5" />
+                            <div className="flex items-center gap-1.5 text-gray-500 text-sm">
+                              <Mail className="h-4 w-4" />
                               <span>Geen email</span>
                             </div>
                           )}
                         </div>
 
                         {lead.place && (
-                          <div className="flex items-center gap-3">
-                            <MapPin className="h-5 w-5 text-gray-600" />
-                            <span className="text-gray-900 font-medium">
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-gray-600" />
+                            <span className="text-gray-900 text-sm">
                               {lead.place}
                             </span>
                           </div>
                         )}
 
                         {lead.drive_url && (
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                             <a
                               href={lead.drive_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-700 flex items-center gap-2 transition-colors font-medium"
+                              className="text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition-colors text-sm"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <ExternalLink className="h-5 w-5" />
+                              <ExternalLink className="h-4 w-4" />
                               <span>Open Drive</span>
                             </a>
                           </div>
                         )}
                       </div>
 
-                      <div className="mt-4">
+                      {lead.message && (
+                        <div className="mb-3 pt-3 border-t border-gray-200">
+                          <h4 className="text-xs font-semibold text-gray-600 mb-1">Bericht:</h4>
+                          <p className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">
+                            {lead.message}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex gap-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedLead(lead);
                           }}
-                          className="w-full px-4 py-3 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 rounded-xl transition-all flex items-center justify-center gap-2 font-medium"
+                          className="flex-1 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 rounded-lg transition-all flex items-center justify-center gap-1.5 text-sm font-medium"
                         >
-                          <ImageIcon className="h-5 w-5" />
+                          <ImageIcon className="h-4 w-4" />
                           {lead.photo_count > 0 ? (
-                            <span>Bekijk Foto's ({lead.photo_count})</span>
+                            <span>Foto's ({lead.photo_count})</span>
                           ) : (
-                            <span>Foto's {isAdmin && '(Upload)'}</span>
+                            <span>Foto's</span>
+                          )}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleArchive(lead.id, lead.archived);
+                          }}
+                          className="flex-1 px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-all flex items-center justify-center gap-1.5 text-sm font-medium"
+                        >
+                          {lead.archived ? (
+                            <>
+                              <ArchiveRestore className="h-4 w-4" />
+                              Herstellen
+                            </>
+                          ) : (
+                            <>
+                              <Archive className="h-4 w-4" />
+                              Archiveren
+                            </>
                           )}
                         </button>
                       </div>
-
-                      <AnimatePresence>
-                        {isExpanded && lead.message && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="pt-4 border-t border-gray-200">
-                              <h4 className="text-sm font-semibold text-gray-600 mb-2">Bericht:</h4>
-                              <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
-                                {lead.message}
-                              </p>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                    <div className="px-6 pb-6">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleArchive(lead.id, lead.archived);
-                        }}
-                        className="w-full px-4 py-2 rounded-xl bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-all flex items-center justify-center gap-2 font-medium"
-                      >
-                        {lead.archived ? (
-                          <>
-                            <ArchiveRestore className="h-5 w-5" />
-                            Herstellen
-                          </>
-                        ) : (
-                          <>
-                            <Archive className="h-5 w-5" />
-                            Archiveren
-                          </>
-                        )}
-                      </button>
                     </div>
                   </Card>
                 </motion.div>
