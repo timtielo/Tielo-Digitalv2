@@ -466,6 +466,24 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
                         {formData.excerpt.length}/160 tekens
                       </p>
                     </div>
+
+                    <div>
+                      <Label htmlFor="published_at">
+                        Publicatiedatum
+                        <span className="text-xs text-gray-500 ml-2">
+                          (laat leeg voor huidige datum)
+                        </span>
+                      </Label>
+                      <Input
+                        id="published_at"
+                        type="datetime-local"
+                        value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ''}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          published_at: e.target.value ? new Date(e.target.value).toISOString() : null
+                        }))}
+                      />
+                    </div>
                   </div>
                 </Card>
 
@@ -655,7 +673,18 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
                   <div className="flex items-center gap-4 mb-8 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      {new Date().toLocaleDateString('nl-NL')}
+                      {formData.published_at
+                        ? new Date(formData.published_at).toLocaleDateString('nl-NL', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })
+                        : new Date().toLocaleDateString('nl-NL', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })
+                      }
                     </span>
                     <span>{formData.reading_time} min leestijd</span>
                     {formData.categories.length > 0 && (
