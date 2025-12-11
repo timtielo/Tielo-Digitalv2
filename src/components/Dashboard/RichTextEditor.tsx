@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -305,6 +305,25 @@ export function RichTextEditor({ content, onChange, onImageUpload, placeholder =
       },
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const editorContent = JSON.stringify(editor.getJSON());
+    const normalizedContent = content || '';
+    const incomingContent = typeof normalizedContent === 'string' ? normalizedContent : JSON.stringify(normalizedContent);
+
+    if (editorContent !== incomingContent && incomingContent) {
+      try {
+        const parsedContent = typeof normalizedContent === 'string' && normalizedContent
+          ? JSON.parse(normalizedContent)
+          : normalizedContent;
+        editor.commands.setContent(parsedContent, false);
+      } catch (error) {
+        console.error('Error updating editor content:', error);
+      }
+    }
+  }, [content, editor]);
 
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
