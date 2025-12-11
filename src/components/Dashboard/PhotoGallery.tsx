@@ -15,6 +15,7 @@ interface Photo {
   name: string;
   url: string;
   fullPath: string;
+  bucket?: string;
 }
 
 export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: PhotoGalleryProps) {
@@ -30,11 +31,36 @@ export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: Pho
 
   const loadPhotos = async () => {
     try {
-      const { data, error } = await supabase.storage
-        .from('lead-photos')
-        .list(leadId, {
+      const { data: leadData } = await supabase
+        .from('leads')
+        .select('photo_folder, photo_count')
+        .eq('id', leadId)
+        .single();
+
+      const photoFolder = leadData?.photo_folder || leadId;
+
+      let bucket = 'contact-photos';
+      let folderPath = photoFolder;
+
+      let { data, error } = await supabase.storage
+        .from(bucket)
+        .list(folderPath, {
           sortBy: { column: 'created_at', order: 'desc' }
         });
+
+      if (error || !data || data.length === 0) {
+        bucket = 'lead-photos';
+        folderPath = leadId;
+
+        const result = await supabase.storage
+          .from(bucket)
+          .list(folderPath, {
+            sortBy: { column: 'created_at', order: 'desc' }
+          });
+
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         console.error('Error listing photos:', error);
@@ -52,8 +78,8 @@ export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: Pho
       const photoUrls = await Promise.all(
         data.map(async (file) => {
           const { data: urlData, error: urlError } = await supabase.storage
-            .from('lead-photos')
-            .createSignedUrl(`${leadId}/${file.name}`, 3600);
+            .from(bucket)
+            .createSignedUrl(`${folderPath}/${file.name}`, 3600);
 
           if (urlError) {
             console.error('Error creating signed URL:', urlError);
@@ -63,7 +89,8 @@ export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: Pho
           return {
             name: file.name,
             url: urlData?.signedUrl || '',
-            fullPath: `${leadId}/${file.name}`
+            fullPath: `${folderPath}/${file.name}`,
+            bucket
           };
         })
       );
@@ -125,8 +152,9 @@ export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: Pho
     if (!confirm('Weet je zeker dat je deze foto wilt verwijderen?')) return;
 
     try {
+      const bucket = photo.bucket || 'lead-photos';
       const { error } = await supabase.storage
-        .from('lead-photos')
+        .from(bucket)
         .remove([photo.fullPath]);
 
       if (error) throw error;
