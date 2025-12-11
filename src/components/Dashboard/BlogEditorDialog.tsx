@@ -441,7 +441,7 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
                       <Label htmlFor="slug">
                         URL Slug *
                         <span className="text-xs text-gray-500 ml-2">
-                          tielo-digital.nl/blog/{formData.slug}
+                          website.nl/{formData.slug}
                         </span>
                       </Label>
                       <Input
