@@ -29,7 +29,7 @@ export function generateTemplateCSV(categories: string[]): string {
       date: '2024-01-15',
       description: 'Een mooi afgerond project met geweldige resultaten',
       before_image: 'https://example.com/before.jpg',
-      after_image: 'https://example.com/after.jpg',
+      after_image: 'doe-dit-in-online-dashboard',
       featured: 'false'
     },
     {

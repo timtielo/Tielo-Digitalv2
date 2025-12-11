@@ -29,7 +29,10 @@ import { LeadsPage } from '../pages/Dashboard/LeadsPage';
 import { ProfilePage } from '../pages/Dashboard/ProfilePage';
 import { AdminPage } from '../pages/Dashboard/AdminPage';
 import { DashboardHome } from '../pages/Dashboard/DashboardHome';
+import { TasksPage } from '../pages/Dashboard/TasksPage';
 import { MissionControlPage } from '../pages/Dashboard/MissionControlPage';
+import { ProjectsManagementPage } from '../pages/Dashboard/ProjectsManagementPage';
+import { ProjectTasksManagementPage } from '../pages/Dashboard/ProjectTasksManagementPage';
 
 export interface Route {
   path: string;
@@ -44,12 +47,15 @@ export const routes: Route[] = [
   { path: '/login', component: Login, layout: false },
   { path: '/reset-password', component: ResetPassword, layout: false },
   { path: '/dashboard', component: DashboardHome, layout: false },
+  { path: '/dashboard/tasks', component: TasksPage, layout: false },
   { path: '/dashboard/portfolio', component: PortfolioPage, layout: false },
   { path: '/dashboard/werkspot', component: WerkspotPage, layout: false },
   { path: '/dashboard/reviews', component: ReviewsPage, layout: false },
   { path: '/dashboard/leads', component: LeadsPage, layout: false },
   { path: '/dashboard/profile', component: ProfilePage, layout: false },
   { path: '/dashboard/admin', component: AdminPage, layout: false },
+  { path: '/dashboard/admin/projects', component: ProjectsManagementPage, layout: false },
+  { path: '/dashboard/admin/projects/:projectId/tasks', component: ProjectTasksManagementPage, params: ['projectId'], layout: false },
   { path: '/dashboard/mcc', component: MissionControlPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },

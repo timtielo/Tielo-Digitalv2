@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Lock, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase/client';
-import { AuroraBackground } from '../components/ui/aurora-bento-grid';
 
-const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm transition-colors focus-within:border-blue-400/70 focus-within:bg-blue-500/10">
+const InputWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div className="rounded-xl border border-gray-300 bg-white transition-colors focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
     {children}
   </div>
 );
@@ -92,9 +91,7 @@ export function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 relative overflow-hidden">
-      <AuroraBackground />
-
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
       <div className="relative z-10 min-h-screen flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <motion.div
@@ -116,7 +113,7 @@ export function ResetPassword() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold text-white text-center leading-tight"
+              className="text-4xl md:text-5xl font-bold text-gray-900 text-center leading-tight"
             >
               Nieuw <span className="font-light">Wachtwoord</span>
             </motion.h1>
@@ -125,7 +122,7 @@ export function ResetPassword() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-gray-300 text-center"
+              className="text-gray-600 text-center"
             >
               {success
                 ? 'Je wachtwoord is succesvol gewijzigd'
@@ -140,10 +137,10 @@ export function ResetPassword() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    <label className="text-sm font-medium text-gray-300 block mb-2">
+                    <label className="text-sm font-medium text-gray-700 block mb-2">
                       Nieuw Wachtwoord
                     </label>
-                    <GlassInputWrapper>
+                    <InputWrapper>
                       <div className="relative">
                         <input
                           name="password"
@@ -153,7 +150,7 @@ export function ResetPassword() {
                           onChange={(e) => setPassword(e.target.value)}
                           disabled={loading}
                           required
-                          className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none text-white placeholder-gray-400"
+                          className="w-full bg-transparent text-sm p-4 pr-12 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
                         />
                         <button
                           type="button"
@@ -161,13 +158,13 @@ export function ResetPassword() {
                           className="absolute inset-y-0 right-3 flex items-center"
                         >
                           {showPassword ? (
-                            <EyeOff className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                            <EyeOff className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
                           ) : (
-                            <Eye className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                            <Eye className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
                           )}
                         </button>
                       </div>
-                    </GlassInputWrapper>
+                    </InputWrapper>
                   </motion.div>
 
                   <motion.div
@@ -175,10 +172,10 @@ export function ResetPassword() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
                   >
-                    <label className="text-sm font-medium text-gray-300 block mb-2">
+                    <label className="text-sm font-medium text-gray-700 block mb-2">
                       Bevestig Wachtwoord
                     </label>
-                    <GlassInputWrapper>
+                    <InputWrapper>
                       <div className="relative">
                         <input
                           name="confirm-password"
@@ -188,7 +185,7 @@ export function ResetPassword() {
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           disabled={loading}
                           required
-                          className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none text-white placeholder-gray-400"
+                          className="w-full bg-transparent text-sm p-4 pr-12 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
                         />
                         <button
                           type="button"
@@ -196,20 +193,20 @@ export function ResetPassword() {
                           className="absolute inset-y-0 right-3 flex items-center"
                         >
                           {showConfirmPassword ? (
-                            <EyeOff className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                            <EyeOff className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
                           ) : (
-                            <Eye className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                            <Eye className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
                           )}
                         </button>
                       </div>
-                    </GlassInputWrapper>
+                    </InputWrapper>
                   </motion.div>
 
                   {error && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="text-red-300 text-sm text-center bg-red-500/20 backdrop-blur-sm border border-red-500/30 p-3 rounded-2xl"
+                      className="text-red-700 text-sm text-center bg-red-50 border border-red-200 p-3 rounded-xl"
                     >
                       {error}
                     </motion.div>
@@ -221,7 +218,7 @@ export function ResetPassword() {
                     transition={{ delay: 0.6 }}
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 py-4 font-medium text-white hover:from-blue-600 hover:to-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50"
+                    className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                   >
                     {loading ? 'Bezig met opslaan...' : 'Wachtwoord wijzigen'}
                   </motion.button>
@@ -232,7 +229,7 @@ export function ResetPassword() {
                     transition={{ delay: 0.7 }}
                     type="button"
                     onClick={() => window.location.href = '/login'}
-                    className="w-full text-sm text-gray-400 hover:text-blue-400 transition-colors"
+                    className="w-full text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
                   >
                     Terug naar inloggen
                   </motion.button>
@@ -244,13 +241,13 @@ export function ResetPassword() {
                   transition={{ delay: 0.4 }}
                   className="space-y-5 mt-4"
                 >
-                  <div className="text-red-300 text-center bg-red-500/20 backdrop-blur-sm border border-red-500/30 p-6 rounded-2xl">
+                  <div className="text-red-700 text-center bg-red-50 border border-red-200 p-6 rounded-xl">
                     <p className="text-sm">{error}</p>
                   </div>
 
                   <button
                     onClick={() => window.location.href = '/login'}
-                    className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 py-4 font-medium text-white hover:from-blue-600 hover:to-cyan-500 transition-all shadow-lg hover:shadow-blue-500/50"
+                    className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all shadow-lg hover:shadow-xl"
                   >
                     Terug naar inloggen
                   </button>
@@ -263,9 +260,9 @@ export function ResetPassword() {
                 transition={{ delay: 0.4 }}
                 className="space-y-5 mt-4"
               >
-                <div className="text-green-300 text-center bg-green-500/20 backdrop-blur-sm border border-green-500/30 p-6 rounded-2xl">
-                  <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-400" />
-                  <p className="text-base font-medium mb-2">Wachtwoord gewijzigd!</p>
+                <div className="text-green-700 text-center bg-green-50 border border-green-200 p-6 rounded-xl">
+                  <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-600" />
+                  <p className="text-base font-semibold mb-2">Wachtwoord gewijzigd!</p>
                   <p className="text-sm">
                     Je wordt doorgestuurd naar de inlogpagina...
                   </p>
@@ -273,7 +270,7 @@ export function ResetPassword() {
 
                 <button
                   onClick={() => window.location.href = '/login'}
-                  className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 py-4 font-medium text-white hover:from-blue-600 hover:to-cyan-500 transition-all shadow-lg hover:shadow-blue-500/50"
+                  className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all shadow-lg hover:shadow-xl"
                 >
                   Nu inloggen
                 </button>

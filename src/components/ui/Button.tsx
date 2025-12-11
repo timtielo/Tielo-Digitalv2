@@ -18,8 +18,8 @@ export function Button({
 
   const variants = {
     default: 'bg-primary text-white hover:bg-primary/90',
-    outline: 'border border-gray-300 bg-white hover:bg-gray-50',
-    ghost: 'hover:bg-gray-100',
+    outline: 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
+    ghost: 'text-gray-900 hover:bg-gray-100',
     destructive: 'bg-red-500 text-white hover:bg-red-600',
   };
 

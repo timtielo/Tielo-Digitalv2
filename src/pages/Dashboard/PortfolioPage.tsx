@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Upload, Check, Briefcase, Tag, Image as ImageIcon, LogOut, Search, Copy, Download, FileUp, X, AlertCircle, Edit3 } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
@@ -405,11 +406,6 @@ function PortfolioContent() {
     setDialogOpen(true);
   };
 
-  const handleBackToDashboard = () => {
-    window.history.pushState({}, '', '/dashboard');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
-
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
@@ -569,178 +565,170 @@ function PortfolioContent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
+    <DashboardLayout currentPage="portfolio">
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+        >
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Portfolio</h1>
+              <p className="text-blue-100">Beheer je projecten en referenties</p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleDownloadTemplate}
+                className="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 font-semibold shadow-lg"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                CSV Template
+              </Button>
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                className="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 font-semibold shadow-lg"
+              >
+                <FileUp className="h-4 w-4 mr-2" />
+                Importeer CSV
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <Button
+                onClick={() => setCategoryDialogOpen(true)}
+                className="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 font-semibold shadow-lg"
+              >
+                <Tag className="h-4 w-4 mr-2" />
+                Categorieën
+              </Button>
+              <Button
+                onClick={openNewDialog}
+                className="!bg-gray-900 !text-white hover:!bg-gray-800 !border-0 font-semibold shadow-xl"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuw Project
+              </Button>
+            </div>
+          </div>
+        </motion.div>
 
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Zoek op titel, locatie of beschrijving..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+            />
+          </div>
+          <Select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-white border-gray-300 text-gray-900 md:w-64"
           >
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={handleBackToDashboard}
-                className="text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors"
-              >
-                ← Terug naar Dashboard
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-xl transition-all duration-300 text-sm"
-              >
-                <LogOut className="h-4 w-4" />
-                Uitloggen
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-4xl font-bold text-white mb-2">Portfolio</h1>
-                <p className="text-gray-300">Beheer je projecten en referenties</p>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={handleDownloadTemplate}
-                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  CSV Template
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-                >
-                  <FileUp className="h-4 w-4 mr-2" />
-                  Importeer CSV
-                </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => setCategoryDialogOpen(true)}
-                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-                >
-                  <Tag className="h-4 w-4 mr-2" />
-                  Categorieën
-                </Button>
-                <Button
-                  onClick={openNewDialog}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nieuw Project
-                </Button>
-              </div>
-            </div>
+            <option value="all">Alle categorieën</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
+          </Select>
+          <button
+            onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
+            className="bg-white border border-gray-300 rounded-lg font-medium transition-all duration-300 whitespace-nowrap flex items-center overflow-hidden"
+          >
+            <span className={`px-4 py-2 transition-all duration-300 ${
+              !showFeaturedOnly
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}>
+              Alle items
+            </span>
+            <span className={`px-4 py-2 transition-all duration-300 flex items-center gap-1.5 ${
+              showFeaturedOnly
+                ? 'bg-blue-600 text-white shadow-inner'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}>
+              <Check className="h-4 w-4" />
+              Featured
+            </span>
+          </button>
+        </div>
 
-            <div className="mt-6 flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Zoek op titel, locatie of beschrijving..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder-gray-400"
-                />
-              </div>
-              <Select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-white/10 backdrop-blur-sm border-white/20 text-white md:w-64"
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : filteredItems.length === 0 ? (
+          items.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20"
+          >
+            <Card className="p-12 max-w-md mx-auto">
+              <Briefcase className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Nog geen portfolio items</h3>
+              <p className="text-gray-600 mb-6">Begin met het toevoegen van je eerste project</p>
+              <Button
+                onClick={openNewDialog}
+                className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
               >
-                <option value="all">Alle categorieën</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.name}>{cat.name}</option>
-                ))}
-              </Select>
-              <button
-                onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
-                className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 whitespace-nowrap flex items-center gap-2 ${
-                  showFeaturedOnly
-                    ? 'bg-gradient-to-r from-yellow-500 to-amber-400 text-white shadow-lg shadow-yellow-500/50'
-                    : 'bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20'
-                }`}
-              >
-                <Check className="h-4 w-4" />
-                {showFeaturedOnly ? 'Featured' : 'Alle items'}
-              </button>
-            </div>
+                <Plus className="h-5 w-5 mr-2" />
+                Voeg je eerste project toe
+              </Button>
+            </Card>
           </motion.div>
-
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-            </div>
-          ) : filteredItems.length === 0 ? (
-            items.length === 0 ? (
+          ) : (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-20"
             >
-              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto border border-white/10">
-                <Briefcase className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-2xl font-bold text-white mb-2">Nog geen portfolio items</h3>
-                <p className="text-gray-400 mb-6">Begin met het toevoegen van je eerste project</p>
+              <Card className="p-12 max-w-md mx-auto">
+                <Search className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Geen resultaten gevonden</h3>
+                <p className="text-gray-600 mb-6">Probeer een andere zoekopdracht of filter</p>
                 <Button
-                  onClick={openNewDialog}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCategory('all');
+                    setShowFeaturedOnly(false);
+                  }}
+                  variant="outline"
+                  className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                 >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Voeg je eerste project toe
+                  Reset filters
                 </Button>
-              </div>
+              </Card>
             </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-20"
-              >
-                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto border border-white/10">
-                  <Search className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-2xl font-bold text-white mb-2">Geen resultaten gevonden</h3>
-                  <p className="text-gray-400 mb-6">Probeer een andere zoekopdracht of filter</p>
-                  <Button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedCategory('all');
-                      setShowFeaturedOnly(false);
-                    }}
-                    variant="outline"
-                    className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-                  >
-                    Reset filters
-                  </Button>
-                </div>
-              </motion.div>
-            )
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              <AnimatePresence>
-                {filteredItems.map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="group relative bg-gradient-to-br from-blue-500/20 to-cyan-400/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300"
-                  >
-                    <div className="aspect-video relative overflow-hidden bg-gray-900/50">
+          )
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <AnimatePresence>
+              {filteredItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Card className={`group relative overflow-hidden transition-all duration-300 ${
+                    item.featured
+                      ? 'ring-4 ring-blue-500 hover:shadow-lg'
+                      : 'hover:shadow-lg'
+                  }`}>
+                    <div className="aspect-video relative overflow-hidden bg-gray-100">
                       {item.after_image || item.before_image ? (
                         <img
                           src={item.after_image || item.before_image || ''}
@@ -749,13 +737,13 @@ function PortfolioContent() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <ImageIcon className="h-12 w-12 text-gray-600" />
+                          <ImageIcon className="h-12 w-12 text-gray-400" />
                         </div>
                       )}
                       {item.featured && (
-                        <div className="absolute top-3 right-3 bg-yellow-500/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
-                          <Check className="h-3 w-3 text-white" />
-                          <span className="text-xs font-semibold text-white">Featured</span>
+                        <div className="absolute top-3 right-3 bg-blue-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                          <Check className="h-4 w-4 text-white font-bold" />
+                          <span className="text-sm font-bold text-white">Featured</span>
                         </div>
                       )}
                     </div>
@@ -763,14 +751,14 @@ function PortfolioContent() {
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-white mb-1 truncate">{item.title}</h3>
-                          <p className="text-sm text-gray-400">{item.category}</p>
+                          <h3 className="text-lg font-bold text-gray-900 mb-1 truncate">{item.title}</h3>
+                          <p className="text-sm text-gray-600">{item.category}</p>
                         </div>
                       </div>
 
                       <div className="space-y-2 mb-4">
-                        <p className="text-sm text-gray-300">{item.location}</p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-sm text-gray-700">{item.location}</p>
+                        <p className="text-xs text-gray-500">
                           {new Date(item.date).toLocaleDateString('nl-NL', {
                             day: 'numeric',
                             month: 'long',
@@ -784,7 +772,7 @@ function PortfolioContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(item)}
-                          className="flex-1 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                          className="flex-1 bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100"
                         >
                           <Pencil className="h-4 w-4 mr-2" />
                           Bewerken
@@ -793,7 +781,7 @@ function PortfolioContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDuplicate(item)}
-                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+                          className="bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
                           title="Dupliceer project"
                         >
                           <Copy className="h-4 w-4" />
@@ -802,18 +790,18 @@ function PortfolioContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDelete(item.id)}
-                          className="bg-red-500/20 backdrop-blur-sm border-red-500/30 text-red-400 hover:bg-red-500/30"
+                          className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -1268,7 +1256,7 @@ function PortfolioContent() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardLayout>
   );
 }
 

@@ -3,8 +3,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
-import { Breadcrumb } from '../../components/Dashboard/Breadcrumb';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 
 interface MCCMonth {
   id: string;
@@ -38,21 +37,21 @@ const MONTHS = [
 
 const CATEGORIES = ['LEADS', 'KLANTEN', 'FANS', 'CASH', 'TEAM', 'BETROKKENHEID'];
 const CATEGORY_COLORS = {
-  LEADS: 'bg-yellow-500/10 border-yellow-500/30',
-  KLANTEN: 'bg-blue-500/10 border-blue-500/30',
-  FANS: 'bg-pink-500/10 border-pink-500/30',
-  CASH: 'bg-green-500/10 border-green-500/30',
-  TEAM: 'bg-purple-500/10 border-purple-500/30',
-  BETROKKENHEID: 'bg-orange-500/10 border-orange-500/30'
+  LEADS: 'bg-yellow-100 border-2 border-yellow-400',
+  KLANTEN: 'bg-blue-100 border-2 border-blue-400',
+  FANS: 'bg-pink-100 border-2 border-pink-400',
+  CASH: 'bg-green-100 border-2 border-green-400',
+  TEAM: 'bg-purple-100 border-2 border-purple-400',
+  BETROKKENHEID: 'bg-orange-100 border-2 border-orange-400'
 };
 
 const CATEGORY_TEXT_COLORS = {
-  LEADS: 'text-yellow-400',
-  KLANTEN: 'text-blue-400',
-  FANS: 'text-pink-400',
-  CASH: 'text-green-400',
-  TEAM: 'text-purple-400',
-  BETROKKENHEID: 'text-orange-400'
+  LEADS: 'text-yellow-800',
+  KLANTEN: 'text-blue-800',
+  FANS: 'text-pink-800',
+  CASH: 'text-green-800',
+  TEAM: 'text-purple-800',
+  BETROKKENHEID: 'text-orange-800'
 };
 
 const STATUS_OPTIONS = [
@@ -301,8 +300,8 @@ function MissionControlContent() {
     return (
       <React.Fragment key={category}>
         {/* Category Header Row */}
-        <tr className={`${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]} border-b border-white/20`}>
-          <td colSpan={11} className="px-4 py-2">
+        <tr className={`${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}>
+          <td colSpan={11} className="px-4 py-3">
             <div className="flex items-center justify-between">
               <h3 className={`text-sm font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
                 {category}
@@ -310,7 +309,14 @@ function MissionControlContent() {
               <button
                 onClick={() => addItem(category)}
                 disabled={!currentMonthData}
-                className="flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium transition-all disabled:opacity-50"
+                className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-md bg-white hover:bg-gray-50 border-2 ${
+                  category === 'LEADS' ? 'border-yellow-400 text-yellow-800' :
+                  category === 'KLANTEN' ? 'border-blue-400 text-blue-800' :
+                  category === 'FANS' ? 'border-pink-400 text-pink-800' :
+                  category === 'CASH' ? 'border-green-400 text-green-800' :
+                  category === 'TEAM' ? 'border-purple-400 text-purple-800' :
+                  'border-orange-400 text-orange-800'
+                } font-semibold transition-all disabled:opacity-50 shadow-sm`}
               >
                 <Plus className="w-3 h-3" />
                 Toevoegen
@@ -325,47 +331,54 @@ function MissionControlContent() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className={`border-b border-white/5 hover:bg-white/5 transition-colors ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}
+                    className={`border-b border-gray-200 hover:bg-gray-50 transition-colors`}
                   >
-                    <td className="px-4 py-1.5">
-                      <span className={`text-xs font-semibold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
+                    <td className="px-4 py-2">
+                      <span className={`inline-block px-2 py-1 text-xs font-bold rounded ${
+                        category === 'LEADS' ? 'bg-yellow-100 text-yellow-800' :
+                        category === 'KLANTEN' ? 'bg-blue-100 text-blue-800' :
+                        category === 'FANS' ? 'bg-pink-100 text-pink-800' :
+                        category === 'CASH' ? 'bg-green-100 text-green-800' :
+                        category === 'TEAM' ? 'bg-purple-100 text-purple-800' :
+                        'bg-orange-100 text-orange-800'
+                      }`}>
                         {category}
                       </span>
                     </td>
-                    <td className="px-4 py-1.5">
+                    <td className="px-4 py-2">
                       <input
                         type="text"
                         value={item.item}
                         onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                        className="w-full min-w-[250px] px-3 py-1.5 text-sm rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-full min-w-[250px] px-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                       />
                     </td>
                     {item.scores.map((score) => (
-                      <td key={score.week} className="px-2 py-1.5">
+                      <td key={score.week} className="px-2 py-2">
                         <input
                           type="number"
                           value={score.value}
                           onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                          className="w-16 px-2 py-1.5 text-sm text-center rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                          className="w-16 px-2 py-2 text-sm text-center rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                         />
                       </td>
                     ))}
-                    <td className="px-2 py-1.5 text-center font-bold text-white text-sm">
+                    <td className="px-2 py-2 text-center font-bold text-gray-900 text-sm">
                       {calculateMonthTotal(item.scores)}
                     </td>
-                    <td className="px-2 py-1.5">
+                    <td className="px-2 py-2">
                       <input
                         type="number"
                         value={item.target}
                         onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                        className="w-20 px-2 py-1.5 text-sm text-center rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                        className="w-20 px-2 py-2 text-sm text-center rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                       />
                     </td>
-                    <td className="px-2 py-1.5">
+                    <td className="px-2 py-2">
                       <select
                         value={item.status}
                         onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                        className="w-full min-w-[130px] px-2 py-1.5 text-xs rounded-md border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50"
+                        className="w-full min-w-[130px] px-2 py-2 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                       >
                         {STATUS_OPTIONS.map(option => (
                           <option key={option.value} value={option.value}>
@@ -374,10 +387,10 @@ function MissionControlContent() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-2 py-1.5 text-center">
+                    <td className="px-2 py-2 text-center">
                       <button
                         onClick={() => deleteItem(item.id)}
-                        className="p-1.5 rounded-md border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                        className="p-1.5 rounded-md border border-red-300 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 transition-all"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -390,46 +403,37 @@ function MissionControlContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-        <AuroraBackground />
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+      <DashboardLayout currentPage="admin">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
-
-      <div className="relative z-10 container mx-auto px-4 py-8">
+    <DashboardLayout currentPage="admin">
+      <div className="space-y-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <Breadcrumb
-            items={[
-              { label: 'Admin', path: '/dashboard/admin' },
-              { label: 'Mission Control Center' }
-            ]}
-          />
-          <h1 className="text-4xl font-bold text-white mb-2">Mission Control Center</h1>
-          <p className="text-gray-400">Beheer je maandelijkse doelen en voortgang</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mission Control Center</h1>
+          <p className="text-gray-600">Beheer je maandelijkse doelen en voortgang</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 mb-6"
+          className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 mb-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigateMonth('prev')}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-300 hover:text-white"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -438,7 +442,7 @@ function MissionControlContent() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                  className="px-4 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                  className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                 >
                   {MONTHS.map((month, index) => (
                     <option key={index} value={index + 1}>
@@ -450,7 +454,7 @@ function MissionControlContent() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="px-4 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                  className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                 >
                   {[2024, 2025, 2026, 2027].map(year => (
                     <option key={year} value={year}>
@@ -462,7 +466,7 @@ function MissionControlContent() {
 
               <button
                 onClick={() => navigateMonth('next')}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-300 hover:text-white"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -471,7 +475,7 @@ function MissionControlContent() {
             {!currentMonthData && (
               <button
                 onClick={createMonth}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-lg"
               >
                 <Plus className="w-4 h-4" />
                 Nieuwe maand aanmaken
@@ -481,22 +485,22 @@ function MissionControlContent() {
         </motion.div>
 
         {currentMonthData ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
-                <thead className="sticky top-0 bg-black/30 backdrop-blur-sm">
-                  <tr className="border-b border-white/10">
-                    <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Categorie</th>
-                    <th className="px-4 py-1.5 text-left text-xs font-semibold text-gray-300">Item</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W1</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W2</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W3</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W4</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">W5</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Maand</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Target</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Status</th>
-                    <th className="px-2 py-1.5 text-center text-xs font-semibold text-gray-300">Acties</th>
+                <thead className="sticky top-0 bg-gray-100 border-b-2 border-gray-300">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">Categorie</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">Item</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W1</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W2</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W3</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W4</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W5</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Maand</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Target</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Status</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Acties</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -510,14 +514,14 @@ function MissionControlContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-12 text-center"
+            className="rounded-2xl border border-gray-200 bg-white shadow-sm p-12 text-center"
           >
-            <p className="text-gray-400 mb-6 text-lg">
+            <p className="text-gray-600 mb-6 text-lg">
               Er is nog geen data voor {MONTHS[selectedMonth - 1]} {selectedYear}
             </p>
             <button
               onClick={createMonth}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white font-medium transition-all shadow-lg mx-auto"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm mx-auto"
             >
               <Plus className="w-4 h-4" />
               Maand aanmaken
@@ -525,7 +529,7 @@ function MissionControlContent() {
           </motion.div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

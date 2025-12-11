@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Upload, Loader2, Camera, Building2, Shield, Lock, Eye, EyeOff } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
-import { AuroraBackground } from '../../components/ui/aurora-bento-grid';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
@@ -238,49 +239,33 @@ function ProfileContent() {
     }
   };
 
-  const handleBackToDashboard = () => {
-    window.history.pushState({}, '', '/dashboard');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
-
   return (
-    <div className="min-h-screen w-full bg-gray-950 font-sans antialiased relative">
-      <AuroraBackground />
+    <DashboardLayout currentPage="profile">
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+        >
+          <h1 className="text-3xl font-bold mb-2">Mijn Profiel</h1>
+          <p className="text-blue-100">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
+          <p className="text-sm text-blue-200 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
+        </motion.div>
 
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <button
-              onClick={handleBackToDashboard}
-              className="text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-2 transition-colors"
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-              ← Terug naar Dashboard
-            </button>
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Mijn Profiel</h1>
-              <p className="text-gray-300">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
-              <p className="text-sm text-blue-400 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
-            </div>
-          </motion.div>
-
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-            </div>
-          ) : (
-            <div className="max-w-3xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden"
-              >
+              <Card className="overflow-hidden">
                 <div className="p-8">
                   <form onSubmit={handleSubmit} className="space-y-8">
-                    <div className="flex flex-col items-center gap-6 pb-8 border-b border-white/10">
+                    <div className="flex flex-col items-center gap-6 pb-8 border-b border-gray-200">
                       <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -292,7 +277,7 @@ function ProfileContent() {
                             <img
                               src={imagePreview || formData.profile_picture_url}
                               alt="Profielfoto"
-                              className="w-32 h-32 rounded-full object-cover border-4 border-white/20"
+                              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
                             />
                             <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                               <Camera className="h-8 w-8 text-white" />
@@ -310,9 +295,9 @@ function ProfileContent() {
                             </label>
                           </div>
                         ) : (
-                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-white/30 rounded-full cursor-pointer hover:bg-white/5 transition-colors">
+                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-full cursor-pointer hover:bg-gray-50 transition-colors">
                             <Upload className="h-8 w-8 text-gray-400 mb-1" />
-                            <span className="text-xs text-gray-400 text-center px-2">Upload foto</span>
+                            <span className="text-xs text-gray-600 text-center px-2">Upload foto</span>
                             <input
                               type="file"
                               className="hidden"
@@ -332,7 +317,7 @@ function ProfileContent() {
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="flex items-center gap-2 text-sm text-gray-300"
+                          className="flex items-center gap-2 text-sm text-gray-700"
                         >
                           <Loader2 className="h-4 w-4 animate-spin" />
                           Uploaden...
@@ -340,7 +325,7 @@ function ProfileContent() {
                       )}
 
                       {imageDimensions && (
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-600">
                           Afmetingen: {imageDimensions.width} × {imageDimensions.height}px
                         </p>
                       )}
@@ -351,7 +336,7 @@ function ProfileContent() {
                           variant="outline"
                           size="sm"
                           onClick={handleRemoveImage}
-                          className="bg-red-500/20 backdrop-blur-sm border-red-500/30 text-red-400 hover:bg-red-500/30"
+                          className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
                         >
                           Verwijder foto
                         </Button>
@@ -365,7 +350,7 @@ function ProfileContent() {
                       className="grid md:grid-cols-2 gap-6"
                     >
                       <div>
-                        <Label htmlFor="name" className="text-gray-300">
+                        <Label htmlFor="name" className="text-gray-900">
                           <div className="flex items-center gap-2 mb-2">
                             <User className="h-4 w-4" />
                             Naam *
@@ -380,12 +365,12 @@ function ProfileContent() {
                             setFormData({ ...formData, name: e.target.value })
                           }
                           required
-                          className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                          className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="business_name" className="text-gray-300">
+                        <Label htmlFor="business_name" className="text-gray-900">
                           <div className="flex items-center gap-2 mb-2">
                             <Building2 className="h-4 w-4" />
                             Bedrijfsnaam *
@@ -400,7 +385,7 @@ function ProfileContent() {
                             setFormData({ ...formData, business_name: e.target.value })
                           }
                           required
-                          className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                          className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         />
                       </div>
                     </motion.div>
@@ -409,23 +394,23 @@ function ProfileContent() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="pt-6 border-t border-white/10"
+                      className="pt-6 border-t border-gray-200"
                     >
-                      <div className="flex items-center gap-2 mb-4 text-gray-300">
+                      <div className="flex items-center gap-2 mb-4 text-gray-700">
                         <Shield className="h-5 w-5" />
                         <span className="font-medium">Account Type</span>
                       </div>
-                      <div className={`p-6 rounded-2xl border ${
+                      <div className={`p-6 rounded-2xl border-2 ${
                         profile?.business_type === 'bouw'
-                          ? 'bg-gradient-to-br from-blue-500/20 to-cyan-400/20 border-blue-500/30'
-                          : 'bg-gradient-to-br from-gray-500/20 to-slate-400/20 border-gray-500/30'
+                          ? 'bg-blue-50 border-blue-300'
+                          : 'bg-gray-100 border-gray-300'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-bold text-white text-lg">
+                            <p className="font-bold text-gray-900 text-lg">
                               {profile?.business_type === 'bouw' ? 'Bouw Profiel' : 'Basis Profiel'}
                             </p>
-                            <p className="text-sm text-gray-300 mt-2">
+                            <p className="text-sm text-gray-700 mt-2">
                               {profile?.business_type === 'bouw'
                                 ? 'Volledige toegang tot alle dashboard functies inclusief Portfolio en Werkspot'
                                 : 'Toegang tot Reviews, Leads en Profiel beheer'}
@@ -433,17 +418,17 @@ function ProfileContent() {
                           </div>
                           <div className={`p-3 rounded-xl ${
                             profile?.business_type === 'bouw'
-                              ? 'bg-blue-500/30'
-                              : 'bg-gray-500/30'
+                              ? 'bg-blue-200'
+                              : 'bg-gray-300'
                           }`}>
                             <Shield className={`h-8 w-8 ${
                               profile?.business_type === 'bouw'
-                                ? 'text-blue-300'
-                                : 'text-gray-300'
+                                ? 'text-blue-700'
+                                : 'text-gray-700'
                             }`} />
                           </div>
                         </div>
-                        <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-white/10">
+                        <p className="text-xs text-gray-600 mt-4 pt-4 border-t border-gray-300">
                           Neem contact op met een beheerder om je account type te wijzigen.
                         </p>
                       </div>
@@ -452,36 +437,60 @@ function ProfileContent() {
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                      className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-0.5">
+                          <svg className="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-amber-800">
+                            Wijzigingen opslaan
+                          </p>
+                          <p className="text-sm text-amber-700 mt-1">
+                            Vergeet niet om je wijzigingen op te slaan voordat je de pagina verlaat
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="flex gap-3 pt-6"
+                      className="flex gap-3 pt-4"
                     >
                       <Button
                         type="submit"
                         disabled={saving || uploading}
-                        className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
+                        className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 border-0 shadow-lg"
                       >
                         {saving ? 'Opslaan...' : 'Profiel Opslaan'}
                       </Button>
                     </motion.div>
                   </form>
                 </div>
-              </motion.div>
+              </Card>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden mt-6"
-              >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="overflow-hidden">
                 <div className="p-8">
                   <div className="flex items-center gap-2 mb-6">
-                    <Lock className="h-5 w-5 text-gray-300" />
-                    <h3 className="text-2xl font-bold text-white">Wachtwoord Wijzigen</h3>
+                    <Lock className="h-5 w-5 text-gray-700" />
+                    <h3 className="text-2xl font-bold text-gray-900">Wachtwoord Wijzigen</h3>
                   </div>
 
                   <form onSubmit={handlePasswordChange} className="space-y-6">
                     <div>
-                      <Label htmlFor="new_password" className="text-gray-300">
+                      <Label htmlFor="new_password" className="text-gray-900">
                         Nieuw Wachtwoord *
                       </Label>
                       <div className="relative">
@@ -495,12 +504,12 @@ function ProfileContent() {
                           }
                           required
                           minLength={6}
-                          className="bg-white/5 border-white/20 text-white placeholder-gray-500 pr-10"
+                          className="bg-white border-gray-300 text-gray-900 placeholder-gray-500 pr-10"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900 transition-colors"
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -508,7 +517,7 @@ function ProfileContent() {
                     </div>
 
                     <div>
-                      <Label htmlFor="confirm_password" className="text-gray-300">
+                      <Label htmlFor="confirm_password" className="text-gray-900">
                         Bevestig Wachtwoord *
                       </Label>
                       <Input
@@ -521,7 +530,7 @@ function ProfileContent() {
                         }
                         required
                         minLength={6}
-                        className="bg-white/5 border-white/20 text-white placeholder-gray-500"
+                        className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                       />
                     </div>
 
@@ -534,30 +543,32 @@ function ProfileContent() {
                     </Button>
                   </form>
                 </div>
-              </motion.div>
+              </Card>
+            </motion.div>
 
-              {profile?.important_links && (
+            {profile?.important_links && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden mt-6"
-                >
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Belangrijke Links</h3>
+              >
+                <Card className="overflow-hidden bg-white">
+                  <div className="p-8 bg-white">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
-                      className="prose prose-invert max-w-none text-gray-200 [&_a]:text-base [&_p]:text-base [&_li]:text-base [&_*]:text-base"
+                      className="space-y-2 [&_*]:!text-gray-900 [&_*]:!bg-transparent [&_a]:!text-blue-600 [&_a]:!underline [&_a]:!decoration-blue-300 [&_a]:!underline-offset-2 [&_a:hover]:!text-blue-800 [&_strong]:!text-gray-900 [&_strong]:!font-bold [&_b]:!text-gray-900 [&_b]:!font-bold [&_p]:!text-gray-900 [&_li]:!text-gray-900 [&_span]:!text-gray-900 [&_div]:!text-gray-900 [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5"
+                      style={{ color: '#111827' }}
                       dangerouslySetInnerHTML={{ __html: profile.important_links }}
                     />
                   </div>
-                </motion.div>
-              )}
-            </div>
-          )}
-        </div>
+                </Card>
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

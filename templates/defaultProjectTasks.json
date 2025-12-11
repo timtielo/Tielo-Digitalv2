@@ -1,0 +1,222 @@
+[
+  {
+    "title": "Welkom bij Tielo Digital",
+    "description": "Kennismaking en uitleg van het ontwikkelproces",
+    "phase": "Onboarding",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 1
+  },
+  {
+    "title": "Toegang tot dashboard",
+    "description": "Bevestig dat je toegang hebt tot het klantendashboard",
+    "phase": "Onboarding",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 2
+  },
+  {
+    "title": "Website doelen bespreken",
+    "description": "Inventarisatie van wensen, doelgroep en functionaliteiten",
+    "phase": "Onboarding",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 3
+  },
+  {
+    "title": "Aanleveren bedrijfsgegevens",
+    "description": "Verstuur logo, huisstijl, kleuren en eventuele bestaande content",
+    "phase": "Onboarding",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 4
+  },
+  {
+    "title": "Ontwerpvoorstel maken",
+    "description": "Eerste schets of wireframe van de website structuur",
+    "phase": "Design",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 5
+  },
+  {
+    "title": "Design goedkeuren",
+    "description": "Beoordeel het ontwerpvoorstel en geef feedback",
+    "phase": "Design",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 6
+  },
+  {
+    "title": "Kleuren en typografie vaststellen",
+    "description": "Definitieve keuze voor huisstijl, fonts en kleuren",
+    "phase": "Design",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 7
+  },
+  {
+    "title": "Finaal design presenteren",
+    "description": "Presentatie van het volledige visuele ontwerp",
+    "phase": "Design",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 8
+  },
+  {
+    "title": "Teksten aanleveren",
+    "description": "Verstuur alle teksten voor de website paginas",
+    "phase": "Content",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 9
+  },
+  {
+    "title": "Afbeeldingen aanleveren",
+    "description": "Verstuur foto's en afbeeldingen in hoge kwaliteit",
+    "phase": "Content",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 10
+  },
+  {
+    "title": "SEO keywords bepalen",
+    "description": "Verzamelen van belangrijke zoekwoorden voor vindbaarheid",
+    "phase": "Content",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 11
+  },
+  {
+    "title": "Content controleren en goedkeuren",
+    "description": "Controleer alle teksten en afbeeldingen op de website",
+    "phase": "Content",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 12
+  },
+  {
+    "title": "Frontend ontwikkeling",
+    "description": "Bouwen van de visuele interface en gebruikersinteractie",
+    "phase": "Techniek",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 13
+  },
+  {
+    "title": "Backend en database opzetten",
+    "description": "Configuratie van server, database en API's",
+    "phase": "Techniek",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 14
+  },
+  {
+    "title": "Responsive design testen",
+    "description": "Testen op mobiel, tablet en desktop",
+    "phase": "Techniek",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 15
+  },
+  {
+    "title": "Formulieren en functionaliteiten testen",
+    "description": "Controleren van alle interactieve elementen",
+    "phase": "Techniek",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 16
+  },
+  {
+    "title": "Acceptatietest uitvoeren",
+    "description": "Doorloop de gehele website en test alle functionaliteiten",
+    "phase": "Techniek",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 17
+  },
+  {
+    "title": "Domein en hosting regelen",
+    "description": "Domeinnaam registreren en hosting configureren",
+    "phase": "Livegang",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 18
+  },
+  {
+    "title": "SSL certificaat installeren",
+    "description": "Beveiligde verbinding (HTTPS) instellen",
+    "phase": "Livegang",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 19
+  },
+  {
+    "title": "Google Analytics en tracking",
+    "description": "Instellen van website analytics en conversie tracking",
+    "phase": "Livegang",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 20
+  },
+  {
+    "title": "Website live zetten",
+    "description": "Publicatie van de website naar productie omgeving",
+    "phase": "Livegang",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": false,
+    "status": "todo",
+    "sort_order": 21
+  },
+  {
+    "title": "Finale controle en oplevering",
+    "description": "Laatste controle en overdracht van de live website",
+    "phase": "Livegang",
+    "required": true,
+    "visible_to_client": true,
+    "assigned_to_customer": true,
+    "status": "todo",
+    "sort_order": 22
+  }
+]
