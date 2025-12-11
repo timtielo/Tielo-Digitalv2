@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, ChevronDown, ChevronUp, Search, Archive, ArchiveRestore } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, TrendingUp, ExternalLink, MapPin, ChevronDown, ChevronUp, Search, Archive, ArchiveRestore, Image as ImageIcon } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { Card } from '../../components/ui/Card';
+import { PhotoGallery } from '../../components/Dashboard/PhotoGallery';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -18,6 +19,8 @@ interface Lead {
   postcode: string | null;
   place: string | null;
   archived: boolean;
+  photo_count: number;
+  photo_folder: string | null;
 }
 
 function LeadsContent() {
@@ -29,13 +32,28 @@ function LeadsContent() {
   const [expandedLeads, setExpandedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [showArchived, setShowArchived] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchLeads();
       subscribeToChanges();
+      checkAdminStatus();
     }
   }, [user, sortField, sortDirection]);
+
+  const checkAdminStatus = async () => {
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('user_profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    setIsAdmin(data?.is_admin || false);
+  };
 
   const fetchLeads = async () => {
     try {
@@ -349,6 +367,23 @@ function LeadsContent() {
                         )}
                       </div>
 
+                      <div className="mt-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLead(lead);
+                          }}
+                          className="w-full px-4 py-3 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 rounded-xl transition-all flex items-center justify-center gap-2 font-medium"
+                        >
+                          <ImageIcon className="h-5 w-5" />
+                          {lead.photo_count > 0 ? (
+                            <span>Bekijk Foto's ({lead.photo_count})</span>
+                          ) : (
+                            <span>Foto's {isAdmin && '(Upload)'}</span>
+                          )}
+                        </button>
+                      </div>
+
                       <AnimatePresence>
                         {isExpanded && lead.message && (
                           <motion.div
@@ -410,6 +445,17 @@ function LeadsContent() {
           </Card>
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {selectedLead && (
+          <PhotoGallery
+            leadId={selectedLead.id}
+            leadName={selectedLead.name}
+            onClose={() => setSelectedLead(null)}
+            isAdmin={isAdmin}
+          />
+        )}
+      </AnimatePresence>
     </DashboardLayout>
   );
 }
