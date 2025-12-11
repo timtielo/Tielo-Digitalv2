@@ -83,10 +83,10 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
   }, [post]);
 
   useEffect(() => {
-    if (!formData.slug && formData.title) {
+    if (!post && formData.title && !formData.slug) {
       generateSlug(formData.title);
     }
-  }, [formData.title]);
+  }, [formData.title, post]);
 
   useEffect(() => {
     calculateReadingTime(formData.content);
