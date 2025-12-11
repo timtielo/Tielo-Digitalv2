@@ -393,9 +393,9 @@ export function AdminPage() {
   const impersonateUser = async (targetUserId: string) => {
     setUpdating(targetUserId);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        showToast('Niet ingelogd', 'error');
+      const { data: { session }, error: refreshError } = await supabase.auth.refreshSession();
+      if (refreshError || !session) {
+        showToast('Sessie verlopen, log opnieuw in', 'error');
         return;
       }
 
@@ -428,6 +428,7 @@ export function AdminPage() {
       const impersonateResult = await impersonateResponse.json();
 
       if (!impersonateResponse.ok) {
+        console.error('Impersonate error:', impersonateResult);
         throw new Error(impersonateResult.error || 'Fout bij genereren van impersonation token');
       }
 
@@ -446,6 +447,7 @@ export function AdminPage() {
       const exchangeResult = await exchangeResponse.json();
 
       if (!exchangeResponse.ok) {
+        console.error('Exchange error:', exchangeResult);
         throw new Error(exchangeResult.error || 'Fout bij uitwisselen van token');
       }
 
