@@ -136,28 +136,25 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
       });
 
       const { data, error } = await supabase
-        .from('user_dashboard_config')
+        .from('user_modules')
         .select(`
           module_key,
-          sort_order,
           dashboard_modules (
             display_name,
             icon_name,
             route_path
           )
         `)
-        .eq('user_id', user?.id)
-        .eq('enabled', true)
-        .order('sort_order', { ascending: true });
+        .eq('user_id', user?.id);
 
       if (error) throw error;
 
-      const modules = data?.map(item => ({
+      const modules = data?.map((item, index) => ({
         module_key: item.module_key,
         display_name: (item.dashboard_modules as any)?.display_name || '',
         icon_name: (item.dashboard_modules as any)?.icon_name || '',
         route_path: (item.dashboard_modules as any)?.route_path || '',
-        sort_order: item.sort_order,
+        sort_order: index,
       })) || [];
 
       setNavigation(modules);
