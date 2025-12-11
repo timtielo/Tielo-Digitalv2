@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users, Target, Rocket } from 'lucide-react';
+import { Shield, Search, Edit2, Mail, UserPlus, UserCog, Trash2, X, AlertCircle, Bold, Italic, Link as LinkIcon, Package, Users, Target, Rocket, Settings } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
-import { AccountTypesManager } from './AccountTypesManager';
+
+interface DashboardModule {
+  module_key: string;
+  display_name: string;
+  description: string;
+  icon_name: string;
+}
 
 interface UserProfile {
   id: string;
   name: string;
   business_name: string;
   business_type: 'bouw' | 'basis';
-  account_type_id?: string;
   is_admin: boolean;
   created_at: string;
   website_url?: string;
@@ -239,32 +244,33 @@ export function AdminPage() {
     password: '',
     name: '',
     business_name: '',
-    business_type: 'basis' as 'bouw' | 'basis',
-    account_type_id: ''
+    business_type: 'basis' as 'bouw' | 'basis'
   });
   const [confirmAdminAction, setConfirmAdminAction] = useState<{ userId: string; makeAdmin: boolean } | null>(null);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState<UserWithEmail | null>(null);
-  const [activeTab, setActiveTab] = useState<'users' | 'account-types'>('users');
-  const [accountTypes, setAccountTypes] = useState<Array<{ id: string; name: string }>>([]);
+  const [availableModules, setAvailableModules] = useState<DashboardModule[]>([]);
+  const [editingModulesFor, setEditingModulesFor] = useState<UserWithEmail | null>(null);
+  const [userModules, setUserModules] = useState<string[]>([]);
+  const [loadingModules, setLoadingModules] = useState(false);
 
   useEffect(() => {
     if (user) {
       checkAdminStatus();
-      fetchAccountTypes();
+      fetchAvailableModules();
     }
   }, [user]);
 
-  const fetchAccountTypes = async () => {
+  const fetchAvailableModules = async () => {
     try {
       const { data, error } = await supabase
-        .from('account_types')
-        .select('id, name')
-        .order('name');
+        .from('dashboard_modules')
+        .select('module_key, display_name, description, icon_name')
+        .order('module_key');
 
       if (error) throw error;
-      setAccountTypes(data || []);
+      setAvailableModules(data || []);
     } catch (error) {
-      console.error('Error fetching account types:', error);
+      console.error('Error fetching modules:', error);
     }
   };
 
@@ -295,12 +301,7 @@ export function AdminPage() {
     try {
       const { data, error } = await supabase
         .from('user_profiles')
-        .select(`
-          *,
-          account_types (
-            name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -313,23 +314,66 @@ export function AdminPage() {
     }
   };
 
-  const updateAccountType = async (userId: string, accountTypeId: string) => {
-    setUpdating(userId);
+  const openModulesDialog = async (userProfile: UserWithEmail) => {
+    setEditingModulesFor(userProfile);
+    setLoadingModules(true);
+
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ account_type_id: accountTypeId })
-        .eq('id', userId);
+      const { data, error } = await supabase
+        .from('user_modules')
+        .select('module_key')
+        .eq('user_id', userProfile.id);
 
       if (error) throw error;
-
-      showToast('Account type succesvol bijgewerkt', 'success');
-      fetchUsers();
+      setUserModules(data.map(m => m.module_key));
     } catch (error) {
-      console.error('Error updating account type:', error);
-      showToast('Fout bij bijwerken van account type', 'error');
+      console.error('Error fetching user modules:', error);
+      showToast('Fout bij laden van modules', 'error');
     } finally {
-      setUpdating(null);
+      setLoadingModules(false);
+    }
+  };
+
+  const toggleModule = (moduleKey: string) => {
+    setUserModules(prev =>
+      prev.includes(moduleKey)
+        ? prev.filter(m => m !== moduleKey)
+        : [...prev, moduleKey]
+    );
+  };
+
+  const saveUserModules = async () => {
+    if (!editingModulesFor) return;
+
+    setLoadingModules(true);
+    try {
+      const { error: deleteError } = await supabase
+        .from('user_modules')
+        .delete()
+        .eq('user_id', editingModulesFor.id);
+
+      if (deleteError) throw deleteError;
+
+      if (userModules.length > 0) {
+        const { error: insertError } = await supabase
+          .from('user_modules')
+          .insert(
+            userModules.map(module_key => ({
+              user_id: editingModulesFor.id,
+              module_key
+            }))
+          );
+
+        if (insertError) throw insertError;
+      }
+
+      showToast('Modules succesvol bijgewerkt', 'success');
+      setEditingModulesFor(null);
+    } catch (error) {
+      console.error('Error saving user modules:', error);
+      showToast('Fout bij opslaan van modules', 'error');
+    } finally {
+      setLoadingModules(false);
     }
   };
 
@@ -393,9 +437,9 @@ export function AdminPage() {
   const impersonateUser = async (targetUserId: string) => {
     setUpdating(targetUserId);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        showToast('Niet ingelogd', 'error');
+      const { data: { session }, error: refreshError } = await supabase.auth.refreshSession();
+      if (refreshError || !session) {
+        showToast('Sessie verlopen, log opnieuw in', 'error');
         return;
       }
 
@@ -428,6 +472,7 @@ export function AdminPage() {
       const impersonateResult = await impersonateResponse.json();
 
       if (!impersonateResponse.ok) {
+        console.error('Impersonate error:', impersonateResult);
         throw new Error(impersonateResult.error || 'Fout bij genereren van impersonation token');
       }
 
@@ -446,6 +491,7 @@ export function AdminPage() {
       const exchangeResult = await exchangeResponse.json();
 
       if (!exchangeResponse.ok) {
+        console.error('Exchange error:', exchangeResult);
         throw new Error(exchangeResult.error || 'Fout bij uitwisselen van token');
       }
 
@@ -522,8 +568,7 @@ export function AdminPage() {
           password: newUserForm.password,
           name: newUserForm.name,
           business_name: newUserForm.business_name,
-          business_type: newUserForm.business_type,
-          account_type_id: newUserForm.account_type_id || null
+          business_type: newUserForm.business_type
         })
       });
 
@@ -540,8 +585,7 @@ export function AdminPage() {
         password: '',
         name: '',
         business_name: '',
-        business_type: 'basis',
-        account_type_id: ''
+        business_type: 'basis'
       });
       fetchUsers();
     } catch (error: any) {
@@ -770,28 +814,6 @@ export function AdminPage() {
 
             <div className="flex gap-4 mb-6">
               <button
-                onClick={() => setActiveTab('users')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                  activeTab === 'users'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
-                }`}
-              >
-                <Users className="w-5 h-5" />
-                Gebruikers
-              </button>
-              <button
-                onClick={() => setActiveTab('account-types')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                  activeTab === 'account-types'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
-                }`}
-              >
-                <Package className="w-5 h-5" />
-                Account Types
-              </button>
-              <button
                 onClick={() => {
                   window.history.pushState({}, '', '/dashboard/admin/projects');
                   window.dispatchEvent(new PopStateEvent('popstate'));
@@ -804,9 +826,7 @@ export function AdminPage() {
             </div>
               </motion.div>
 
-              {activeTab === 'account-types' ? (
-                <AccountTypesManager />
-              ) : loading ? (
+              {loading ? (
                 <Card className="p-16">
                   <div className="flex justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -856,7 +876,7 @@ export function AdminPage() {
                           <th className="text-left p-4 text-sm font-semibold text-gray-600">Naam</th>
                           <th className="text-left p-4 text-sm font-semibold text-gray-600">E-mail</th>
                           <th className="text-left p-4 text-sm font-semibold text-gray-600">Bedrijf</th>
-                          <th className="text-left p-4 text-sm font-semibold text-gray-600">Type</th>
+                          <th className="text-left p-4 text-sm font-semibold text-gray-600">Modules</th>
                           <th className="text-left p-4 text-sm font-semibold text-gray-600">Admin</th>
                           <th className="text-left p-4 text-sm font-semibold text-gray-600">Acties</th>
                         </tr>
@@ -879,17 +899,14 @@ export function AdminPage() {
                             </td>
                             <td className="p-4 text-gray-700">{profile.business_name || '-'}</td>
                             <td className="p-4">
-                              <select
-                                value={profile.account_type_id || ''}
-                                onChange={(e) => updateAccountType(profile.id, e.target.value)}
+                              <button
+                                onClick={() => openModulesDialog(profile)}
                                 disabled={updating === profile.id}
-                                className="px-3 py-1.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 hover:text-gray-900 text-sm transition-all disabled:opacity-50"
                               >
-                                <option value="">Geen type</option>
-                                {accountTypes.map(type => (
-                                  <option key={type.id} value={type.id}>{type.name}</option>
-                                ))}
-                              </select>
+                                <Settings className="h-4 w-4" />
+                                Beheer
+                              </button>
                             </td>
                             <td className="p-4">
                               <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-lg ${
@@ -1082,17 +1099,6 @@ export function AdminPage() {
                 onChange={(e: any) => setNewUserForm({ ...newUserForm, business_name: e.target.value })}
               />
 
-              <Select
-                label="Account Type"
-                value={newUserForm.account_type_id}
-                onChange={(e: any) => setNewUserForm({ ...newUserForm, account_type_id: e.target.value })}
-              >
-                <option value="">Geen type</option>
-                {accountTypes.map(type => (
-                  <option key={type.id} value={type.id}>{type.name}</option>
-                ))}
-              </Select>
-
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={() => setIsCreatingUser(false)}
@@ -1181,6 +1187,63 @@ export function AdminPage() {
                     className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-medium transition-all shadow-sm disabled:opacity-50"
                   >
                     {updating ? 'Verwijderen...' : 'Verwijderen'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </Modal>
+
+          <Modal
+            isOpen={!!editingModulesFor}
+            onClose={() => setEditingModulesFor(null)}
+            title={`Modules voor ${editingModulesFor?.name || 'Gebruiker'}`}
+          >
+            {editingModulesFor && (
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  Selecteer welke modules beschikbaar moeten zijn voor deze gebruiker.
+                </p>
+
+                {loadingModules ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {availableModules.map((module) => (
+                      <label
+                        key={module.module_key}
+                        className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={userModules.includes(module.module_key)}
+                          onChange={() => toggleModule(module.module_key)}
+                          className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">{module.display_name}</div>
+                          <div className="text-sm text-gray-600">{module.description}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setEditingModulesFor(null)}
+                    disabled={loadingModules}
+                    className="flex-1 px-4 py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all disabled:opacity-50"
+                  >
+                    Annuleren
+                  </button>
+                  <button
+                    onClick={saveUserModules}
+                    disabled={loadingModules}
+                    className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium transition-all shadow-sm disabled:opacity-50"
+                  >
+                    {loadingModules ? 'Opslaan...' : 'Opslaan'}
                   </button>
                 </div>
               </div>
