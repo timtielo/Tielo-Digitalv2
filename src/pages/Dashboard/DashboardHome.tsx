@@ -461,7 +461,8 @@ function DashboardHomeContent() {
                   <h2 className="text-xl font-bold text-gray-900">Belangrijke Links</h2>
                 </div>
                 <div
-                  className="prose prose-sm max-w-none [&_a]:text-blue-600 [&_a]:font-semibold [&_a]:hover:text-blue-800 [&_a]:transition-colors [&_a]:underline [&_a]:decoration-blue-300 [&_a]:underline-offset-2 [&_ul]:space-y-2 [&_li]:text-sm [&_li]:leading-relaxed"
+                  className="space-y-2 [&_*]:!text-gray-900 [&_*]:!bg-transparent [&_a]:!text-blue-600 [&_a]:!font-semibold [&_a]:!hover:text-blue-800 [&_a]:!transition-colors [&_a]:!underline [&_a]:!decoration-blue-300 [&_a]:!underline-offset-2 [&_ul]:!space-y-2 [&_li]:!text-sm [&_li]:!leading-relaxed [&_strong]:!text-gray-900 [&_strong]:!font-bold [&_b]:!text-gray-900 [&_b]:!font-bold [&_p]:!text-gray-900 [&_span]:!text-gray-900 [&_div]:!text-gray-900"
+                  style={{ color: '#111827' }}
                   dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;
