@@ -352,20 +352,18 @@ function LeadsContent() {
                       )}
 
                       <div className="flex gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedLead(lead);
-                          }}
-                          className="flex-1 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 rounded-lg transition-all flex items-center justify-center gap-1.5 text-sm font-medium"
-                        >
-                          <ImageIcon className="h-4 w-4" />
-                          {lead.photo_count > 0 ? (
+                        {lead.photo_count > 0 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedLead(lead);
+                            }}
+                            className="flex-1 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 rounded-lg transition-all flex items-center justify-center gap-1.5 text-sm font-medium"
+                          >
+                            <ImageIcon className="h-4 w-4" />
                             <span>Foto's ({lead.photo_count})</span>
-                          ) : (
-                            <span>Foto's</span>
-                          )}
-                        </button>
+                          </button>
+                        )}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
