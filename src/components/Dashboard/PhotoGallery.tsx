@@ -36,13 +36,29 @@ export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: Pho
           sortBy: { column: 'created_at', order: 'desc' }
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error listing photos:', error);
+        setPhotos([]);
+        setLoading(false);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        setPhotos([]);
+        setLoading(false);
+        return;
+      }
 
       const photoUrls = await Promise.all(
-        (data || []).map(async (file) => {
-          const { data: urlData } = await supabase.storage
+        data.map(async (file) => {
+          const { data: urlData, error: urlError } = await supabase.storage
             .from('lead-photos')
             .createSignedUrl(`${leadId}/${file.name}`, 3600);
+
+          if (urlError) {
+            console.error('Error creating signed URL:', urlError);
+            return null;
+          }
 
           return {
             name: file.name,
@@ -52,9 +68,10 @@ export function PhotoGallery({ leadId, leadName, onClose, isAdmin = false }: Pho
         })
       );
 
-      setPhotos(photoUrls.filter(p => p.url));
+      setPhotos(photoUrls.filter((p): p is Photo => p !== null && !!p.url));
     } catch (error) {
       console.error('Error loading photos:', error);
+      setPhotos([]);
     } finally {
       setLoading(false);
     }
