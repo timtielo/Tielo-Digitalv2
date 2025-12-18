@@ -179,26 +179,26 @@ function DashboardHomeContent() {
   if (userProfile?.is_admin) {
     return (
       <DashboardLayout currentPage="home">
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl"
+            className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl md:rounded-2xl p-6 md:p-8 text-white shadow-xl"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-2">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl md:text-3xl font-bold mb-2">
                   Welkom terug, {userProfile.name || 'Admin'}
                 </h1>
-                <p className="text-blue-100 text-lg">
+                <p className="text-blue-100 text-base md:text-lg">
                   Admin Dashboard - Beheer en Overzicht
                 </p>
               </div>
-              <Shield className="h-16 w-16 text-white/30" />
+              <Shield className="h-12 w-12 md:h-16 md:w-16 text-white/30 flex-shrink-0" />
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -293,8 +293,8 @@ function DashboardHomeContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Quick Access</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <Card
                 className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-rose-500"
                 onClick={() => handleNavigation('/dashboard/admin')}
@@ -343,26 +343,26 @@ function DashboardHomeContent() {
 
   return (
     <DashboardLayout currentPage="home">
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl"
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl md:rounded-2xl p-6 md:p-8 text-white shadow-xl"
         >
-          <div className="flex items-start gap-6">
+          <div className="flex items-start gap-4 md:gap-6">
             {userProfile?.profile_picture_url && (
               <img
                 src={userProfile.profile_picture_url}
                 alt="Profile"
-                className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-lg"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-4 border-white/30 shadow-lg flex-shrink-0"
               />
             )}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">
                 Welkom terug, {userProfile?.name || 'User'}
               </h1>
               {userProfile?.business_name && (
-                <p className="text-blue-100 text-lg mb-3">
+                <p className="text-blue-100 text-base md:text-lg mb-3 truncate">
                   {userProfile.business_name}
                 </p>
               )}
@@ -371,18 +371,18 @@ function DashboardHomeContent() {
                   href={userProfile.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
                 >
-                  <ExternalLink className="h-4 w-4" />
-                  {userProfile.website_url.replace(/^https?:\/\//, '')}
+                  <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{userProfile.website_url.replace(/^https?:\/\//, '')}</span>
                 </a>
               )}
             </div>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -397,14 +397,14 @@ function DashboardHomeContent() {
               transition={{ delay: 0.2 }}
               className="space-y-4"
             >
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Jouw Taken</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Jouw Taken</h2>
                 <button
                   onClick={() => handleNavigation('/dashboard/tasks')}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 text-blue-700 rounded-xl transition-all font-medium"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 text-blue-700 rounded-xl transition-all font-medium text-sm md:text-base w-full sm:w-auto"
                 >
                   Alle taken bekijken
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 flex-shrink-0" />
                 </button>
               </div>
               <ProjectTasksList limit={2} />
@@ -415,7 +415,7 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Jouw Dashboard Modules</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Jouw Dashboard Modules</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {modules.map((module) => {
                   const Icon = iconMap[module.icon_name] || User;
