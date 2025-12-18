@@ -39,7 +39,7 @@ export function Home() {
       <LocalBusinessSchema
         aggregateRating={{
           ratingValue: 5,
-          reviewCount: 3
+          reviewCount: 5
         }}
       />
       <Hero />

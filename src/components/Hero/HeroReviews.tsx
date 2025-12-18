@@ -26,6 +26,12 @@ const reviews = [
     role: 'Her Horizon',
     quote: 'Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp ook bij het uitwerken van mijn businessidee.',
     rating: 5
+  },
+  {
+    name: 'Bart Vermeulen',
+    role: 'i-Lizard',
+    quote: 'Erg tevreden met Tim\'s persoonlijke benadering, zijn betrokkenheid, de kwaliteit en relevantie van het eindproduct, en de schappelijke ontwikkelings- en beheer-kosten.',
+    rating: 5
   }
 ];
 
