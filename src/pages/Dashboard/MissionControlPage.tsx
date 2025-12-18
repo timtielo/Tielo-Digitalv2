@@ -412,28 +412,28 @@ function MissionControlContent() {
   }
 
   return (
-    <DashboardLayout currentPage="admin">
-      <div className="space-y-6">
+    <DashboardLayout currentPage="mcc">
+      <div className="space-y-4 md:space-y-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
+          className="mb-4 md:mb-6"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mission Control Center</h1>
-          <p className="text-gray-600">Beheer je maandelijkse doelen en voortgang</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Mission Control Center</h1>
+          <p className="text-sm md:text-base text-gray-600">Beheer je maandelijkse doelen en voortgang</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 mb-6"
+          className="rounded-xl md:rounded-2xl border border-gray-200 bg-white shadow-sm p-4 md:p-6 mb-4 md:mb-6"
         >
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-2 md:gap-4 justify-center sm:justify-start">
               <button
                 onClick={() => navigateMonth('prev')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900 flex-shrink-0"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -442,7 +442,7 @@ function MissionControlContent() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                  className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="px-2 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                 >
                   {MONTHS.map((month, index) => (
                     <option key={index} value={index + 1}>
@@ -454,7 +454,7 @@ function MissionControlContent() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="px-2 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                 >
                   {[2024, 2025, 2026, 2027].map(year => (
                     <option key={year} value={year}>
@@ -466,7 +466,7 @@ function MissionControlContent() {
 
               <button
                 onClick={() => navigateMonth('next')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900 flex-shrink-0"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -475,40 +475,160 @@ function MissionControlContent() {
             {!currentMonthData && (
               <button
                 onClick={createMonth}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-lg"
+                className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-lg w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4" />
-                Nieuwe maand aanmaken
+                <span className="hidden sm:inline">Nieuwe maand aanmaken</span>
+                <span className="sm:hidden">Nieuwe maand</span>
               </button>
             )}
           </div>
         </motion.div>
 
         {currentMonthData ? (
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead className="sticky top-0 bg-gray-100 border-b-2 border-gray-300">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">Categorie</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">Item</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W1</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W2</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W3</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W4</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W5</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Maand</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Target</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Status</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Acties</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {CATEGORIES.map(category => renderItemsByCategory(category))}
-                </tbody>
-              </table>
+          <>
+            {/* Mobile Card View */}
+            <div className="lg:hidden space-y-6">
+              {CATEGORIES.map(category => {
+                const categoryItems = items.filter(item => item.category === category);
+                return (
+                  <div key={category} className="space-y-3">
+                    <div className={`rounded-xl p-4 ${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}`}>
+                      <div className="flex items-center justify-between">
+                        <h3 className={`text-base font-bold ${CATEGORY_TEXT_COLORS[category as keyof typeof CATEGORY_TEXT_COLORS]}`}>
+                          {category}
+                        </h3>
+                        <button
+                          onClick={() => addItem(category)}
+                          disabled={!currentMonthData}
+                          className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg bg-white hover:bg-gray-50 border-2 ${
+                            category === 'LEADS' ? 'border-yellow-400 text-yellow-800' :
+                            category === 'KLANTEN' ? 'border-blue-400 text-blue-800' :
+                            category === 'FANS' ? 'border-pink-400 text-pink-800' :
+                            category === 'CASH' ? 'border-green-400 text-green-800' :
+                            category === 'TEAM' ? 'border-purple-400 text-purple-800' :
+                            'border-orange-400 text-orange-800'
+                          } font-semibold transition-all disabled:opacity-50 shadow-sm`}
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Toevoegen
+                        </button>
+                      </div>
+                    </div>
+
+                    {categoryItems.map((item, index) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="bg-white rounded-xl border-2 border-gray-200 p-4 space-y-4"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <label className="block text-xs font-semibold text-gray-500 mb-1.5">Item</label>
+                            <input
+                              type="text"
+                              value={item.item}
+                              onChange={(e) => updateItem(item.id, 'item', e.target.value)}
+                              className="w-full px-3 py-2 text-sm rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all"
+                            />
+                          </div>
+                          <button
+                            onClick={() => deleteItem(item.id)}
+                            className="flex-shrink-0 p-2 rounded-lg border-2 border-red-300 bg-red-50 hover:bg-red-100 text-red-700 transition-all mt-6"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-2">Wekelijkse Scores</label>
+                          <div className="grid grid-cols-5 gap-2">
+                            {item.scores.map((score) => (
+                              <div key={score.week}>
+                                <label className="block text-xs text-gray-600 mb-1 text-center font-medium">W{score.week}</label>
+                                <input
+                                  type="number"
+                                  value={score.value}
+                                  onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
+                                  className="w-full px-2 py-2 text-sm text-center rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1.5">Maand</label>
+                            <div className="px-3 py-2.5 text-sm font-bold text-center rounded-lg bg-gray-100 text-gray-900 border-2 border-gray-300">
+                              {calculateMonthTotal(item.scores)}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1.5">Target</label>
+                            <input
+                              type="number"
+                              value={item.target}
+                              onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
+                              className="w-full px-2 py-2 text-sm text-center rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1.5">Status</label>
+                            <select
+                              value={item.status}
+                              onChange={(e) => updateItem(item.id, 'status', e.target.value)}
+                              className="w-full px-2 py-2 text-xs rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all"
+                            >
+                              {STATUS_OPTIONS.map(option => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+
+                    {categoryItems.length === 0 && (
+                      <div className="text-center py-6 text-gray-500 text-sm bg-white rounded-xl border-2 border-dashed border-gray-300">
+                        Geen items in deze categorie
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead className="bg-gray-100 border-b-2 border-gray-300">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">Categorie</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">Item</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W1</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W2</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W3</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W4</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">W5</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Maand</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Target</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Status</th>
+                      <th className="px-2 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wide">Acties</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {CATEGORIES.map(category => renderItemsByCategory(category))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

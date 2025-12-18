@@ -389,34 +389,34 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
         )}
 
         <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
-          <header className="h-20 bg-white border-b border-gray-200 flex items-center px-6 lg:px-8 shadow-sm">
+          <header className="h-16 md:h-20 bg-white border-b border-gray-200 flex items-center px-4 md:px-6 lg:px-8 shadow-sm flex-shrink-0">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden mr-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="lg:hidden mr-3 p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
             >
-              <Menu className="h-6 w-6 text-gray-600" />
+              <Menu className="h-5 w-5 md:h-6 md:w-6 text-gray-600" />
             </button>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+            <div className="flex-1 min-w-0">
+              <div className="hidden sm:flex items-center gap-2 text-xs md:text-sm text-gray-500 mb-1">
                 <button
                   onClick={() => handleNavigation('/dashboard')}
                   className="hover:text-blue-600 transition-colors"
                 >
                   Dashboard
                 </button>
-                <ChevronRight className="h-4 w-4" />
-                <span className="text-gray-900 font-medium capitalize">
-                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                <ChevronRight className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                <span className="text-gray-900 font-medium capitalize truncate">
+                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control Center' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900 truncate">
+                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
               </h2>
             </div>
           </header>
 
           <main className="flex-1 overflow-y-auto bg-gray-50">
-            <div className="container mx-auto px-6 lg:px-8 py-8">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-8">
               {children}
             </div>
           </main>

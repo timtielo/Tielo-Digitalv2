@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Quote, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Quote, Star, ChevronDown, ChevronUp } from 'lucide-react';
 
 const testimonials = [
   {
@@ -26,8 +26,74 @@ const testimonials = [
     company: 'Her Horizon',
     quote: "Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp bij het uitwerken van mijn businessidee. Alles was snel geregeld en de communicatie was duidelijk.",
     rating: 5
+  },
+  {
+    name: 'Bart Vermeulen',
+    company: 'i-Lizard',
+    quote: "Tim introduceerde zichzelf middels een handgeschreven kaartje welke ik ontving via PostNL. Door het aantal positieve reviews op Werkspot te benoemen, en de mogelijkheid te benoemen meer \"los te komen\" van Werkspot, was ik meteen geïnteresseerd. Daarnaast deelde Tim een link naar een 1e opzet van een op maat gesneden website. Deze 1e opzet sloot meer dan verwacht aan op mijn wensen. Na een 1e persoonlijk contact, waarin er goed geluisterd werd naar mijn wensen, heeft Tim een op maat gesneden website aangeleverd waarin foto's, recensies, werkgebieden en motivatie duidelijk naar voren kwamen. Middels video-instructies werd aangegeven hoe ik de inhoud van mijn portfolio zelf kan aanpassen en mijn website up-to-date kan houden. Ik ben ook blij met de vertaalslag die Tim kon maken tussen mijn ideeën en wensen naar een \"marketing-proof\" web-ingang. Erg tevreden met Tim's persoonlijke benadering, zijn betrokkenheid, de kwaliteit en relevantie van het eindproduct, en de schappelijke ontwikkelings- en beheer-kosten.",
+    rating: 5
   }
 ];
+
+const MAX_LENGTH = 250;
+
+function TestimonialCard({ testimonial, index }: { testimonial: typeof testimonials[0], index: number }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const shouldTruncate = testimonial.quote.length > MAX_LENGTH;
+  const displayQuote = shouldTruncate && !isExpanded
+    ? testimonial.quote.slice(0, MAX_LENGTH) + '...'
+    : testimonial.quote;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      className="bg-white rounded-xl p-8 shadow-sm"
+    >
+      <div className="flex gap-8 items-start">
+        <div className="hidden md:block">
+          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Quote className="w-6 h-6 text-primary" />
+          </div>
+        </div>
+        <div className="flex-1">
+          <div className="flex gap-1 mb-4">
+            {[...Array(testimonial.rating)].map((_, i) => (
+              <Star key={i} className="w-5 h-5 fill-current text-yellow-400" />
+            ))}
+          </div>
+          <blockquote className="text-gray-600 text-base italic mb-4">
+            "{displayQuote}"
+          </blockquote>
+          {shouldTruncate && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-primary hover:text-primary/80 text-sm font-medium flex items-center gap-1 mb-4 transition-colors"
+            >
+              {isExpanded ? (
+                <>
+                  Lees minder
+                  <ChevronUp className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  Lees meer
+                  <ChevronDown className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          )}
+          <div>
+            <p className="font-semibold">{testimonial.name}</p>
+            <p className="text-gray-500">Eigenaar bij {testimonial.company}</p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export function WebsitesPortfolio() {
   return (
@@ -40,36 +106,7 @@ export function WebsitesPortfolio() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl p-8 shadow-sm"
-              >
-                <div className="flex gap-8 items-start">
-                  <div className="hidden md:block">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Quote className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-current text-yellow-400" />
-                      ))}
-                    </div>
-                    <blockquote className="text-gray-600 text-base italic mb-6">
-                      "{testimonial.quote}"
-                    </blockquote>
-                    <div>
-                      <p className="font-semibold">{testimonial.name}</p>
-                      <p className="text-gray-500">Eigenaar bij {testimonial.company}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+              <TestimonialCard key={index} testimonial={testimonial} index={index} />
             ))}
           </div>
         </div>
