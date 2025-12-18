@@ -26,6 +26,12 @@ const testimonials = [
     company: 'Her Horizon',
     quote: "Binnen een week stond mijn hele website live. Tim dacht mee over de vormgeving en hielp bij het uitwerken van mijn businessidee. Alles was snel geregeld en de communicatie was duidelijk.",
     rating: 5
+  },
+  {
+    name: 'Bart Vermeulen',
+    company: 'i-Lizard',
+    quote: "Tim introduceerde zichzelf middels een handgeschreven kaartje welke ik ontving via PostNL. Door het aantal positieve reviews op Werkspot te benoemen, en de mogelijkheid te benoemen meer \"los te komen\" van Werkspot, was ik meteen geïnteresseerd. Daarnaast deelde Tim een link naar een 1e opzet van een op maat gesneden website. Deze 1e opzet sloot meer dan verwacht aan op mijn wensen. Na een 1e persoonlijk contact, waarin er goed geluisterd werd naar mijn wensen, heeft Tim een op maat gesneden website aangeleverd waarin foto's, recensies, werkgebieden en motivatie duidelijk naar voren kwamen. Middels video-instructies werd aangegeven hoe ik de inhoud van mijn portfolio zelf kan aanpassen en mijn website up-to-date kan houden. Ik ben ook blij met de vertaalslag die Tim kon maken tussen mijn ideeën en wensen naar een \"marketing-proof\" web-ingang. Erg tevreden met Tim's persoonlijke benadering, zijn betrokkenheid, de kwaliteit en relevantie van het eindproduct, en de schappelijke ontwikkelings- en beheer-kosten.",
+    rating: 5
   }
 ];
 
