@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
-import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Trash2, Copy } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 
@@ -152,6 +152,75 @@ function MissionControlContent() {
       setItems([]);
     } catch (error) {
       console.error('Error creating month:', error);
+    }
+  };
+
+  const getPreviousMonthId = async () => {
+    let prevMonth = selectedMonth - 1;
+    let prevYear = selectedYear;
+
+    if (prevMonth < 1) {
+      prevMonth = 12;
+      prevYear -= 1;
+    }
+
+    const { data, error } = await supabase
+      .from('mcc_months')
+      .select('*')
+      .eq('year', prevYear)
+      .eq('month', prevMonth)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  };
+
+  const createMonthFromLastMonth = async () => {
+    try {
+      const previousMonth = await getPreviousMonthId();
+      if (!previousMonth) {
+        alert('Er is geen vorige maand gevonden om te kopieren.');
+        return;
+      }
+
+      const { data: previousItems, error: itemsError } = await supabase
+        .from('mcc_items')
+        .select('*')
+        .eq('month_id', previousMonth.id)
+        .order('order_index');
+
+      if (itemsError) throw itemsError;
+
+      const { data: newMonth, error: monthError } = await supabase
+        .from('mcc_months')
+        .insert({ year: selectedYear, month: selectedMonth })
+        .select()
+        .single();
+
+      if (monthError) throw monthError;
+
+      if (previousItems && previousItems.length > 0) {
+        const newItems = previousItems.map(item => ({
+          month_id: newMonth.id,
+          category: item.category,
+          item: item.item,
+          target: item.target,
+          status: 'on-track',
+          order_index: item.order_index
+        }));
+
+        const { error: insertError } = await supabase
+          .from('mcc_items')
+          .insert(newItems);
+
+        if (insertError) throw insertError;
+      }
+
+      setCurrentMonthData(newMonth);
+      await loadItems(newMonth.id);
+    } catch (error) {
+      console.error('Error creating month from last month:', error);
+      alert('Er is een fout opgetreden bij het kopieren van de vorige maand.');
     }
   };
 
@@ -473,14 +542,24 @@ function MissionControlContent() {
             </div>
 
             {!currentMonthData && (
-              <button
-                onClick={createMonth}
-                className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-lg w-full sm:w-auto"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">Nieuwe maand aanmaken</span>
-                <span className="sm:hidden">Nieuwe maand</span>
-              </button>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <button
+                  onClick={createMonth}
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-lg"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline">Nieuwe lege maand</span>
+                  <span className="sm:hidden">Leeg</span>
+                </button>
+                <button
+                  onClick={createMonthFromLastMonth}
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium transition-all shadow-lg"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span className="hidden sm:inline">Kopieer vorige maand</span>
+                  <span className="sm:hidden">Kopieer</span>
+                </button>
+              </div>
             )}
           </div>
         </motion.div>
@@ -639,13 +718,22 @@ function MissionControlContent() {
             <p className="text-gray-600 mb-6 text-lg">
               Er is nog geen data voor {MONTHS[selectedMonth - 1]} {selectedYear}
             </p>
-            <button
-              onClick={createMonth}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm mx-auto"
-            >
-              <Plus className="w-4 h-4" />
-              Maand aanmaken
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={createMonth}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Nieuwe lege maand
+              </button>
+              <button
+                onClick={createMonthFromLastMonth}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium transition-all shadow-sm"
+              >
+                <Copy className="w-4 h-4" />
+                Kopieer vorige maand
+              </button>
+            </div>
           </motion.div>
         )}
       </div>
