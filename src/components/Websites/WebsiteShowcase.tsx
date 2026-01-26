@@ -71,10 +71,10 @@ export function WebsiteShowcase() {
           >
             <motion.div
               animate={isPaused ? {} : {
-                x: [-100, -2200],
+                x: [-100, -2500],
               }}
               transition={{
-                duration: 40,
+                duration: 45,
                 repeat: Infinity,
                 ease: "linear"
               }}
