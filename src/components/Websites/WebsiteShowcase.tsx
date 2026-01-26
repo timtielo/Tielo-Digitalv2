@@ -39,8 +39,8 @@ const websites = [
     nofollow: true
   },
   {
-    name: 'Allround Klusbedrijf Specht'',
-    url: 'hhttps://www.spechtbouwt.nl',
+    name: 'Allround Klusbedrijf Specht',
+    url: 'https://www.spechtbouwt.nl',
     logo: '/assets/spechttrans.png',
     nofollow: true
   }
