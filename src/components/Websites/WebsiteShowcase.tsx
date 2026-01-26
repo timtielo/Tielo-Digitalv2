@@ -37,12 +37,6 @@ const websites = [
     url: 'http://www.i-lizard.nl',
     logo: '/assets/Fulllogo.png',
     nofollow: true
-  },
-  {
-    name: 'Specht Bouwt',
-    url: 'https://www.spechtbouwt.nl/',
-    logo: '/assets/spechttrans.png',
-    nofollow: true
   }
 ];
 
