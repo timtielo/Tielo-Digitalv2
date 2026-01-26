@@ -37,6 +37,12 @@ const websites = [
     url: 'http://www.i-lizard.nl',
     logo: '/assets/Fulllogo.png',
     nofollow: true
+  },
+  {
+    name: 'Allround Klusbedrijf Specht'',
+    url: 'hhttps://www.spechtbouwt.nl',
+    logo: '/assets/Fulllogo.png',
+    nofollow: true
   }
 ];
 
