@@ -37,6 +37,12 @@ const websites = [
     url: 'http://www.i-lizard.nl',
     logo: '/assets/Fulllogo.png',
     nofollow: true
+  },
+  {
+    name: 'Allround Klusbedrijf Specht',
+    url: 'https://www.spechtbouwt.nl',
+    logo: '/assets/spechttrans.png',
+    nofollow: true
   }
 ];
 
@@ -57,10 +63,10 @@ export function WebsitesShowcase() {
           <div className="overflow-hidden whitespace-nowrap py-8">
             <motion.div
               animate={{
-                x: [-100, -2200],
+                x: [-100, -2500],
               }}
               transition={{
-                duration: 40,
+                duration: 45,
                 repeat: Infinity,
                 ease: "linear"
               }}
