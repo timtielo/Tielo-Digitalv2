@@ -4,6 +4,12 @@ import { Quote, Star, ChevronDown, ChevronUp } from 'lucide-react';
 
 const testimonials = [
   {
+    name: 'Jack van Eijk',
+    company: 'Allround Klusbedrijf Specht',
+    quote: "Ik haalde mijn werk vooral uit mond-tot-mondreclame en via Werkspot en had geen website. Dat ging op zich wel, maar ik had zelf geen controle op hoe mijn bedrijf online overkwam en was afhankelijk van andere platforms. Toen Tim mij via WhatsApp benaderde, was ik wat sceptisch. Wat voor mij het verschil maakte, was dat Tim niet met een vaag verhaal kwam, maar direct een website opzetje stuurde. Dat gaf vertrouwen. Ook de prijs was zo geregeld. Alles werd duidelijk afgesproken, zonder gedoe. Daarna werd eigenlijk alles uit handen genomen. Domein, e-mail, hosting, teksten, portfolio en de basis voor Google. Ik hoefde me nergens druk om te maken. Door mijn drukke planning, ziekte en vakantie was het fijn dat ik alleen input hoefde te geven wanneer het mij uitkwam. Aanpassingen werden snel opgepakt en echt doorgevoerd. De website staat nu live en ik ben er gewoon heel tevreden over. Het ziet er professioneel uit, laat mijn werk goed zien en klanten kunnen me direct via WhatsApp bereiken. Ondanks mijn twijfel in het begin kijk ik terug op een prettig en soepel traject. Aanrader.",
+    rating: 5
+  },
+  {
     name: 'Youssef Fazazi',
     company: 'Mr. Clogged 24/7',
     quote: "Ik twijfelde lang of ik wel een eigen website nodig had. Ik werk al lang via Werkspot en heb al meer dan 600 reviews. Dat betekent ook hoge kosten en soms onnodig betalen. Verder had ik geen online aanwezigheid. Tim heeft er nu voor gezorgd dat ik direct geappt of gebeld kan worden, zonder dat Werkspot daartussen zit. Hij bouwde een professionele website en regel­de alles eromheen: Google Business, WhatsApp-integratie en het complete domeinbeheer. Ik hoefde nergens zelf achteraan. Het proces was snel, duidelijk en de prijs viel positief mee. Dikke aanrader.",
