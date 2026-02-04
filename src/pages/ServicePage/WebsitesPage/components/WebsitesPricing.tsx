@@ -39,7 +39,7 @@ export function WebsitesPricing() {
               <div>
                 <div className="mb-4">
                   <div className="text-sm text-gray-500 mb-1">Eenmalig</div>
-                  <div className="text-4xl font-bold text-gray-900">€875</div>
+                  <div className="text-4xl font-bold text-gray-900">€975</div>
                   <div className="text-gray-600">Pakketprijs website</div>
                 </div>
                 <ul className="space-y-3">
@@ -72,8 +72,8 @@ export function WebsitesPricing() {
 
               <div>
                 <div className="mb-4">
-                  <div className="text-sm text-gray-500 mb-1">Maandelijks</div>
-                  <div className="text-4xl font-bold text-gray-900">€30</div>
+                  <div className="text-sm text-gray-500 mb-1">Jaarlijks</div>
+                  <div className="text-4xl font-bold text-gray-900">€165</div>
                   <div className="text-gray-600">Hosting + onderhoud</div>
                 </div>
                 <ul className="space-y-3">

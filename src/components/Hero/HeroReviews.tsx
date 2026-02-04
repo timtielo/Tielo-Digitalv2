@@ -4,6 +4,12 @@ import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const reviews = [
   {
+    name: 'Jack van Eijk',
+    role: 'Allround Klusbedrijf Specht',
+    quote: 'Alles werd duidelijk afgesproken, zonder gedoe.',
+    rating: 5
+  },
+  {
     name: 'Youssef Fazazi',
     role: 'Mr. Clogged 24/7',
     quote: 'Ik twijfelde of ik een eigen website nodig had, maar door de hoge kosten en het gebrek aan direct klantcontact via Werkspot besloot ik de stap te zetten. Tim regelde alles snel en professioneel, nu bellen klanten me direct en ben ik minder afhankelijk.',
