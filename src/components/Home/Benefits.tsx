@@ -90,7 +90,7 @@ export function Benefits() {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <WhatsAppButton variant="outline" className="border-white text-white hover:bg-white hover:text-tielo-navy" />
+          <WhatsAppButton className="bg-white text-tielo-navy border-2 border-white hover:bg-tielo-orange hover:text-white hover:border-tielo-orange" />
         </motion.div>
       </div>
     </section>
