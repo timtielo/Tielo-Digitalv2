@@ -5,7 +5,7 @@ import { DependencyQuote } from '../components/Home/DependencyQuote';
 import { OplossingSection } from '../components/Home/OplossingSection';
 import { AgitateSection } from '../components/Home/AgitateSection';
 import { Benefits } from '../components/Home/Benefits';
-import { Testimonials } from '../components/Testimonials';
+
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
 import { CTASection } from '../components/CTASection';
 import { SEO } from '../components/SEO';
@@ -50,7 +50,6 @@ export function Home() {
       <OplossingSection />
       <AgitateSection />
       <Benefits />
-      <Testimonials />
       <div id="voorbeelden">
         <WebsiteShowcase />
       </div>
