@@ -49,6 +49,7 @@ export function HeroReviews() {
     { reviewIndex: 2, id: 2 }
   ]);
   const nextIdRef = useRef(3);
+  const prevIndexRef = useRef(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -59,12 +60,18 @@ export function HeroReviews() {
   }, []);
 
   useEffect(() => {
+    if (currentIndex === prevIndexRef.current && nextIdRef.current > 3) return;
+    prevIndexRef.current = currentIndex;
     const nextReviewIndex = (currentIndex + 3) % reviews.length;
     const id = nextIdRef.current++;
-    setDisplayedReviews(prev => [
-      { reviewIndex: nextReviewIndex, id },
-      ...prev.slice(0, 2)
-    ]);
+    setDisplayedReviews(prev => {
+      const existingIndices = new Set(prev.slice(0, 2).map(r => r.reviewIndex));
+      if (existingIndices.has(nextReviewIndex)) return prev;
+      return [
+        { reviewIndex: nextReviewIndex, id },
+        ...prev.slice(0, 2)
+      ];
+    });
   }, [currentIndex]);
 
   const nextReview = () => {
