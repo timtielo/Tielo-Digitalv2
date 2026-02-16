@@ -27,7 +27,7 @@ const features = [
   {
     icon: MessageCircle,
     title: 'WhatsApp integratie',
-    description: 'Klanten kunnen je direct via WhatsApp bereiken met één klik op je website.'
+    description: 'Klanten kunnen je direct via WhatsApp bereiken met een klik op je website.'
   },
   {
     icon: Server,
@@ -38,14 +38,23 @@ const features = [
 
 export function OplossingSection() {
   return (
-    <section className="py-16 sm:py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section className="py-16 sm:py-24 bg-tielo-offwhite relative">
+      <div className="absolute inset-0 td-micro-grid opacity-30" />
+      <div className="container mx-auto px-4 sm:px-6 relative">
         <div className="text-center mb-12 sm:mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block"
+          >
+            De oplossing
+          </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold mb-4 font-rubik"
+            className="text-3xl font-bold text-tielo-navy mb-4"
           >
             Een website die jij niet zelf hoeft te bouwen
           </motion.h2>
@@ -54,7 +63,7 @@ export function OplossingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto"
+            className="text-lg text-tielo-navy/60 max-w-2xl mx-auto"
           >
             Ik maak een gratis opzetje en regel daarna alle techniek. Jij hoeft niets te doen.
           </motion.p>

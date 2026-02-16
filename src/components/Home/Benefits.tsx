@@ -27,13 +27,16 @@ const benefits = [
 
 export function Benefits() {
   return (
-    <section className="py-16 sm:py-20 bg-gray-50">
+    <section className="py-16 sm:py-24 bg-white">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-rubik">
+          <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
+            Waarom wij
+          </span>
+          <h2 className="text-3xl font-bold text-tielo-navy mb-4">
             Waarom Tielo Digital
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-tielo-navy/60 max-w-2xl mx-auto">
             Eenvoudig, betrouwbaar en gemaakt voor jouw situatie
           </p>
         </div>

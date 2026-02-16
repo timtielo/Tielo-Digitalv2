@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 @import './styles/buttons.css';
 @import './styles/animations.css';
 
@@ -7,33 +6,47 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --td-offwhite: #f7f7f7;
+  --td-cream: #f6f1d1;
+  --td-sage: #cfd7c7;
+  --td-navy: #0b2027;
+  --td-orange: #e96020;
+  --td-steel: #40798c;
+  --td-teal: #70a9a1;
+  --td-black: #000000;
+  --td-ease: ease-out;
+  --td-dur: 200ms;
+  --td-r: 6px;
+  --td-border: #e5e7eb;
+}
+
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Rubik', sans-serif;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Rubik', sans-serif;
+
+  body {
+    background: var(--td-offwhite);
+    color: var(--td-navy);
   }
 
-  /* Make text selectable by default but keep default cursor */
   p, h1, h2, h3, h4, h5, h6, span, li {
     user-select: text;
     cursor: default;
   }
 
-  /* Styling for important links content */
   .prose a {
-    color: #60a5fa;
+    color: var(--td-steel);
     text-decoration: underline;
     transition: color 0.2s;
   }
 
   .prose a:hover {
-    color: #93c5fd;
+    color: var(--td-teal);
   }
 
   .prose strong, .prose b {
@@ -49,26 +62,83 @@
     margin-bottom: 0.5rem;
   }
 
-  /* Keep buttons and links clickable with pointer cursor */
   button, a {
     user-select: none;
     cursor: pointer;
   }
 
-  /* Ensure form inputs show text cursor */
   input, textarea {
     cursor: text;
   }
 }
 
+.td-tech-corner {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+
+.td-micro-grid {
+  background-size: 20px 20px;
+  background-image:
+    linear-gradient(to right, rgba(11,32,39,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11,32,39,0.05) 1px, transparent 1px);
+}
+
+.td-striped {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(233,96,32,0.05) 10px,
+    rgba(233,96,32,0.05) 20px
+  );
+}
+
+.td-card {
+  border: 1px solid var(--td-border);
+  border-radius: var(--td-r);
+  background: #fff;
+  transition:
+    transform var(--td-dur) var(--td-ease),
+    box-shadow var(--td-dur) var(--td-ease),
+    border-color var(--td-dur) var(--td-ease);
+}
+
+.td-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px 0px rgba(233, 96, 32, 0.2);
+}
+
+.td-checkbox {
+  accent-color: var(--td-orange);
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 .bg-grid-pattern {
-  background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px),
-                    linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, rgba(11,32,39,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11,32,39,0.04) 1px, transparent 1px);
   background-size: 24px 24px;
   pointer-events: none;
 }
 
-/* Smooth hover transitions */
 .hover-lift {
   transition: transform 0.3s ease-out;
 }
@@ -77,12 +147,10 @@
   transform: translateY(-4px);
 }
 
-/* Smooth button animations */
 button, a {
-  transition: all 0.3s ease-out;
+  transition: all 0.2s ease-out;
 }
 
-/* Smooth image zoom */
 .image-zoom {
   overflow: hidden;
 }
@@ -95,41 +163,35 @@ button, a {
   transform: scale(1.05);
 }
 
-/* Make sure text remains selectable even when using animations */
 .animate-fade-in,
 .animate-slide-up {
   user-select: text;
   cursor: default;
 }
 
-/* Ensure text selection doesn't interfere with interactive elements */
 .btn-primary,
 .btn-secondary {
   user-select: none;
   cursor: pointer;
 }
 
-/* Focus visible styles for accessibility */
 @layer utilities {
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded;
   }
 
-  /* Touch manipulation for better mobile performance */
   .touch-manipulation {
     touch-action: manipulation;
   }
 }
 
-/* Improve link and button focus states */
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid #e96020;
+  outline: 2px solid var(--td-orange);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Ensure minimum tap target size on mobile */
 @media (max-width: 640px) {
   button,
   a[role="button"],

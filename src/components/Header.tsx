@@ -41,35 +41,44 @@ export function Header() {
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'
+      isScrolled ? 'bg-white shadow-sharp py-4' : 'bg-transparent py-6'
     }`}>
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group" onClick={handleLinkClick}>
-            <img 
-              src="/logo/favicon-96x96.png" 
-              alt="Tielo Digital Logo" 
+            <img
+              src="/logo/favicon-96x96.png"
+              alt="Tielo Digital Logo"
               width="40"
               height="40"
-              className="transition-transform duration-300 group-hover:scale-105"
+              className="transition-transform duration-200 group-hover:scale-105"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-gray-900 font-rubik transition-colors duration-300 group-hover:text-primary">
+              <span className="text-xl font-bold text-tielo-navy transition-colors duration-200 group-hover:text-tielo-orange">
                 Tielo Digital
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
-            <Link href="/diensten/websites" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Website</Link>
-            <Link href="/contact" className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">Contact</Link>
+            <Link
+              href="/diensten/websites"
+              className="text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
+            >
+              Website
+            </Link>
+            <Link
+              href="/contact"
+              className="text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
+            >
+              Contact
+            </Link>
             <ConsultButton>
               Gratis opzetje
             </ConsultButton>
             <Link
               href="/login"
-              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
               onClick={handleLinkClick}
             >
               <LogIn size={16} />
@@ -77,9 +86,8 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="md:hidden p-2 hover:bg-gray-100 rounded-td transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? 'Sluit menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
@@ -88,21 +96,20 @@ export function Header() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-lg overflow-hidden"
+              className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-sharp overflow-hidden"
             >
               <nav className="flex flex-col divide-y divide-gray-100" aria-label="Mobile navigation">
                 {mobileMenuItems.map((item) => (
                   <div key={item.name} className="py-2 px-4">
                     <Link
                       href={item.path}
-                      className="block py-3 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded min-h-[44px] flex items-center"
+                      className="block py-3 text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded min-h-[44px] flex items-center"
                       onClick={handleLinkClick}
                     >
                       {item.name}
@@ -117,7 +124,7 @@ export function Header() {
                 <div className="py-2 px-4">
                   <Link
                     href="/login"
-                    className="flex items-center gap-2 py-3 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded min-h-[44px]"
+                    className="flex items-center gap-2 py-3 text-gray-500 hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded min-h-[44px]"
                     onClick={handleLinkClick}
                   >
                     <LogIn size={20} />

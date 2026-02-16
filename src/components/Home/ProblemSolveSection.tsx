@@ -8,7 +8,7 @@ const options = [
   {
     icon: Search,
     title: 'Klanten zoeken je online maar vinden niets',
-    description: 'Zonder website ben je onzichtbaar voor potentiële klanten.',
+    description: 'Zonder website ben je onzichtbaar voor potentiele klanten.',
   },
   {
     icon: Phone,
@@ -34,17 +34,22 @@ const options = [
 
 export function ProblemSolveSection() {
   return (
-    <section className="py-16 sm:py-20 bg-white">
+    <section className="py-16 sm:py-24 bg-white">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 font-rubik"
+          className="text-center mb-12 sm:mb-16"
         >
-          Veel bouwbedrijven lopen werk mis zonder website
-        </motion.h2>
-        
+          <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
+            Het probleem
+          </span>
+          <h2 className="text-3xl font-bold text-tielo-navy">
+            Veel bouwbedrijven lopen werk mis zonder website
+          </h2>
+        </motion.div>
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
           {options.map((option, index) => (
             <Card key={index} {...option} index={index} />
@@ -55,16 +60,17 @@ export function ProblemSolveSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-8 sm:mt-12 text-center"
+          className="mt-12 sm:mt-16 text-center"
         >
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white rounded-lg
-                     font-semibold text-base sm:text-lg hover:bg-primary/90 transition-all duration-300
-                     hover:scale-[1.02] active:scale-[0.98] min-h-[48px] touch-manipulation"
+            className="inline-flex items-center gap-2 bg-tielo-orange hover:bg-[#d85515] text-white
+                     px-6 sm:px-8 py-3 sm:py-4 rounded-td font-medium text-base sm:text-lg
+                     shadow-sm hover:shadow-sharp transition-all duration-200
+                     active:scale-[0.98] min-h-[48px] touch-manipulation"
           >
             Vraag een gratis opzetje aan
-            <ArrowRight className="w-6 h-6" />
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </motion.div>
       </div>

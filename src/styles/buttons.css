@@ -1,13 +1,13 @@
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-primary text-white rounded-lg font-semibold 
-           hover:bg-primary/90 transition-all duration-300
-           hover:scale-[1.02] active:scale-[0.98];
+    @apply px-4 py-2 bg-tielo-orange text-white rounded-td font-medium shadow-sm
+           hover:bg-[#d85515] hover:shadow-sharp transition-all duration-200
+           active:scale-[0.98];
   }
-  
+
   .btn-secondary {
-    @apply px-6 py-3 bg-green-light/10 text-green-dark rounded-lg font-semibold 
-           hover:bg-green-light/20 transition-all duration-300
-           hover:scale-[1.02] active:scale-[0.98];
+    @apply px-4 py-2 bg-white border border-gray-300 text-tielo-navy rounded-td font-medium
+           hover:border-tielo-navy hover:bg-gray-50 transition-all duration-200
+           active:scale-[0.98];
   }
 }
