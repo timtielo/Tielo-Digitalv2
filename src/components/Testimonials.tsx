@@ -30,7 +30,7 @@ export function Testimonials() {
 
           <div className="flex items-center gap-1">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              <Star key={i} fill="currentColor" className="w-5 h-5 text-yellow-400" />
             ))}
           </div>
 

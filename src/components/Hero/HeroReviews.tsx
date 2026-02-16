@@ -96,7 +96,7 @@ export function HeroReviews() {
           >
             <div className="flex items-center gap-1 mb-3">
               {[...Array(reviews[currentIndex].rating)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-tielo-orange text-tielo-orange" />
+                <Star key={i} fill="currentColor" className="w-4 h-4 text-tielo-orange" />
               ))}
             </div>
             <p className="text-tielo-navy/70 mb-4 text-sm italic leading-relaxed">
@@ -175,7 +175,7 @@ export function HeroReviews() {
                 <div className="relative">
                   <div className="flex items-center gap-1 mb-2">
                     {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-tielo-orange text-tielo-orange" />
+                      <Star key={i} fill="currentColor" className="w-3.5 h-3.5 text-tielo-orange" />
                     ))}
                   </div>
                   <p className="text-tielo-navy/70 mb-3 text-sm italic leading-relaxed line-clamp-3">
