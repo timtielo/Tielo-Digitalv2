@@ -1,39 +1,15 @@
 import React from 'react';
-import { Gift, FileText, Globe, MapPin, MessageCircle, Server } from 'lucide-react';
+import { Palette, Smartphone, MessageCircle, Search, Star, Server } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BenefitCard } from './BenefitCard';
 
 const features = [
-  {
-    icon: Gift,
-    title: 'Gratis website-opzetje',
-    description: 'Eerst zie je precies hoe jouw website eruit komt te zien. Helemaal gratis.'
-  },
-  {
-    icon: FileText,
-    title: 'Jij hoeft geen teksten te schrijven',
-    description: 'Ik schrijf alle teksten voor je. Jij hoeft alleen te controleren of het klopt.'
-  },
-  {
-    icon: Globe,
-    title: 'Volledige DNS & domeinconfiguratie',
-    description: 'Van domeinregistratie tot technische instellingen. Alles wordt voor je geregeld.'
-  },
-  {
-    icon: MapPin,
-    title: 'Google Business opzetten',
-    description: 'Ik zorg dat je zichtbaar bent op Google Maps met de juiste informatie.'
-  },
-  {
-    icon: MessageCircle,
-    title: 'WhatsApp integratie',
-    description: 'Klanten kunnen je direct via WhatsApp bereiken met een klik op je website.'
-  },
-  {
-    icon: Server,
-    title: 'Hosting & onderhoud geregeld',
-    description: 'Snelle, veilige hosting en doorlopend onderhoud zonder omkijken.'
-  }
+  { icon: Palette, title: 'Professioneel ontwerp', description: 'Een website die er strak uitziet en vertrouwen wekt bij klanten.' },
+  { icon: Search, title: 'Google vindbaar', description: 'Lokale SEO zodat klanten jou vinden in jouw regio.' },
+  { icon: MessageCircle, title: 'WhatsApp knop', description: 'Klanten bereiken je direct met een klik.' },
+  { icon: Star, title: 'Reviews geintegreerd', description: 'Laat zien wat andere klanten over je zeggen.' },
+  { icon: Server, title: 'Alles geregeld', description: 'Domein, mail, hosting. Jij hoeft niets te doen.' },
+  { icon: Smartphone, title: 'Mobiel geoptimaliseerd', description: 'Perfect zichtbaar op telefoon, tablet en desktop.' },
 ];
 
 export function OplossingSection() {
@@ -56,17 +32,8 @@ export function OplossingSection() {
             viewport={{ once: true }}
             className="text-3xl font-bold text-tielo-navy mb-4"
           >
-            Een website die jij niet zelf hoeft te bouwen
+            Ik bouw binnen 2 weken een complete website
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-tielo-navy/60 max-w-2xl mx-auto"
-          >
-            Ik maak een gratis opzetje en regel daarna alle techniek. Jij hoeft niets te doen.
-          </motion.p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">

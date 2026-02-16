@@ -1,49 +1,46 @@
 import React from 'react';
-import { Globe, User, Shield, Euro } from 'lucide-react';
-import { BenefitCard } from './BenefitCard';
+import { motion } from 'framer-motion';
+import { CreditCard, Phone, Hammer, MessageSquare, Check, Wrench, Send } from 'lucide-react';
 
-const benefits = [
-  {
-    icon: Globe,
-    title: 'Gespecialiseerd in kleine bouwbedrijven',
-    description: 'Ik begrijp precies waar jij als startend bouwbedrijf tegenaan loopt en wat je nodig hebt.'
-  },
-  {
-    icon: User,
-    title: 'Volledig ontzorgd',
-    description: 'Jij hoeft niets te doen. Ik regel alles technisch voor je zodat jij gewoon kan blijven werken.'
-  },
-  {
-    icon: Shield,
-    title: 'Duidelijke communicatie',
-    description: 'Geen technische taal of verwarrende concepten. Alles wordt uitgelegd in normale taal.'
-  },
-  {
-    icon: Euro,
-    title: 'Vaste, eerlijke prijzen',
-    description: 'Je weet precies waar je aan toe bent. Geen verborgen kosten of verrassingen achteraf.'
-  }
+const steps = [
+  { number: '1', title: 'Aanbetaling', icon: CreditCard },
+  { number: '2', title: '(Video)call waarin we jouw bedrijf bespreken', icon: Phone },
+  { number: '3', title: 'Ik bouw versie 1', icon: Hammer },
+  { number: '4', title: 'Jij geeft feedback', icon: MessageSquare },
+  { number: '5', title: 'Ik werk alles af', icon: Wrench },
+  { number: '6', title: 'Na akkoord zet ik de website live', icon: Check },
+  { number: '7', title: 'Factuur resterend bedrag', icon: Send },
 ];
 
 export function Benefits() {
   return (
-    <section className="py-16 sm:py-24 bg-white">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section className="py-16 sm:py-24 bg-tielo-navy relative overflow-hidden">
+      <div className="absolute inset-0 td-striped opacity-30" />
+      <div className="container mx-auto px-4 sm:px-6 relative">
         <div className="text-center mb-12 sm:mb-16">
-          <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
-            Waarom wij
+          <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-3 block">
+            Stappenplan
           </span>
-          <h2 className="text-3xl font-bold text-tielo-navy mb-4">
-            Waarom Tielo Digital
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Hoe werkt het?
           </h2>
-          <p className="text-lg text-tielo-navy/60 max-w-2xl mx-auto">
-            Eenvoudig, betrouwbaar en gemaakt voor jouw situatie
-          </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {benefits.map((benefit, index) => (
-            <BenefitCard key={index} {...benefit} index={index} />
+        <div className="max-w-2xl mx-auto space-y-4">
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.08 }}
+              className="flex items-center gap-4 bg-white/5 backdrop-blur-sm rounded-td p-4 border border-white/10"
+            >
+              <div className="w-10 h-10 bg-tielo-orange rounded-td flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">{step.number}</span>
+              </div>
+              <span className="text-white/90 font-medium">{step.title}</span>
+            </motion.div>
           ))}
         </div>
       </div>

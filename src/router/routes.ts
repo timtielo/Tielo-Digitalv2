@@ -2,24 +2,23 @@ import { ComponentType } from 'react';
 import { Home } from '../pages/Home';
 import { Blog } from '../pages/Blog';
 import { BlogPost } from '../pages/BlogPost';
-import { Services } from '../pages/Services';
-import { ServicePage } from '../pages/ServicePage';
+import { Diensten } from '../pages/Diensten';
 import { WebsitesPage } from '../pages/ServicePage/WebsitesPage';
-import { WorkflowPage } from '../pages/ServicePage/WorkflowPage';
-import { OutreachPage } from '../pages/ServicePage/OutreachPage';
-import { CustomerServicePage } from '../pages/ServicePage/CustomerServicePage';
-import { CustomPage } from '../pages/ServicePage/CustomPage';
+import { MaatwerkPage } from '../pages/MaatwerkPage';
+import { OverOns } from '../pages/OverOns';
+import { Cases } from '../pages/Cases';
 import { Contact } from '../pages/Contact';
-import { GratisGuide } from '../pages/GratisGuide';
-import { GuideThankYou } from '../pages/GuideThankYou';
-import { AnalysisThankYou } from '../pages/AnalysisThankYou';
-import { Call } from '../pages/Call';
+import { LoodgieterPage } from '../pages/trades/LoodgieterPage';
+import { SchilderPage } from '../pages/trades/SchilderPage';
+import { KlusbedrijfPage } from '../pages/trades/KlusbedrijfPage';
+import { ElektricienPage } from '../pages/trades/ElektricienPage';
+import { AannemerPage } from '../pages/trades/AannemerPage';
+import { MetselaarPage } from '../pages/trades/MetselaarPage';
 import { BusinessCard } from '../pages/BusinessCard';
 import { Privacy } from '../pages/Privacy';
 import { Terms } from '../pages/Terms';
 import { Cookies } from '../pages/Cookies';
 import { ShowcaseCompanyPage } from '../pages/ShowcaseCompanyPage';
-import { MetselaarShowcase } from '../pages/MetselaarShowcase';
 import { Login } from '../pages/Login';
 import { ResetPassword } from '../pages/ResetPassword';
 import { PortfolioPage } from '../pages/Dashboard/PortfolioPage';
@@ -61,23 +60,19 @@ export const routes: Route[] = [
   { path: '/dashboard/blogs', component: BlogsPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },
-  { path: '/diensten', component: Services },
-  // Specific service routes
+  { path: '/diensten', component: Diensten },
   { path: '/diensten/websites', component: WebsitesPage },
-  { path: '/diensten/websites/metselaar', component: MetselaarShowcase },
-  { path: '/diensten/workflow', component: WorkflowPage },
-  { path: '/diensten/outreach', component: OutreachPage },
-  { path: '/diensten/customer-service', component: CustomerServicePage },
-  { path: '/diensten/custom', component: CustomPage },
-  // Showcase company routes - must come before generic service route (no layout)
+  { path: '/diensten/websites/loodgieter', component: LoodgieterPage },
+  { path: '/diensten/websites/schilder', component: SchilderPage },
+  { path: '/diensten/websites/klusbedrijf', component: KlusbedrijfPage },
+  { path: '/diensten/websites/elektricien', component: ElektricienPage },
+  { path: '/diensten/websites/aannemer', component: AannemerPage },
+  { path: '/diensten/websites/metselaar', component: MetselaarPage },
   { path: '/diensten/websites/:businessType/:slug', component: ShowcaseCompanyPage, params: ['businessType', 'slug'], layout: false },
-  // Generic service route should come after specific routes
-  { path: '/diensten/:serviceId', component: ServicePage, params: ['serviceId'] },
+  { path: '/diensten/maatwerk', component: MaatwerkPage },
+  { path: '/over-ons', component: OverOns },
+  { path: '/cases', component: Cases },
   { path: '/contact', component: Contact },
-  { path: '/gratis-guide', component: GratisGuide },
-  { path: '/gratis-guide/bedankt', component: GuideThankYou },
-  { path: '/analysis-thank-you', component: AnalysisThankYou },
-  { path: '/call', component: Call },
   { path: '/visitekaartje', component: BusinessCard },
   { path: '/privacy', component: Privacy },
   { path: '/terms', component: Terms },

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, LogIn } from 'lucide-react';
 import { Link } from './Link';
-import { ConsultButton } from './common/ConsultButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const mobileMenuItems = [
-  { name: 'Website', path: '/diensten/websites' },
-  { name: 'Contact', path: '/contact' }
+const navItems = [
+  { name: 'Diensten', path: '/diensten' },
+  { name: 'Over ons', path: '/over-ons' },
+  { name: 'Cases', path: '/cases' },
+  { name: 'Blog', path: '/blog' },
+  { name: 'Contact', path: '/contact' },
 ];
 
 export function Header() {
@@ -61,21 +63,15 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
-            <Link
-              href="/diensten/websites"
-              className="text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
-            >
-              Website
-            </Link>
-            <Link
-              href="/contact"
-              className="text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
-            >
-              Contact
-            </Link>
-            <ConsultButton>
-              Gratis opzetje
-            </ConsultButton>
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.path}
+                className="text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
+              >
+                {item.name}
+              </Link>
+            ))}
             <Link
               href="/login"
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
@@ -105,7 +101,7 @@ export function Header() {
               className="md:hidden fixed top-[72px] left-0 w-full bg-white shadow-sharp overflow-hidden"
             >
               <nav className="flex flex-col divide-y divide-gray-100" aria-label="Mobile navigation">
-                {mobileMenuItems.map((item) => (
+                {navItems.map((item) => (
                   <div key={item.name} className="py-2 px-4">
                     <Link
                       href={item.path}
@@ -116,11 +112,6 @@ export function Header() {
                     </Link>
                   </div>
                 ))}
-                <div className="py-2 px-4">
-                  <ConsultButton>
-                    Gratis opzetje
-                  </ConsultButton>
-                </div>
                 <div className="py-2 px-4">
                   <Link
                     href="/login"

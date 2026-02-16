@@ -1,34 +1,27 @@
 import React from 'react';
-import { Search, Phone, AlertCircle, MapPin, MessageCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle, DollarSign, Eye, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Card } from './Card';
-import { Link } from '../Link';
 
-const options = [
-  {
-    icon: Search,
-    title: 'Klanten zoeken je online maar vinden niets',
-    description: 'Zonder website ben je onzichtbaar voor potentiele klanten.',
-  },
-  {
-    icon: Phone,
-    title: 'Geen contactgegevens online',
-    description: 'Klanten kunnen je niet makkelijk vinden of bereiken.',
-  },
+const problems = [
   {
     icon: AlertCircle,
-    title: 'Afhankelijk van dure en onzekere Werkspot-leads',
-    description: 'Je betaalt veel voor leads die niet altijd betrouwbaar zijn.',
+    title: 'Te afhankelijk van Werkspot',
+    description: 'Elke klus begint met betalen voor leads die je moet delen met andere bedrijven.',
   },
   {
-    icon: MessageCircle,
-    title: 'Geen makkelijke manier voor klanten om je te bereiken',
-    description: 'Zonder WhatsApp of contactformulier loop je kansen mis.',
+    icon: DollarSign,
+    title: 'Concurreren op prijs',
+    description: 'Op platforms win je alleen als je de goedkoopste bent. Dat is geen duurzaam model.',
   },
   {
-    icon: MapPin,
-    title: 'Geen Google Business vermelding',
-    description: 'Je bent niet zichtbaar op Google Maps waar klanten zoeken.',
+    icon: Eye,
+    title: 'Geen professionele uitstraling',
+    description: 'Zonder eigen website mis je de geloofwaardigheid die klanten verwachten.',
+  },
+  {
+    icon: Shield,
+    title: 'Geen eigen online controle',
+    description: 'Je hebt geen eigen plek waar klanten je direct kunnen vinden en bereiken.',
   },
 ];
 
@@ -46,33 +39,28 @@ export function ProblemSolveSection() {
             Het probleem
           </span>
           <h2 className="text-3xl font-bold text-tielo-navy">
-            Veel bouwbedrijven lopen werk mis zonder website
+            Herkenbaar?
           </h2>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
-          {options.map((option, index) => (
-            <Card key={index} {...option} index={index} />
+        <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+          {problems.map((problem, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="td-card p-5 sm:p-6 shadow-sharp"
+            >
+              <div className="w-12 h-12 bg-red-50 rounded-td flex items-center justify-center mb-4">
+                <problem.icon className="w-6 h-6 text-red-500" />
+              </div>
+              <h3 className="text-lg sm:text-xl font-semibold text-tielo-navy mb-2">{problem.title}</h3>
+              <p className="text-tielo-navy/60 text-sm sm:text-base leading-relaxed">{problem.description}</p>
+            </motion.div>
           ))}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-12 sm:mt-16 text-center"
-        >
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 bg-tielo-orange hover:bg-[#d85515] text-white
-                     px-6 sm:px-8 py-3 sm:py-4 rounded-td font-medium text-base sm:text-lg
-                     shadow-sm hover:shadow-sharp transition-all duration-200
-                     active:scale-[0.98] min-h-[48px] touch-manipulation"
-          >
-            Vraag een gratis opzetje aan
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </motion.div>
       </div>
     </section>
   );
