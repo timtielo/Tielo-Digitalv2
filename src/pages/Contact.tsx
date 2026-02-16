@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, ArrowRight, Loader, CheckCircle } from 'lucide-react';
+import { ArrowRight, Loader, CheckCircle, Phone, Mail, MapPin, Building2, MessageCircle } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { useFormSubmission } from '../hooks/useFormSubmission';
+import { WhatsAppButton } from '../components/common/WhatsAppButton';
+
+const WHATSAPP_URL = 'https://wa.me/31620948502?text=Hey%20Tim,';
+
+const contactDetails = [
+  { icon: Phone, label: 'Telefoon', value: '+31 6 20948502', href: 'tel:+31620948502' },
+  { icon: Mail, label: 'Email', value: 'tim@tielo-digital.nl', href: 'mailto:tim@tielo-digital.nl' },
+  { icon: MapPin, label: 'Locatie', value: 'Utrecht, Nederland', href: null },
+  { icon: Building2, label: 'KVK', value: '87850893', href: null },
+];
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -30,8 +40,8 @@ export function Contact() {
         canonical="https://www.tielo-digital.nl/contact"
       />
 
-      <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 bg-tielo-offwhite relative overflow-hidden">
-        <div className="absolute inset-0 td-micro-grid opacity-40" />
+      <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 bg-tielo-navy relative overflow-hidden">
+        <div className="absolute inset-0 td-striped opacity-30" />
         <div className="container mx-auto px-4 sm:px-6 relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -39,25 +49,51 @@ export function Contact() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-3 block">
               Contact
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-tielo-navy mb-6 tracking-tight leading-[1.15]">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight leading-[1.15]">
               Laten we praten
             </h1>
-            <p className="text-lg text-tielo-navy/70 leading-relaxed mb-8">
-              Reactie binnen 1 werkdag.
+            <p className="text-lg text-white/70 leading-relaxed mb-8">
+              Reactie binnen 1 werkdag. Het snelst via WhatsApp.
             </p>
-            <a
-              href="https://wa.me/31612345678"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[#25D366] hover:bg-[#20BD5A] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-td font-medium text-base sm:text-lg shadow-sm hover:shadow-sharp transition-all duration-200 active:scale-[0.98] min-h-[48px] touch-manipulation inline-flex items-center gap-2"
-            >
-              <MessageCircle className="w-5 h-5" />
-              WhatsApp
-            </a>
+            <WhatsAppButton className="text-lg sm:px-8 sm:py-4" />
           </motion.div>
+        </div>
+      </section>
+
+      <section className="py-12 sm:py-16 bg-tielo-offwhite">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto">
+            {contactDetails.map((detail, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className="td-card p-5 shadow-sharp text-center"
+              >
+                <div className="w-10 h-10 bg-tielo-orange/10 rounded-td flex items-center justify-center mx-auto mb-3">
+                  <detail.icon className="w-5 h-5 text-tielo-orange" />
+                </div>
+                <p className="text-xs font-medium text-tielo-navy/50 uppercase tracking-wider mb-1">
+                  {detail.label}
+                </p>
+                {detail.href ? (
+                  <a
+                    href={detail.href}
+                    className="text-sm font-medium text-tielo-navy hover:text-tielo-orange transition-colors"
+                  >
+                    {detail.value}
+                  </a>
+                ) : (
+                  <p className="text-sm font-medium text-tielo-navy">{detail.value}</p>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -74,9 +110,18 @@ export function Contact() {
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-tielo-navy mb-4">Bericht ontvangen!</h2>
-                <p className="text-tielo-navy/60">
+                <p className="text-tielo-navy/60 mb-6">
                   Ik neem binnen 1 werkdag contact met je op.
                 </p>
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-tielo-orange hover:underline font-medium"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Of stuur direct een appje
+                </a>
               </motion.div>
             ) : (
               <>
@@ -86,9 +131,12 @@ export function Contact() {
                   viewport={{ once: true }}
                   className="text-center mb-10"
                 >
-                  <h2 className="text-3xl font-bold text-tielo-navy">
+                  <h2 className="text-3xl font-bold text-tielo-navy mb-2">
                     Of stuur een bericht
                   </h2>
+                  <p className="text-tielo-navy/60">
+                    Vul het formulier in en ik neem contact met je op
+                  </p>
                 </motion.div>
 
                 <motion.form

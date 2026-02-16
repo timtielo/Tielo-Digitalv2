@@ -27,7 +27,7 @@ export function HeroContent() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <WhatsAppButton />
+        <WhatsAppButton>Kom in contact</WhatsAppButton>
         <Link
           href="/diensten/websites"
           className="bg-white border border-gray-300 text-tielo-navy px-6 py-3 rounded-td font-medium
@@ -35,7 +35,7 @@ export function HeroContent() {
                    active:scale-[0.98] text-base
                    min-h-[48px] touch-manipulation inline-flex items-center justify-center"
         >
-          Bekijk voorbeeld
+          Meer informatie
         </Link>
       </div>
     </motion.div>
