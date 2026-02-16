@@ -1,8 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Target, AlertTriangle, Compass, ListChecks, Rocket, TrendingDown } from 'lucide-react';
+import { ArrowRight, Globe, Search, MessageCircle, Settings, Check } from 'lucide-react';
 import { Link } from '../components/Link';
 import { SEO } from '../components/SEO';
+
+const services = [
+  { icon: Globe, text: 'Een duidelijke, professionele website' },
+  { icon: Search, text: 'Goede vindbaarheid in Google' },
+  { icon: MessageCircle, text: 'Direct contact via WhatsApp' },
+  { icon: Settings, text: 'Alles technisch geregeld' },
+];
 
 export function OverOns() {
   return (
@@ -27,11 +34,13 @@ export function OverOns() {
               Over Tielo Digital
             </span>
             <h1 className="text-4xl md:text-5xl font-bold text-tielo-navy mb-6 tracking-tight leading-[1.15]">
-              Ik help vakmensen aan een eigen{' '}
-              <span className="text-tielo-orange">professionele online basis</span>
+              Ik ben{' '}
+              <span className="text-tielo-orange">Tim Tielkemeijer</span>.
             </h1>
             <p className="text-lg text-tielo-navy/70 leading-relaxed">
-              Geen afhankelijkheid van platforms. Geen concurrentie op prijs. Gewoon een sterke website die voor jou werkt.
+              Ik help vakmensen aan een sterke, professionele website.
+              <br />
+              Zodat je minder afhankelijk bent van platforms zoals Werkspot en meer controle krijgt over je eigen klanten.
             </p>
           </motion.div>
         </div>
@@ -44,15 +53,18 @@ export function OverOns() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex gap-5"
             >
-              <div className="w-12 h-12 bg-tielo-teal/10 rounded-td flex items-center justify-center flex-shrink-0 mt-1">
-                <Target className="w-6 h-6 text-tielo-steel" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-tielo-navy mb-3">De held</h2>
-                <p className="text-tielo-navy/70 leading-relaxed text-lg">
-                  Jij bent de vakman die meer controle wil. Je bent goed in je vak, maar online zichtbaarheid is niet je ding. Je wilt klanten die direct bij jou komen, niet via een tussenpartij.
+              <div className="td-card p-8 sm:p-10 shadow-sharp border-l-4 border-tielo-orange">
+                <p className="text-xl sm:text-2xl font-semibold text-tielo-navy leading-relaxed mb-4">
+                  Heb jij 100+ reviews op Werkspot?
+                </p>
+                <p className="text-lg text-tielo-navy/70 leading-relaxed">
+                  Dan googelen mensen jouw naam.
+                  <br />
+                  Kunnen ze je nu vinden?
+                </p>
+                <p className="text-lg text-tielo-navy/50 mt-4 italic">
+                  Waarschijnlijk niet. En daarmee loop je opdrachten mis.
                 </p>
               </div>
             </motion.div>
@@ -61,15 +73,54 @@ export function OverOns() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex gap-5"
             >
-              <div className="w-12 h-12 bg-red-50 rounded-td flex items-center justify-center flex-shrink-0 mt-1">
-                <AlertTriangle className="w-6 h-6 text-red-500" />
+              <p className="text-2xl font-bold text-tielo-navy mb-8">
+                Daar kom ik in beeld.
+              </p>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-6">
+                Ik zorg voor
+              </p>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {services.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.08 }}
+                    className="flex items-center gap-4 bg-tielo-offwhite rounded-td p-4 border border-gray-100"
+                  >
+                    <div className="w-10 h-10 bg-tielo-orange/10 rounded-td flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-5 h-5 text-tielo-orange" />
+                    </div>
+                    <span className="text-tielo-navy font-medium">{item.text}</span>
+                  </motion.div>
+                ))}
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-tielo-navy mb-3">Het probleem</h2>
-                <p className="text-tielo-navy/70 leading-relaxed text-lg">
-                  Je bent te afhankelijk van platforms zoals Werkspot. Je betaalt steeds meer voor leads, concurreert op prijs en hebt geen eigen online aanwezigheid. Klanten zoeken je op Google, maar vinden niets.
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-tielo-orange mt-1 flex-shrink-0" />
+                <p className="text-lg text-tielo-navy/70 leading-relaxed">
+                  Geen ingewikkelde trajecten.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-tielo-orange mt-1 flex-shrink-0" />
+                <p className="text-lg text-tielo-navy/70 leading-relaxed">
+                  Geen marketingpraat.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-tielo-orange mt-1 flex-shrink-0" />
+                <p className="text-lg text-tielo-navy/70 leading-relaxed">
+                  Gewoon duidelijkheid en resultaat.
                 </p>
               </div>
             </motion.div>
@@ -78,79 +129,14 @@ export function OverOns() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex gap-5"
+              className="bg-tielo-navy rounded-td p-8 sm:p-10 text-center"
             >
-              <div className="w-12 h-12 bg-tielo-orange/10 rounded-td flex items-center justify-center flex-shrink-0 mt-1">
-                <Compass className="w-6 h-6 text-tielo-orange" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-tielo-navy mb-3">De gids</h2>
-                <p className="text-tielo-navy/70 leading-relaxed text-lg">
-                  Ik help vakmensen aan een eigen professionele online basis. Een website die er goed uitziet, goed vindbaar is in Google, en waar klanten je direct kunnen bereiken via WhatsApp. Geen gedoe, geen technische kennis nodig.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex gap-5"
-            >
-              <div className="w-12 h-12 bg-tielo-teal/10 rounded-td flex items-center justify-center flex-shrink-0 mt-1">
-                <ListChecks className="w-6 h-6 text-tielo-steel" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-tielo-navy mb-3">Het plan</h2>
-                <ol className="space-y-3 text-tielo-navy/70 text-lg">
-                  <li className="flex gap-3">
-                    <span className="font-bold text-tielo-orange">1.</span>
-                    Kort gesprek over jouw bedrijf en wensen
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="font-bold text-tielo-orange">2.</span>
-                    Ik bouw je website binnen 2 weken
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="font-bold text-tielo-orange">3.</span>
-                    Live gaan en klanten ontvangen
-                  </li>
-                </ol>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex gap-5"
-            >
-              <div className="w-12 h-12 bg-green-50 rounded-td flex items-center justify-center flex-shrink-0 mt-1">
-                <Rocket className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-tielo-navy mb-3">Succes</h2>
-                <p className="text-tielo-navy/70 leading-relaxed text-lg">
-                  Meer aanvragen via je eigen website. Klanten die direct bij jou terechtkomen. Minder afhankelijkheid van dure platforms.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex gap-5"
-            >
-              <div className="w-12 h-12 bg-gray-100 rounded-td flex items-center justify-center flex-shrink-0 mt-1">
-                <TrendingDown className="w-6 h-6 text-gray-400" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-tielo-navy mb-3">Of...</h2>
-                <p className="text-tielo-navy/70 leading-relaxed text-lg">
-                  Blijven concurreren op prijs via tussenplatforms. Steeds meer betalen voor leads. Geen eigen klantenbestand opbouwen.
-                </p>
-              </div>
+              <p className="text-white/90 text-lg leading-relaxed mb-2">
+                We starten met een kort gesprek.
+              </p>
+              <p className="text-white font-bold text-xl">
+                Binnen twee weken staat je website live.
+              </p>
             </motion.div>
           </div>
         </div>
@@ -166,16 +152,16 @@ export function OverOns() {
             className="max-w-3xl mx-auto text-center"
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-tielo-navy tracking-tight">
-              Klaar om de stap te zetten?
+              Wil je bouwen aan je eigen online basis?
             </h2>
             <p className="text-lg mb-8 text-tielo-navy/60">
-              Plan een kort gesprek en ontdek wat ik voor jou kan betekenen
+              Stuur mij een appje
             </p>
             <Link
               href="/contact"
               className="bg-tielo-orange hover:bg-[#d85515] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-td font-medium text-base sm:text-lg shadow-sm hover:shadow-sharp transition-all duration-200 active:scale-[0.98] min-h-[48px] touch-manipulation inline-flex items-center gap-2"
             >
-              Plan een gesprek
+              Neem contact op
               <ArrowRight className="w-5 h-5" />
             </Link>
           </motion.div>
