@@ -24,25 +24,47 @@ export function OverOns() {
       <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 bg-tielo-offwhite relative overflow-hidden">
         <div className="absolute inset-0 td-micro-grid opacity-40" />
         <div className="container mx-auto px-4 sm:px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-3xl mx-auto"
-          >
-            <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
-              Over Tielo Digital
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-tielo-navy mb-6 tracking-tight leading-[1.15]">
-              Ik ben{' '}
-              <span className="text-tielo-orange">Tim Tielkemeijer</span>.
-            </h1>
-            <p className="text-lg text-tielo-navy/70 leading-relaxed">
-              Ik help vakmensen aan een sterke, professionele website.
-              <br />
-              Zodat je minder afhankelijk bent van platforms zoals Werkspot en meer controle krijgt over je eigen klanten.
-            </p>
-          </motion.div>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex justify-center md:justify-start order-2 md:order-1"
+              >
+                <div className="relative w-64 h-64 sm:w-80 sm:h-80">
+                  <img
+                    src="/assets/profielfoto1.png"
+                    alt="Tim Tielkemeijer - Oprichter Tielo Digital"
+                    className="w-full h-full object-cover rounded-full shadow-sharp"
+                    loading="eager"
+                    width="320"
+                    height="320"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="order-1 md:order-2"
+              >
+                <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
+                  Over Tielo Digital
+                </span>
+                <h1 className="text-4xl md:text-5xl font-bold text-tielo-navy mb-6 tracking-tight leading-[1.15]">
+                  Ik ben{' '}
+                  <span className="text-tielo-orange">Tim Tielkemeijer</span>.
+                </h1>
+                <p className="text-lg text-tielo-navy/70 leading-relaxed">
+                  Ik help vakmensen aan een sterke, professionele website.
+                  <br />
+                  Zodat je minder afhankelijk bent van platforms zoals Werkspot en meer controle krijgt over je eigen klanten.
+                </p>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 

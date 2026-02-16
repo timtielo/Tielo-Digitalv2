@@ -72,11 +72,11 @@ export function WebsiteShowcase() {
             onMouseLeave={() => setIsPaused(false)}
           >
             <motion.div
-              animate={isPaused ? {} : {
+              animate={{
                 x: [-100, -2500],
               }}
               transition={{
-                duration: 45,
+                duration: isPaused ? 200 : 45,
                 repeat: Infinity,
                 ease: "linear"
               }}
