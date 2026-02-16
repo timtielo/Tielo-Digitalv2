@@ -65,7 +65,7 @@ export function WebsiteShowcase() {
           <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-tielo-offwhite to-transparent z-10 pointer-events-none" />
 
           <div
-            className="overflow-hidden whitespace-nowrap py-6 sm:py-8"
+            className="overflow-hidden whitespace-nowrap py-6 sm:py-8 bg-white rounded-xl"
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => setIsPaused(false)}
             onMouseEnter={() => setIsPaused(true)}
