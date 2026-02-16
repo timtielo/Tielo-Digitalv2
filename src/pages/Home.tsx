@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Hero } from '../components/Hero';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
+import { DependencyQuote } from '../components/Home/DependencyQuote';
 import { OplossingSection } from '../components/Home/OplossingSection';
 import { AgitateSection } from '../components/Home/AgitateSection';
 import { Benefits } from '../components/Home/Benefits';
@@ -45,6 +46,7 @@ export function Home() {
       />
       <Hero />
       <ProblemSolveSection />
+      <DependencyQuote />
       <OplossingSection />
       <AgitateSection />
       <Benefits />
