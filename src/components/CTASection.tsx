@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Link } from './Link';
+import { WhatsAppButton } from './common/WhatsAppButton';
 
 export function CTASection() {
   return (
@@ -18,15 +17,9 @@ export function CTASection() {
             Klaar om onafhankelijk te worden van Werkspot?
           </h2>
           <p className="text-lg sm:text-xl mb-8 text-tielo-navy/60">
-            Plan een kort gesprek en ik laat zien wat ik voor je kan bouwen
+            Stuur een berichtje en ik laat zien wat ik voor je kan bouwen
           </p>
-          <Link
-            href="/contact"
-            className="bg-tielo-orange hover:bg-[#d85515] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-td font-medium text-base sm:text-lg shadow-sm hover:shadow-sharp transition-all duration-200 active:scale-[0.98] min-h-[48px] touch-manipulation inline-flex items-center gap-2"
-          >
-            Start hier
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <WhatsAppButton className="text-lg sm:px-8 sm:py-4" />
         </motion.div>
       </div>
     </section>

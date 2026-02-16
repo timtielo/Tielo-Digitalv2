@@ -2,6 +2,7 @@ import React from 'react';
 import { Palette, Smartphone, MessageCircle, Search, Star, Server } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BenefitCard } from './BenefitCard';
+import { WhatsAppButton } from '../common/WhatsAppButton';
 
 const features = [
   { icon: Palette, title: 'Professioneel ontwerp', description: 'Een website die er strak uitziet en vertrouwen wekt bij klanten.' },
@@ -41,6 +42,15 @@ export function OplossingSection() {
             <BenefitCard key={index} {...feature} index={index} />
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-12"
+        >
+          <WhatsAppButton />
+        </motion.div>
       </div>
     </section>
   );

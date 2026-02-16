@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { Link } from '../Link';
+import { WhatsAppButton } from '../common/WhatsAppButton';
 
 export function HeroContent() {
   return (
@@ -26,6 +27,7 @@ export function HeroContent() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <WhatsAppButton />
         <Link
           href="/diensten/websites"
           className="bg-white border border-gray-300 text-tielo-navy px-6 py-3 rounded-td font-medium
@@ -34,16 +36,6 @@ export function HeroContent() {
                    min-h-[48px] touch-manipulation inline-flex items-center justify-center"
         >
           Bekijk voorbeeld
-        </Link>
-        <Link
-          href="/contact"
-          className="bg-tielo-orange hover:bg-[#d85515] text-white px-6 py-3 rounded-td font-medium
-                   shadow-sm hover:shadow-sharp transition-all duration-200
-                   active:scale-[0.98]
-                   inline-flex items-center justify-center gap-2 text-base
-                   min-h-[48px] touch-manipulation"
-        >
-          Plan WhatsApp gesprek
         </Link>
       </div>
     </motion.div>
