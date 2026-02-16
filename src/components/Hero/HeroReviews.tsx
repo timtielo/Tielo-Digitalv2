@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -48,7 +48,7 @@ export function HeroReviews() {
     { reviewIndex: 1, id: 1 },
     { reviewIndex: 2, id: 2 }
   ]);
-  const [nextId, setNextId] = useState(3);
+  const nextIdRef = useRef(3);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,11 +60,11 @@ export function HeroReviews() {
 
   useEffect(() => {
     const nextReviewIndex = (currentIndex + 3) % reviews.length;
+    const id = nextIdRef.current++;
     setDisplayedReviews(prev => [
-      { reviewIndex: nextReviewIndex, id: nextId },
+      { reviewIndex: nextReviewIndex, id },
       ...prev.slice(0, 2)
     ]);
-    setNextId(prev => prev + 1);
   }, [currentIndex]);
 
   const nextReview = () => {
