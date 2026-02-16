@@ -4,7 +4,7 @@ import { Link } from './Link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
-  { name: 'Diensten', path: '/diensten' },
+  { name: 'Websites', path: '/diensten/websites' },
   { name: 'Over ons', path: '/over-ons' },
   { name: 'Cases', path: '/cases' },
   { name: 'Blog', path: '/blog' },
