@@ -9,15 +9,17 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-green-dark">
+    <footer className="bg-tielo-navy">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
           {/* Company Info */}
           <div>
             <h3 className="text-white text-lg font-bold mb-4">Tielo Digital</h3>
-            <p className="text-white/80">
+            <p className="text-white/80 mb-3">
               Websites voor bouwbedrijven. Snel, professioneel en zonder gedoe.
             </p>
+            <p className="text-white/60 text-sm mb-1">KVK: 87850893</p>
+            <p className="text-white/60 text-sm mb-4">Utrecht, Nederland</p>
             <SocialLinks />
           </div>
           
@@ -33,13 +35,13 @@ export function Footer() {
               &copy; {currentYear} Tielo Digital. Alle rechten voorbehouden.
             </p>
             <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-              <Link href="/privacy" className="text-white/80 hover:text-white whitespace-nowrap">
+              <Link href="/privacy" className="text-white/80 hover:text-tielo-orange transition-colors whitespace-nowrap">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-white/80 hover:text-white whitespace-nowrap">
+              <Link href="/terms" className="text-white/80 hover:text-tielo-orange transition-colors whitespace-nowrap">
                 Algemene Voorwaarden
               </Link>
-              <Link href="/cookies" className="text-white/80 hover:text-white whitespace-nowrap">
+              <Link href="/cookies" className="text-white/80 hover:text-tielo-orange transition-colors whitespace-nowrap">
                 Cookie Beleid
               </Link>
             </div>

@@ -5,8 +5,8 @@ export function SocialLinks() {
   return (
     <div className="flex space-x-4 mt-4">
       <a
-        href="mailto:info@tielo-digital.nl"
-        className="text-white/70 hover:text-white transition-colors"
+        href="mailto:tim@tielo-digital.nl"
+        className="text-white/70 hover:text-tielo-orange transition-colors"
         aria-label="Email"
       >
         <Mail className="w-6 h-6" />

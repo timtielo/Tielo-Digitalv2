@@ -12,7 +12,7 @@ export function ContactInfo() {
           href="https://wa.me/31620948502?text=Hey%20Tim,"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors"
+          className="inline-flex items-center gap-2 text-tielo-orange hover:text-tielo-cream transition-colors"
         >
           <MessageCircle className="w-4 h-4" />
           <span>WhatsApp</span>
