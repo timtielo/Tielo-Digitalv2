@@ -22,7 +22,7 @@ export function HeroContent() {
       </h1>
 
       <p className="text-base sm:text-lg text-tielo-navy/70 mb-8 leading-relaxed max-w-xl">
-        Ik maak simpele, sterke websites voor vakmensen die zelf controle willen over hun klanten.
+        Meer klanten. Professioneel en duidelijk. Vaak binnen een maand terugverdiend.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
