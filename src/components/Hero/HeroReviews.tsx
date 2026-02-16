@@ -60,9 +60,9 @@ export function HeroReviews() {
 
   useEffect(() => {
     const nextReviewIndex = (currentIndex + 3) % reviews.length;
-    setDisplayedReviews([
+    setDisplayedReviews(prev => [
       { reviewIndex: nextReviewIndex, id: nextId },
-      ...displayedReviews.slice(0, 2)
+      ...prev.slice(0, 2)
     ]);
     setNextId(prev => prev + 1);
   }, [currentIndex]);
@@ -134,48 +134,49 @@ export function HeroReviews() {
         </div>
       </div>
 
-      <div className="hidden md:block relative overflow-hidden" style={{ height: '460px' }}>
+      <div className="hidden md:block relative overflow-hidden" style={{ height: '420px' }}>
         <AnimatePresence initial={false}>
           {displayedReviews.map((item, position) => {
             const review = reviews[item.reviewIndex];
+            const offsets = [0, 155, 290];
             return (
               <motion.div
                 key={item.id}
                 initial={{
                   opacity: 0,
-                  y: -100,
-                  scale: 0.95
+                  y: -80,
+                  scale: 0.97
                 }}
                 animate={{
-                  opacity: position === 2 ? 0.4 : 1,
-                  y: position * 150,
-                  scale: 1
+                  opacity: position === 2 ? 0.35 : position === 1 ? 0.85 : 1,
+                  y: offsets[position],
+                  scale: 1 - position * 0.02
                 }}
                 exit={{
                   opacity: 0,
-                  y: 450,
+                  y: 420,
                   scale: 0.95
                 }}
                 transition={{
-                  duration: 0.6,
+                  duration: 0.5,
                   ease: [0.4, 0, 0.2, 1]
                 }}
-                className="absolute w-full td-card td-tech-corner p-6 shadow-sharp relative overflow-hidden"
+                className="absolute left-0 right-0 td-card td-tech-corner p-5 shadow-sharp overflow-hidden"
                 style={{ zIndex: 3 - position }}
               >
                 <div className="absolute inset-0 td-micro-grid opacity-20 pointer-events-none" />
                 <div className="relative">
-                  <div className="flex items-center gap-1 mb-3">
+                  <div className="flex items-center gap-1 mb-2">
                     {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-tielo-orange text-tielo-orange" />
+                      <Star key={i} className="w-3.5 h-3.5 fill-tielo-orange text-tielo-orange" />
                     ))}
                   </div>
-                  <p className="text-tielo-navy/70 mb-4 text-base italic leading-relaxed">
+                  <p className="text-tielo-navy/70 mb-3 text-sm italic leading-relaxed line-clamp-3">
                     "{review.quote}"
                   </p>
                   <div>
-                    <p className="font-semibold text-base text-tielo-navy">{review.name}</p>
-                    <p className="text-sm text-gray-400">{review.role}</p>
+                    <p className="font-semibold text-sm text-tielo-navy">{review.name}</p>
+                    <p className="text-xs text-gray-400">{review.role}</p>
                   </div>
                 </div>
               </motion.div>
