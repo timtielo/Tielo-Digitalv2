@@ -39,6 +39,7 @@ export function WebsitesPricing() {
               </div>
             </div>
             <p className="text-tielo-navy/60">Geen verborgen kosten.</p>
+            <p className="text-tielo-navy/40 text-xs mt-4">*voor een standaard website voor een vakman. Neem contact op voor maatwerk.</p>
           </motion.div>
         </div>
       </div>
