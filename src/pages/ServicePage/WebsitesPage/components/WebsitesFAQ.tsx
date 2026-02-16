@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     question: 'Zit ik ergens aan vast?',
-    answer: 'Nee. Het jaarlijkse hosting- en onderhoudspakket is maandelijks opzegbaar. De website blijft altijd van jou.',
+    answer: 'Nee. De jaarlijkse pakket is opzegbaar. Ik denk graag met je mee over een oplossing.',
   },
 ];
 
