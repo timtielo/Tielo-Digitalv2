@@ -1,15 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CreditCard, Phone, Hammer, MessageSquare, Check, Wrench, Send } from 'lucide-react';
+import { CreditCard, Hammer, Check } from 'lucide-react';
 
 const steps = [
-  { number: '1', title: 'Aanbetaling', icon: CreditCard },
-  { number: '2', title: '(Video)call waarin we jouw bedrijf bespreken', icon: Phone },
-  { number: '3', title: 'Ik bouw versie 1', icon: Hammer },
-  { number: '4', title: 'Jij geeft feedback', icon: MessageSquare },
-  { number: '5', title: 'Ik werk alles af', icon: Wrench },
-  { number: '6', title: 'Na akkoord zet ik de website live', icon: Check },
-  { number: '7', title: 'Factuur resterend bedrag', icon: Send },
+  { number: '1', title: 'Aanbetaling & intake gesprek', icon: CreditCard },
+  { number: '2', title: 'Ik bouw, jij geeft feedback', icon: Hammer },
+  { number: '3', title: 'Website live & factuur', icon: Check },
 ];
 
 export function Benefits() {
