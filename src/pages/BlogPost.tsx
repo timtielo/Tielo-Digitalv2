@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSupabaseBlogPost } from '../hooks/useSupabaseBlogPost';
-import { Loader, Calendar, User } from 'lucide-react';
+import { Loader, Calendar, User, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { BlogNewsletter } from '../components/blog/BlogNewsletter';
 import { TipTapRenderer } from '../components/Dashboard/TipTapRenderer';
@@ -16,7 +16,7 @@ export function BlogPost({ slug }: BlogPostProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-tielo-offwhite">
         <Loader className="w-8 h-8 animate-spin text-tielo-orange" />
       </div>
     );
@@ -24,9 +24,13 @@ export function BlogPost({ slug }: BlogPostProps) {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen pt-32 px-4">
+      <div className="min-h-screen pt-32 px-4 bg-tielo-offwhite">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-red-600">{error || 'Blog post niet gevonden'}</p>
+          <p className="text-red-600 mb-4">{error || 'Blog post niet gevonden'}</p>
+          <Link href="/blog" className="inline-flex items-center gap-2 text-tielo-orange hover:text-tielo-orange/80 font-medium">
+            <ArrowLeft className="w-4 h-4" />
+            Terug naar blog
+          </Link>
         </div>
       </div>
     );
@@ -42,18 +46,31 @@ export function BlogPost({ slug }: BlogPostProps) {
         canonical={`https://www.tielo-digital.nl/blog/${post.slug}`}
       />
 
-      <article className="min-h-screen bg-white">
-        <div className="pt-32 pb-20">
-          <div className="container mx-auto px-4">
+      <article className="min-h-screen bg-tielo-offwhite">
+        {/* Header */}
+        <header className="bg-tielo-navy pt-32 pb-16 relative overflow-hidden">
+          <div className="absolute inset-0 td-striped opacity-30" />
+          <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto">
-              {/* Header */}
-              <header className="mb-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-8 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Terug naar blog
+                </Link>
+
                 {post.categories.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-6">
                     {post.categories.map((category) => (
                       <span
                         key={category}
-                        className="px-3 py-1 text-sm font-medium rounded-full bg-tielo-orange/10 text-tielo-orange"
+                        className="px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full bg-tielo-orange text-white"
                       >
                         {category}
                       </span>
@@ -61,34 +78,34 @@ export function BlogPost({ slug }: BlogPostProps) {
                   </div>
                 )}
 
-                <h1 className="text-4xl md:text-5xl font-bold mb-6 font-rubik text-tielo-navy">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-rubik text-white">
                   {post.title}
                 </h1>
 
                 {post.excerpt && (
-                  <p className="text-xl text-gray-600 mb-8">
+                  <p className="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
                     {post.excerpt}
                   </p>
                 )}
 
-                <div className="flex items-center gap-6 text-sm text-gray-500">
+                <div className="flex flex-wrap items-center gap-6 text-sm text-white/70">
                   {post.author_name && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {post.author_avatar_url ? (
                         <img
                           src={post.author_avatar_url}
                           alt={post.author_name}
-                          className="w-10 h-10 rounded-full"
+                          className="w-10 h-10 rounded-full border-2 border-white/20"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-tielo-orange/10 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-tielo-orange/20 flex items-center justify-center border-2 border-tielo-orange/30">
                           <User className="w-5 h-5 text-tielo-orange" />
                         </div>
                       )}
-                      <span className="font-medium text-tielo-navy">{post.author_name}</span>
+                      <span className="font-medium text-white">{post.author_name}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     <time dateTime={post.published_at || post.created_at}>
                       {new Date(post.published_at || post.created_at).toLocaleDateString('nl-NL', {
@@ -98,42 +115,92 @@ export function BlogPost({ slug }: BlogPostProps) {
                       })}
                     </time>
                   </div>
-                  <span>{post.reading_time} min leestijd</span>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>{post.reading_time} min leestijd</span>
+                  </div>
                 </div>
-              </header>
+              </motion.div>
+            </div>
+          </div>
+        </header>
 
+        {/* Content */}
+        <div className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
               {/* Featured Image */}
               {post.featured_image_url && (
-                <div className="mb-12">
-                  <img
-                    src={post.featured_image_url}
-                    alt={post.title}
-                    className="w-full rounded-td shadow-md"
-                  />
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mb-12 -mt-32 relative z-10"
+                >
+                  <div className="rounded-td overflow-hidden shadow-lg">
+                    <img
+                      src={post.featured_image_url}
+                      alt={post.title}
+                      className="w-full"
+                    />
+                  </div>
+                </motion.div>
               )}
 
-              {/* Content */}
-              <div className="prose prose-lg max-w-none">
-                <TipTapRenderer content={post.content} />
-              </div>
+              {/* Article Content */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="td-card p-8 md:p-12 mb-12"
+              >
+                <div className="prose prose-lg max-w-none
+                  prose-headings:text-tielo-navy prose-headings:font-rubik
+                  prose-p:text-tielo-navy/80 prose-p:leading-relaxed
+                  prose-a:text-tielo-orange prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-tielo-navy
+                  prose-ul:text-tielo-navy/80
+                  prose-ol:text-tielo-navy/80
+                  prose-blockquote:border-l-tielo-orange prose-blockquote:text-tielo-navy/70
+                  prose-img:rounded-td
+                ">
+                  <TipTapRenderer content={post.content} />
+                </div>
+              </motion.div>
 
               {/* Related Posts */}
               {relatedPosts.length > 0 && (
-                <div className="mt-16 pt-16 border-t border-gray-200">
-                  <h2 className="text-2xl font-bold mb-8 text-tielo-navy">Gerelateerde artikelen</h2>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="mt-16 pt-16 border-t border-tielo-navy/10"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-tielo-navy">
+                      Gerelateerde artikelen
+                    </h2>
+                    <Link
+                      href="/blog"
+                      className="text-tielo-orange hover:text-tielo-orange/80 font-medium inline-flex items-center gap-2"
+                    >
+                      Alle blogs
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                   <div className="grid md:grid-cols-3 gap-6">
-                    {relatedPosts.map((relatedPost) => (
+                    {relatedPosts.map((relatedPost, index) => (
                       <motion.article
                         key={relatedPost.id}
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="bg-gray-50 rounded-td overflow-hidden hover:shadow-md transition-shadow group"
+                        transition={{ delay: index * 0.1 }}
+                        className="td-card overflow-hidden hover:shadow-lg transition-all group"
                       >
                         <Link href={`/blog/${relatedPost.slug}`} className="block">
                           {relatedPost.featured_image_url && (
-                            <div className="aspect-video overflow-hidden">
+                            <div className="aspect-video overflow-hidden bg-tielo-steel/10">
                               <img
                                 src={relatedPost.featured_image_url}
                                 alt={relatedPost.title}
@@ -143,20 +210,29 @@ export function BlogPost({ slug }: BlogPostProps) {
                             </div>
                           )}
                           <div className="p-4">
-                            <h3 className="font-semibold text-tielo-navy group-hover:text-tielo-orange transition-colors line-clamp-2 mb-2">
+                            {relatedPost.categories.length > 0 && (
+                              <span className="inline-block px-2 py-1 text-xs font-bold uppercase rounded-full bg-tielo-orange/10 text-tielo-orange mb-2">
+                                {relatedPost.categories[0]}
+                              </span>
+                            )}
+                            <h3 className="font-bold text-tielo-navy group-hover:text-tielo-orange transition-colors line-clamp-2 mb-2">
                               {relatedPost.title}
                             </h3>
                             {relatedPost.excerpt && (
-                              <p className="text-sm text-gray-600 line-clamp-2">
+                              <p className="text-sm text-tielo-navy/70 line-clamp-2 mb-3">
                                 {relatedPost.excerpt}
                               </p>
                             )}
+                            <div className="text-sm text-tielo-navy/50 flex items-center gap-2">
+                              <Clock className="w-3 h-3" />
+                              {relatedPost.reading_time} min
+                            </div>
                           </div>
                         </Link>
                       </motion.article>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BlogNewsletter } from '../components/blog/BlogNewsletter';
 import { useSupabaseBlogPosts } from '../hooks/useSupabaseBlogPosts';
-import { Loader, Calendar } from 'lucide-react';
+import { Loader, Calendar, Clock, ChevronRight } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { Link } from '../components/Link';
 import { motion } from 'framer-motion';
@@ -13,7 +13,7 @@ export function Blog() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-tielo-offwhite">
         <Loader className="w-8 h-8 animate-spin text-tielo-orange" />
       </div>
     );
@@ -21,19 +21,23 @@ export function Blog() {
 
   if (error) {
     return (
-      <div className="min-h-screen pt-32 px-4">
+      <div className="min-h-screen pt-32 px-4 bg-tielo-offwhite">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-red-600 mb-2">{error}</p>
-          <p className="text-gray-600">Er is een fout opgetreden bij het laden van de blogs</p>
+          <p className="text-tielo-navy/60">Er is een fout opgetreden bij het laden van de blogs</p>
         </div>
       </div>
     );
   }
 
+  const allCategories = Array.from(
+    new Set(posts.flatMap(post => post.categories))
+  ).sort();
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-tielo-offwhite">
       <SEO
-        title="Blog"
+        title="Blog - Inzichten & Tips"
         description="Ontdek de laatste inzichten over AI, automatisering en digitale transformatie. Praktische tips en strategieën voor jouw bedrijf."
         keywords={[
           'AI Blog',
@@ -47,24 +51,91 @@ export function Blog() {
         ogType="website"
         canonical="https://www.tielo-digital.nl/blog"
       />
-      <div className="pt-32 pb-20">
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-16 bg-tielo-navy relative overflow-hidden">
+        <div className="absolute inset-0 td-striped opacity-30" />
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-3 block">
+                Kennisbank
+              </span>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 font-rubik text-white">
+                Blog & Inzichten
+              </h1>
+              <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+                Praktische tips, strategieën en inzichten over digitalisering, automatisering en online groeien.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Category Filter */}
+      {allCategories.length > 0 && (
+        <section className="py-8 border-b border-tielo-navy/10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-wrap gap-3 justify-center">
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  className={`px-4 py-2 rounded-td font-medium transition-all ${
+                    selectedCategory === null
+                      ? 'bg-tielo-orange text-white shadow-sm'
+                      : 'bg-white text-tielo-navy hover:bg-tielo-steel/10 border border-tielo-navy/10'
+                  }`}
+                >
+                  Alles
+                </button>
+                {allCategories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-4 py-2 rounded-td font-medium transition-all ${
+                      selectedCategory === category
+                        ? 'bg-tielo-orange text-white shadow-sm'
+                        : 'bg-white text-tielo-navy hover:bg-tielo-steel/10 border border-tielo-navy/10'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Blog Posts Grid */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold mb-4 font-rubik text-tielo-navy">
-                Blog
-              </h1>
-              <p className="text-xl text-gray-600">
-                Inzichten en nieuws over AI en automatisering
-              </p>
-            </div>
-
             {posts.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-600">
-                  Nog geen blogs beschikbaar. Check later terug!
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-20 td-card max-w-md mx-auto"
+              >
+                <p className="text-tielo-navy/60 mb-4">
+                  {selectedCategory
+                    ? `Geen blogs gevonden in deze categorie.`
+                    : 'Nog geen blogs beschikbaar. Check later terug!'
+                  }
                 </p>
-              </div>
+                {selectedCategory && (
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className="text-tielo-orange hover:text-tielo-orange/80 font-medium"
+                  >
+                    Bekijk alle blogs
+                  </button>
+                )}
+              </motion.div>
             ) : (
               <>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -72,13 +143,14 @@ export function Blog() {
                     <motion.article
                       key={post.id}
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white rounded-td overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group"
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.05 }}
+                      className="td-card overflow-hidden hover:shadow-lg transition-all duration-300 group"
                     >
-                      <Link href={`/blog/${post.slug}`} className="block">
+                      <Link href={`/blog/${post.slug}`} className="block h-full flex flex-col">
                         {post.featured_image_url && (
-                          <div className="aspect-video overflow-hidden bg-gray-100">
+                          <div className="aspect-video overflow-hidden bg-tielo-steel/10">
                             <img
                               src={post.featured_image_url}
                               alt={post.title}
@@ -87,35 +159,46 @@ export function Blog() {
                             />
                           </div>
                         )}
-                        <div className="p-6">
+                        <div className="p-6 flex-1 flex flex-col">
                           {post.categories.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-3">
                               {post.categories.slice(0, 2).map((category) => (
                                 <span
                                   key={category}
-                                  className="px-3 py-1 text-xs font-medium rounded-full bg-tielo-orange/10 text-tielo-orange"
+                                  className="px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full bg-tielo-orange/10 text-tielo-orange"
                                 >
                                   {category}
                                 </span>
                               ))}
                             </div>
                           )}
-                          <h2 className="text-xl font-bold mb-3 text-tielo-navy group-hover:text-tielo-orange transition-colors line-clamp-2">
+                          <h2 className="text-xl font-bold mb-3 text-tielo-navy group-hover:text-tielo-orange transition-colors line-clamp-2 flex-shrink-0">
                             {post.title}
                           </h2>
                           {post.excerpt && (
-                            <p className="text-gray-600 mb-4 line-clamp-3">
+                            <p className="text-tielo-navy/70 mb-4 line-clamp-3 flex-grow">
                               {post.excerpt}
                             </p>
                           )}
-                          <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center justify-between text-sm text-tielo-navy/50 border-t border-tielo-navy/5 pt-4 mt-auto">
                             <div className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               <time dateTime={post.published_at || post.created_at}>
-                                {new Date(post.published_at || post.created_at).toLocaleDateString('nl-NL')}
+                                {new Date(post.published_at || post.created_at).toLocaleDateString('nl-NL', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric'
+                                })}
                               </time>
                             </div>
-                            <span>{post.reading_time} min leestijd</span>
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{post.reading_time} min</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-tielo-orange font-medium mt-4 group-hover:gap-3 transition-all">
+                            Lees meer
+                            <ChevronRight className="w-4 h-4" />
                           </div>
                         </div>
                       </Link>
@@ -129,10 +212,10 @@ export function Blog() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-td font-medium transition-colors ${
+                        className={`px-4 py-2 rounded-td font-bold transition-all ${
                           currentPage === page
-                            ? 'bg-tielo-orange text-white'
-                            : 'bg-white text-tielo-navy hover:bg-tielo-orange/10'
+                            ? 'bg-tielo-orange text-white shadow-sm'
+                            : 'bg-white text-tielo-navy hover:bg-tielo-steel/10 border border-tielo-navy/10'
                         }`}
                       >
                         {page}
@@ -144,7 +227,7 @@ export function Blog() {
             )}
           </div>
         </div>
-      </div>
+      </section>
 
       <BlogNewsletter />
     </div>

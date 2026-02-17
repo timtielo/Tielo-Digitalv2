@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase/client';
 import type { SupabaseBlogPost } from './useSupabaseBlogPosts';
 
+const TIELO_USER_ID = 'a3111414-1473-4443-8f6c-2fbdd4fd0c7d';
+
 export function useSupabaseBlogPost(slug: string) {
   const [post, setPost] = useState<SupabaseBlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<SupabaseBlogPost[]>([]);
@@ -24,6 +26,7 @@ export function useSupabaseBlogPost(slug: string) {
         .select('*')
         .eq('slug', slug)
         .eq('status', 'published')
+        .eq('user_id', TIELO_USER_ID)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
@@ -41,6 +44,7 @@ export function useSupabaseBlogPost(slug: string) {
           .from('blog_posts')
           .select('*')
           .eq('status', 'published')
+          .eq('user_id', TIELO_USER_ID)
           .neq('id', data.id)
           .overlaps('categories', data.categories)
           .order('published_at', { ascending: false })
