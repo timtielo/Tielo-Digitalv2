@@ -357,14 +357,13 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                   </div>
                 </button>
               )}
-              <Button
-                variant="outline"
-                className="w-full justify-center gap-2 font-bold hover:bg-white/10 text-white border-white/20 hover:border-white/40 transition-colors"
+              <button
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-td font-bold bg-tielo-orange/10 text-tielo-orange border-2 border-tielo-orange/30 hover:bg-tielo-orange hover:text-white hover:border-tielo-orange transition-all"
                 onClick={handleSignOut}
               >
                 <LogOut className="h-4 w-4" />
                 Uitloggen
-              </Button>
+              </button>
             </div>
           </div>
         </aside>
