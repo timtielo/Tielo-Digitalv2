@@ -178,23 +178,23 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-tielo-offwhite">
       <AnimatePresence>
         {isImpersonating && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-4 right-4 z-50 bg-amber-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
+            className="fixed top-4 right-4 z-50 bg-tielo-orange text-white px-4 py-3 rounded-td shadow-lg flex items-center gap-3 max-w-md"
           >
             <UserCog className="h-5 w-5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold">Impersonating User</p>
+              <p className="text-sm font-bold">Impersonating User</p>
               <p className="text-xs opacity-90 truncate">{impersonatedUserEmail}</p>
             </div>
             <button
               onClick={returnToAdmin}
-              className="flex-shrink-0 hover:bg-amber-600 rounded p-1 transition-colors"
+              className="flex-shrink-0 hover:bg-white/20 rounded p-1 transition-colors"
               title="Return to admin"
             >
               <XCircle className="h-5 w-5" />
@@ -204,49 +204,48 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
       </AnimatePresence>
       <div className="flex h-screen overflow-hidden">
         <aside className={`
-          fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out
+          fixed inset-y-0 left-0 z-50 w-64 bg-tielo-navy border-r border-tielo-steel/20 transform transition-transform duration-200 ease-in-out
           lg:relative lg:translate-x-0
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
-          <div className="flex flex-col h-full bg-gradient-to-b from-gray-50 to-white">
-            <div className="flex items-center justify-between h-20 px-6 border-b border-gray-200 bg-white">
+          <div className="flex flex-col h-full relative overflow-hidden">
+            <div className="absolute inset-0 td-striped opacity-5" />
+            <div className="flex items-center justify-between h-20 px-6 border-b border-white/10 relative">
               <button
                 onClick={() => handleNavigation('/dashboard')}
-                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-cyan-700 transition-all"
+                className="text-2xl font-bold font-rubik text-white hover:text-tielo-orange transition-all"
               >
                 Dashboard
               </button>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="lg:hidden p-2 hover:bg-white/10 rounded-td transition-colors"
               >
-                <X className="h-6 w-6 text-gray-600" />
+                <X className="h-6 w-6 text-white" />
               </button>
             </div>
 
-            <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto relative">
               {loading ? (
                 <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-tielo-orange"></div>
                 </div>
               ) : (
                 <>
                   <div className="mb-4 px-3">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Menu</p>
+                    <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-2">Menu</p>
                   </div>
                   <button
                     onClick={() => handleNavigation('/dashboard')}
                     className={`
-                      w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
+                      w-full flex items-center gap-3 px-4 py-3.5 rounded-td text-sm font-bold transition-all duration-200 relative
                       ${currentPage === 'home'
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]'
-                        : 'text-gray-700 hover:bg-white hover:shadow-md'
+                        ? 'bg-tielo-orange text-white shadow-lg'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white'
                       }
                     `}
                   >
-                    <div className={`p-2 rounded-lg ${currentPage === 'home' ? 'bg-white/20' : 'bg-gray-100'}`}>
-                      <Home className={`h-4 w-4 ${currentPage === 'home' ? 'text-white' : 'text-gray-600'}`} />
-                    </div>
+                    <Home className="h-4 w-4" />
                     <span className="flex-1 text-left">Home</span>
                     {currentPage === 'home' && <ChevronRight className="h-4 w-4 ml-auto" />}
                   </button>
@@ -254,16 +253,14 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                     <button
                       onClick={() => handleNavigation('/dashboard/tasks')}
                       className={`
-                        w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
+                        w-full flex items-center gap-3 px-4 py-3.5 rounded-td text-sm font-bold transition-all duration-200
                         ${currentPage === 'tasks'
-                          ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]'
-                          : 'text-gray-700 hover:bg-white hover:shadow-md'
+                          ? 'bg-tielo-orange text-white shadow-lg'
+                          : 'text-white/70 hover:bg-white/10 hover:text-white'
                         }
                       `}
                     >
-                      <div className={`p-2 rounded-lg ${currentPage === 'tasks' ? 'bg-white/20' : 'bg-gray-100'}`}>
-                        <ListTodo className={`h-4 w-4 ${currentPage === 'tasks' ? 'text-white' : 'text-gray-600'}`} />
-                      </div>
+                      <ListTodo className="h-4 w-4" />
                       <span className="flex-1 text-left">Taken</span>
                       {currentPage === 'tasks' && <ChevronRight className="h-4 w-4 ml-auto" />}
                     </button>
@@ -271,24 +268,19 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                   {navigation.map((item) => {
                     const Icon = iconMap[item.icon_name] || User;
                     const isActive = currentPage === item.module_key;
-                    const isWerkspot = item.module_key === 'werkspot';
                     return (
                       <button
                         key={item.module_key}
                         onClick={() => handleNavigation(item.route_path)}
                         className={`
-                          w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
-                          ${isActive && isWerkspot
-                            ? 'bg-white text-gray-900 shadow-lg shadow-gray-500/20 scale-[1.02] border-2 border-gray-200'
-                            : isActive
-                            ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]'
-                            : 'text-gray-700 hover:bg-white hover:shadow-md'
+                          w-full flex items-center gap-3 px-4 py-3.5 rounded-td text-sm font-bold transition-all duration-200
+                          ${isActive
+                            ? 'bg-tielo-orange text-white shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                           }
                         `}
                       >
-                        <div className={`p-2 rounded-lg ${isActive && isWerkspot ? 'bg-gray-100' : isActive ? 'bg-white/20' : 'bg-gray-100'}`}>
-                          <Icon className={`h-4 w-4 ${isActive && isWerkspot ? 'text-gray-700' : isActive ? 'text-white' : 'text-gray-600'}`} />
-                        </div>
+                        <Icon className="h-4 w-4" />
                         <span className="flex-1 text-left">{item.display_name}</span>
                         {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
                       </button>
@@ -297,39 +289,35 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
 
                   {isAdmin && (
                     <>
-                      <div className="border-t border-gray-200 my-4" />
+                      <div className="border-t border-white/10 my-4" />
                       <div className="mb-3 px-3">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Beheer</p>
+                        <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Beheer</p>
                       </div>
                       <button
                         onClick={() => handleNavigation('/dashboard/admin')}
                         className={`
-                          w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
+                          w-full flex items-center gap-3 px-4 py-3.5 rounded-td text-sm font-bold transition-all duration-200
                           ${currentPage === 'admin'
-                            ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-lg shadow-rose-500/30 scale-[1.02]'
-                            : 'text-gray-700 hover:bg-white hover:shadow-md'
+                            ? 'bg-tielo-orange text-white shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                           }
                         `}
                       >
-                        <div className={`p-2 rounded-lg ${currentPage === 'admin' ? 'bg-white/20' : 'bg-gray-100'}`}>
-                          <Shield className={`h-4 w-4 ${currentPage === 'admin' ? 'text-white' : 'text-gray-600'}`} />
-                        </div>
+                        <Shield className="h-4 w-4" />
                         <span className="flex-1 text-left">Admin</span>
                         {currentPage === 'admin' && <ChevronRight className="h-4 w-4 ml-auto" />}
                       </button>
                       <button
                         onClick={() => handleNavigation('/dashboard/mcc')}
                         className={`
-                          w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200
+                          w-full flex items-center gap-3 px-4 py-3.5 rounded-td text-sm font-bold transition-all duration-200
                           ${currentPage === 'mcc'
-                            ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/30 scale-[1.02]'
-                            : 'text-gray-700 hover:bg-white hover:shadow-md'
+                            ? 'bg-tielo-orange text-white shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                           }
                         `}
                       >
-                        <div className={`p-2 rounded-lg ${currentPage === 'mcc' ? 'bg-white/20' : 'bg-gray-100'}`}>
-                          <Target className={`h-4 w-4 ${currentPage === 'mcc' ? 'text-white' : 'text-gray-600'}`} />
-                        </div>
+                        <Target className="h-4 w-4" />
                         <span className="flex-1 text-left">Mission Control</span>
                         {currentPage === 'mcc' && <ChevronRight className="h-4 w-4 ml-auto" />}
                       </button>
@@ -339,31 +327,31 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
               )}
             </nav>
 
-            <div className="border-t border-gray-200 p-4 bg-white">
+            <div className="border-t border-white/10 p-4 relative">
               {userProfile && (
                 <button
                   onClick={() => handleNavigation('/dashboard/profile')}
-                  className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors mb-3"
+                  className="w-full flex items-center gap-3 px-3 py-3 rounded-td hover:bg-white/10 transition-colors mb-3"
                 >
                   <div className="relative flex-shrink-0">
                     {userProfile.profile_picture_url ? (
                       <img
                         src={userProfile.profile_picture_url}
                         alt={userProfile.name || 'Profile'}
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200"
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-tielo-orange/50"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center">
-                        <User className="h-6 w-6 text-blue-600" />
+                      <div className="w-12 h-12 rounded-full bg-tielo-orange/20 flex items-center justify-center">
+                        <User className="h-6 w-6 text-tielo-orange" />
                       </div>
                     )}
-                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-tielo-navy"></div>
                   </div>
                   <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
+                    <p className="text-sm font-bold text-white truncate">
                       {userProfile.name || 'User'}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-white/60 truncate">
                       {userProfile.business_name || 'Bekijk profiel'}
                     </p>
                   </div>
@@ -371,7 +359,7 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
               )}
               <Button
                 variant="outline"
-                className="w-full justify-center gap-2 font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
+                className="w-full justify-center gap-2 font-bold hover:bg-white/10 text-white border-white/20 hover:border-white/40 transition-colors"
                 onClick={handleSignOut}
               >
                 <LogOut className="h-4 w-4" />
@@ -383,39 +371,39 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
 
         {mobileMenuOpen && (
           <div
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            className="fixed inset-0 z-40 bg-tielo-navy/80 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
 
-        <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
-          <header className="h-16 md:h-20 bg-white border-b border-gray-200 flex items-center px-4 md:px-6 lg:px-8 shadow-sm flex-shrink-0">
+        <div className="flex-1 flex flex-col overflow-hidden bg-tielo-offwhite">
+          <header className="h-16 md:h-20 bg-white border-b border-tielo-steel/20 flex items-center px-4 md:px-6 lg:px-8 shadow-sm flex-shrink-0">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden mr-3 p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+              className="lg:hidden mr-3 p-2 hover:bg-tielo-orange/10 rounded-td transition-colors flex-shrink-0"
             >
-              <Menu className="h-5 w-5 md:h-6 md:w-6 text-gray-600" />
+              <Menu className="h-5 w-5 md:h-6 md:w-6 text-tielo-navy" />
             </button>
             <div className="flex-1 min-w-0">
-              <div className="hidden sm:flex items-center gap-2 text-xs md:text-sm text-gray-500 mb-1">
+              <div className="hidden sm:flex items-center gap-2 text-xs md:text-sm text-tielo-navy/60 mb-1">
                 <button
                   onClick={() => handleNavigation('/dashboard')}
-                  className="hover:text-blue-600 transition-colors"
+                  className="hover:text-tielo-orange transition-colors font-medium"
                 >
                   Dashboard
                 </button>
                 <ChevronRight className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                <span className="text-gray-900 font-medium capitalize truncate">
+                <span className="text-tielo-navy font-bold capitalize truncate">
                   {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
                 </span>
               </div>
-              <h2 className="text-lg md:text-2xl font-bold text-gray-900 truncate">
+              <h2 className="text-lg md:text-2xl font-bold font-rubik text-tielo-navy truncate">
                 {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
               </h2>
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto bg-gray-50">
+          <main className="flex-1 overflow-y-auto bg-tielo-offwhite">
             <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-8">
               {children}
             </div>
