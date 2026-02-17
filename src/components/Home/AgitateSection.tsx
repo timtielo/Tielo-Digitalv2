@@ -29,7 +29,7 @@ export function AgitateSection() {
             Ik werk voor:
           </h2>
           <p className="text-tielo-navy/60 text-lg">
-            Niet voor grote corporate bedrijven.
+            Voor lokale vaklui.
           </p>
         </motion.div>
 
