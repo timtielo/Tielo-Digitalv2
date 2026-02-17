@@ -9,7 +9,7 @@ const WHATSAPP_URL = 'https://wa.me/31620948502?text=Hey%20Tim,';
 
 const contactDetails = [
   { icon: Phone, label: 'Telefoon', value: '+31 6 20948502', href: 'tel:+31620948502' },
-  { icon: Mail, label: 'Email', value: 'tim@tielo-digital.nl', href: 'mailto:tim@tielo-digital.nl' },
+  { icon: Mail, label: 'Email', value: 'info@tielo-digital.nl', href: 'mailto:info@tielo-digital.nl' },
   { icon: MapPin, label: 'Locatie', value: 'Utrecht, Nederland', href: null },
   { icon: Building2, label: 'KVK', value: '87850893', href: null },
 ];
