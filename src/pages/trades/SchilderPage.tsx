@@ -5,6 +5,7 @@ import { Link } from '../../components/Link';
 import { SEO } from '../../components/SEO';
 import { PricingCard } from '../../components/common/PricingCard';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
+import { FAQSection } from '../../components/common/FAQSection';
 
 const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?sa=X&sca_esv=f2a3ab287e621a42&biw=1710&bih=862&sxsrf=ANbL-n77AWrooKCSmFta4IKSSxntHiUdUg:1771270283560&q=Tielo+Digital+Reviews&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxI2MzO2MDMzNzE2NTczNDY3MrC03MDI-IpRNCQzNSdfwSUzPbMkMUchKLUsM7W8eBErdnEAia9Gd0oAAAA&rldimm=6638667435761372099&tbm=lcl&hl=en-NL&ved=2ahUKEwjS6rWA4N6SAxUW1QIHHbqIKQIQ9fQKegQIUhAG#lkt=LocalPoiReviews';
 
@@ -21,6 +22,29 @@ const idealFor = [
   'Zelfstandige schilders',
   'Bedrijven die particuliere klanten willen',
   'Schilders die professioneel willen overkomen',
+];
+
+const faqs = [
+  {
+    question: "Hoe belangrijk zijn foto's op een schilder-website?",
+    answer: "Cruciaal. Klanten beslissen op basis van zichtbaar resultaat."
+  },
+  {
+    question: "Hoe krijg ik meer particuliere opdrachten?",
+    answer: "Door lokaal vindbaar te zijn en duidelijke voorbeelden van binnen- en buitenschilderwerk te tonen."
+  },
+  {
+    question: "Moet ik prijzen op mijn website zetten?",
+    answer: "Niet per se. Vaak is een offerte-aanvraag beter, omdat schilderwerk maatwerk is."
+  },
+  {
+    question: "Werkt SEO voor schilders?",
+    answer: "Ja, vooral lokaal. 'Schilder + plaatsnaam' wordt veel gezocht."
+  },
+  {
+    question: "Kan een website helpen in rustige periodes?",
+    answer: "Ja. Een goede online aanwezigheid zorgt voor constante aanvragen."
+  }
 ];
 
 export function SchilderPage() {
@@ -234,6 +258,8 @@ export function SchilderPage() {
       </section>
 
       <PricingCard />
+
+      <FAQSection faqs={faqs} />
 
       <section className="py-16 sm:py-24 bg-tielo-cream relative overflow-hidden">
         <div className="absolute inset-0 td-striped opacity-40" />

@@ -5,6 +5,7 @@ import { Link } from '../../components/Link';
 import { SEO } from '../../components/SEO';
 import { PricingCard } from '../../components/common/PricingCard';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
+import { FAQSection } from '../../components/common/FAQSection';
 
 const features = [
   'Vindbaarheid op "loodgieter + plaatsnaam"',
@@ -20,6 +21,29 @@ const idealFor = [
   'Spoedgerichte bedrijven',
   'Loodgieters die minder afhankelijk willen zijn van Werkspot',
   'Vakmannen die lokaal beter gevonden willen worden',
+];
+
+const faqs = [
+  {
+    question: "Hoe krijg ik meer spoedklussen als loodgieter?",
+    answer: "Door lokaal vindbaar te zijn op zoekwoorden als 'loodgieter + plaats' en een directe bel- of WhatsApp-knop op je website te hebben. Bij spoed willen mensen direct contact."
+  },
+  {
+    question: "Is een website nodig als ik al Werkspot gebruik?",
+    answer: "Ja. Werkspot levert leads, maar je betaalt per aanvraag en concurreert met anderen. Met een eigen website krijg je directe aanvragen zonder tussenpartij."
+  },
+  {
+    question: "Hoe snel kan ik vindbaar worden in Google als loodgieter?",
+    answer: "Voor lokale zoekwoorden vaak binnen enkele weken, mits je Google Bedrijfsprofiel en website goed zijn ingericht."
+  },
+  {
+    question: "Wat moet er op een loodgieter-website staan?",
+    answer: "Spoedknop, duidelijke diensten (lekkage, verstopping, CV), reviews, regio's waar je werkt en directe contactmogelijkheden."
+  },
+  {
+    question: "Kan ik ook 's avonds aanvragen krijgen via mijn website?",
+    answer: "Ja. De website werkt 24/7. Met een klikbare telefoonknop of WhatsApp-knop kunnen klanten je direct bereiken."
+  }
 ];
 
 export function LoodgieterPage() {
@@ -182,6 +206,8 @@ export function LoodgieterPage() {
       </section>
 
       <PricingCard />
+
+      <FAQSection faqs={faqs} />
 
       <section className="py-16 sm:py-24 bg-tielo-cream relative overflow-hidden">
         <div className="absolute inset-0 td-striped opacity-40" />

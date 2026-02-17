@@ -5,6 +5,7 @@ import { Link } from '../../components/Link';
 import { SEO } from '../../components/SEO';
 import { PricingCard } from '../../components/common/PricingCard';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
+import { FAQSection } from '../../components/common/FAQSection';
 
 const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?sa=X&sca_esv=f2a3ab287e621a42&biw=1710&bih=862&sxsrf=ANbL-n77AWrooKCSmFta4IKSSxntHiUdUg:1771270283560&q=Tielo+Digital+Reviews&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxI2MzO2MDMzNzE2NTczNDY3MrC03MDI-IpRNCQzNSdfwSUzPbMkMUchKLUsM7W8eBErdnEAia9Gd0oAAAA&rldimm=6638667435761372099&tbm=lcl&hl=en-NL&ved=2ahUKEwjS6rWA4N6SAxUW1QIHHbqIKQIQ9fQKegQIUhAG#lkt=LocalPoiReviews';
 
@@ -21,6 +22,29 @@ const idealFor = [
   'Aannemers die grotere projecten willen',
   'Bedrijven die samenwerken met architecten of VvE\'s',
   'Vakmannen die professioneel willen overkomen',
+];
+
+const faqs = [
+  {
+    question: "Waarom is een portfolio belangrijk voor aannemers?",
+    answer: "Opdrachtgevers willen eerdere projecten zien voordat ze een aannemer vertrouwen. Beeld en referenties maken het verschil."
+  },
+  {
+    question: "Hoe trek ik grotere projecten aan via mijn website?",
+    answer: "Door je projecten professioneel te presenteren en duidelijk te maken dat je complete bouwtrajecten uitvoert."
+  },
+  {
+    question: "Is een website ook relevant als ik vooral via netwerk werk?",
+    answer: "Ja. Ook bij netwerkopdrachten wordt je naam eerst gegoogeld. Zonder website verlies je vertrouwen."
+  },
+  {
+    question: "Moet een aannemer SEO gebruiken?",
+    answer: "Ja, vooral lokaal. Zoekwoorden als 'aannemer + plaats' of 'verbouwing + regio' leveren gericht verkeer op."
+  },
+  {
+    question: "Kan ik referenties van opdrachtgevers tonen?",
+    answer: "Ja, dat versterkt vertrouwen aanzienlijk. Zeker bij VvE's en grotere projecten."
+  }
 ];
 
 export function AannemerPage() {
@@ -244,6 +268,8 @@ export function AannemerPage() {
       </section>
 
       <PricingCard />
+
+      <FAQSection faqs={faqs} />
 
       <section className="py-16 sm:py-24 bg-tielo-cream relative overflow-hidden">
         <div className="absolute inset-0 td-striped opacity-40" />

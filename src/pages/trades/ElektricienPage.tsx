@@ -5,6 +5,7 @@ import { Link } from '../../components/Link';
 import { SEO } from '../../components/SEO';
 import { PricingCard } from '../../components/common/PricingCard';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
+import { FAQSection } from '../../components/common/FAQSection';
 
 const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?sa=X&sca_esv=f2a3ab287e621a42&biw=1710&bih=862&sxsrf=ANbL-n77AWrooKCSmFta4IKSSxntHiUdUg:1771270283560&q=Tielo+Digital+Reviews&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxI2MzO2MDMzNzE2NTczNDY3MrC03MDI-IpRNCQzNSdfwSUzPbMkMUchKLUsM7W8eBErdnEAia9Gd0oAAAA&rldimm=6638667435761372099&tbm=lcl&hl=en-NL&ved=2ahUKEwjS6rWA4N6SAxUW1QIHHbqIKQIQ9fQKegQIUhAG#lkt=LocalPoiReviews';
 
@@ -21,6 +22,29 @@ const idealFor = [
   'Zelfstandige elektriciens',
   'Installatiebedrijven',
   'Elektriciens die nieuwbouwprojecten willen aantrekken',
+];
+
+const faqs = [
+  {
+    question: "Hoe onderscheid ik mij als elektricien online?",
+    answer: "Door certificeringen, specialisaties (laadpalen, domotica) en projectvoorbeelden duidelijk te tonen."
+  },
+  {
+    question: "Werkt Google voor elektriciens?",
+    answer: "Ja. Veel mensen zoeken op 'elektricien + plaatsnaam' of 'groepenkast vervangen + regio'."
+  },
+  {
+    question: "Moet ik mijn certificeringen op mijn website zetten?",
+    answer: "Ja. Dit verhoogt vertrouwen en laat professionaliteit zien."
+  },
+  {
+    question: "Is een website nuttig als ik vooral via aannemers werk?",
+    answer: "Ja. Aannemers checken je online voordat ze met je samenwerken."
+  },
+  {
+    question: "Kan ik zakelijke klanten aantrekken via mijn website?",
+    answer: "Ja. Door je te positioneren als specialist in installaties of nieuwbouw."
+  }
 ];
 
 export function ElektricienPage() {
@@ -243,6 +267,8 @@ export function ElektricienPage() {
       </section>
 
       <PricingCard />
+
+      <FAQSection faqs={faqs} />
 
       <section className="py-16 sm:py-24 bg-tielo-cream relative overflow-hidden">
         <div className="absolute inset-0 td-striped opacity-40" />

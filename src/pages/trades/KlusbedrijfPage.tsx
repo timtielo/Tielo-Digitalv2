@@ -5,6 +5,7 @@ import { Link } from '../../components/Link';
 import { SEO } from '../../components/SEO';
 import { PricingCard } from '../../components/common/PricingCard';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
+import { FAQSection } from '../../components/common/FAQSection';
 
 const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?sa=X&sca_esv=f2a3ab287e621a42&biw=1710&bih=862&sxsrf=ANbL-n77AWrooKCSmFta4IKSSxntHiUdUg:1771270283560&q=Tielo+Digital+Reviews&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxI2MzO2MDMzNzE2NTczNDY3MrC03MDI-IpRNCQzNSdfwSUzPbMkMUchKLUsM7W8eBErdnEAia9Gd0oAAAA&rldimm=6638667435761372099&tbm=lcl&hl=en-NL&ved=2ahUKEwjS6rWA4N6SAxUW1QIHHbqIKQIQ9fQKegQIUhAG#lkt=LocalPoiReviews';
 
@@ -21,6 +22,29 @@ const idealFor = [
   'Allround klusbedrijven',
   'ZZP\'ers',
   'Bedrijven die lokaal meer aanvragen willen',
+];
+
+const faqs = [
+  {
+    question: "Wat moet er op een website voor een klusbedrijf staan?",
+    answer: "Overzicht van diensten, duidelijke foto's, regio en snelle contactoptie."
+  },
+  {
+    question: "Hoe krijg ik meer kleine klussen via Google?",
+    answer: "Door lokaal te optimaliseren en duidelijke dienstenpagina's te maken."
+  },
+  {
+    question: "Is een website nuttig als ik veel via mond-tot-mond werk?",
+    answer: "Ja. Nieuwe klanten zoeken je naam eerst online."
+  },
+  {
+    question: "Kan ik meerdere soorten klussen op één website tonen?",
+    answer: "Ja, maar overzicht is belangrijk. Structuur voorkomt verwarring."
+  },
+  {
+    question: "Hoe zorg ik dat klanten mij snel bereiken?",
+    answer: "Met een prominente WhatsApp-knop en klikbare telefoonknop."
+  }
 ];
 
 export function KlusbedrijfPage() {
@@ -234,6 +258,8 @@ export function KlusbedrijfPage() {
       </section>
 
       <PricingCard />
+
+      <FAQSection faqs={faqs} />
 
       <section className="py-16 sm:py-24 bg-tielo-cream relative overflow-hidden">
         <div className="absolute inset-0 td-striped opacity-40" />

@@ -5,6 +5,7 @@ import { Link } from '../../components/Link';
 import { SEO } from '../../components/SEO';
 import { PricingCard } from '../../components/common/PricingCard';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
+import { FAQSection } from '../../components/common/FAQSection';
 
 const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?sa=X&sca_esv=f2a3ab287e621a42&biw=1710&bih=862&sxsrf=ANbL-n77AWrooKCSmFta4IKSSxntHiUdUg:1771270283560&q=Tielo+Digital+Reviews&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxI2MzO2MDMzNzE2NTczNDY3MrC03MDI-IpRNCQzNSdfwSUzPbMkMUchKLUsM7W8eBErdnEAia9Gd0oAAAA&rldimm=6638667435761372099&tbm=lcl&hl=en-NL&ved=2ahUKEwjS6rWA4N6SAxUW1QIHHbqIKQIQ9fQKegQIUhAG#lkt=LocalPoiReviews';
 
@@ -20,6 +21,29 @@ const idealFor = [
   'Zelfstandige metselaars',
   'Bedrijven die met aannemers samenwerken',
   'Vakmannen die minder afhankelijk willen zijn van tussenpartijen',
+];
+
+const faqs = [
+  {
+    question: "Hoe vinden mensen een metselaar online?",
+    answer: "Meestal via Google op 'metselaar + regio' of via aannemers die online zoeken naar vakmensen."
+  },
+  {
+    question: "Moet een metselaar een portfolio hebben?",
+    answer: "Ja. Gevelwerk en renovaties worden visueel beoordeeld."
+  },
+  {
+    question: "Is een website nuttig als ik alleen voor aannemers werk?",
+    answer: "Ja. Aannemers controleren je professionaliteit online."
+  },
+  {
+    question: "Hoe onderscheid ik mij van andere metselaars?",
+    answer: "Door specialisaties (restauratie, nieuwbouw, gevelrenovatie) duidelijk te tonen."
+  },
+  {
+    question: "Kan ik via een website meer particuliere klanten krijgen?",
+    answer: "Ja, mits je ook specifieke diensten voor particulieren benoemt."
+  }
 ];
 
 export function MetselaarPage() {
@@ -250,6 +274,8 @@ export function MetselaarPage() {
       </section>
 
       <PricingCard />
+
+      <FAQSection faqs={faqs} />
 
       <section className="py-16 sm:py-24 bg-tielo-cream relative overflow-hidden">
         <div className="absolute inset-0 td-striped opacity-40" />
