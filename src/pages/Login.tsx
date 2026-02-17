@@ -13,13 +13,13 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    avatarSrc: "https://www.tgildegevelwerken.nl/tgildegevelwerkenlogo-transparant.svg",
+    avatarSrc: "https://lh3.googleusercontent.com/a/ACg8ocJLJmHzjw8QkAwM38S1vf98OwWQexkDLvkNXuEgy2HRdB11EA=s72-c-rp-mo-br100",
     name: "Job 't Gilde",
     handle: "'t Gilde Gevelwerken",
     text: "Fijn platform voor het beheren van mijn reviews en portfolio!"
   },
   {
-    avatarSrc: "https://www.herhorizon.nl/images/HerHorizontrans.svg",
+    avatarSrc: "https://lh3.googleusercontent.com/a/ACg8ocI-EzTdjl7fL-QXh25p4h_zMIy7T0OdtBzRO9KnpJWwRRjQCw=s72-c-rp-mo-br100",
     name: "Iris Achtereekte",
     handle: "Her Horizon",
     text: "Top voor inzicht in leads en reviews."
@@ -41,7 +41,7 @@ const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial; del
   >
     <img
       src={testimonial.avatarSrc}
-      className="h-10 w-10 object-cover rounded-td flex-shrink-0"
+      className="h-10 w-10 object-cover rounded-full flex-shrink-0"
       alt="avatar"
     />
     <div className="text-sm leading-snug">
