@@ -23,7 +23,14 @@ export function useSupabaseBlogPost(slug: string) {
 
       const { data, error: fetchError } = await supabase
         .from('blog_posts')
-        .select('*')
+        .select(`
+          *,
+          user_profiles (
+            name,
+            business_name,
+            profile_picture
+          )
+        `)
         .eq('slug', slug)
         .eq('status', 'published')
         .eq('user_id', TIELO_USER_ID)
@@ -42,7 +49,14 @@ export function useSupabaseBlogPost(slug: string) {
       if (data.categories && data.categories.length > 0) {
         const { data: related } = await supabase
           .from('blog_posts')
-          .select('*')
+          .select(`
+            *,
+            user_profiles (
+              name,
+              business_name,
+              profile_picture
+            )
+          `)
           .eq('status', 'published')
           .eq('user_id', TIELO_USER_ID)
           .neq('id', data.id)

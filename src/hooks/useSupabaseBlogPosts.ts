@@ -21,6 +21,11 @@ export interface SupabaseBlogPost {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  user_profiles?: {
+    name: string;
+    business_name: string;
+    profile_picture: string | null;
+  };
 }
 
 export function useSupabaseBlogPosts(
@@ -42,10 +47,17 @@ export function useSupabaseBlogPosts(
       setIsLoading(true);
       setError(null);
 
-      // Build query
+      // Build query with user profile join
       let query = supabase
         .from('blog_posts')
-        .select('*', { count: 'exact' })
+        .select(`
+          *,
+          user_profiles (
+            name,
+            business_name,
+            profile_picture
+          )
+        `, { count: 'exact' })
         .eq('status', 'published')
         .eq('user_id', TIELO_USER_ID)
         .order('published_at', { ascending: false, nullsFirst: false });

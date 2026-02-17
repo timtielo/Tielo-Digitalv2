@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BlogNewsletter } from '../components/blog/BlogNewsletter';
 import { useSupabaseBlogPosts } from '../hooks/useSupabaseBlogPosts';
-import { Loader, Calendar, Clock, ChevronRight } from 'lucide-react';
+import { Loader, Calendar, Clock, ChevronRight, User } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { Link } from '../components/Link';
 import { motion } from 'framer-motion';
@@ -180,6 +180,33 @@ export function Blog() {
                               {post.excerpt}
                             </p>
                           )}
+
+                          {(post.user_profiles?.name || post.author_name) && (
+                            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-tielo-navy/5">
+                              {(post.user_profiles?.profile_picture || post.author_avatar_url) ? (
+                                <img
+                                  src={post.user_profiles?.profile_picture || post.author_avatar_url || ''}
+                                  alt={post.user_profiles?.name || post.author_name}
+                                  className="w-8 h-8 rounded-full object-cover border border-tielo-navy/10"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-tielo-orange/10 flex items-center justify-center">
+                                  <User className="w-4 h-4 text-tielo-orange" />
+                                </div>
+                              )}
+                              <div className="flex flex-col text-xs">
+                                <span className="font-medium text-tielo-navy">
+                                  {post.user_profiles?.name || post.author_name}
+                                </span>
+                                {post.user_profiles?.business_name && (
+                                  <span className="text-tielo-navy/50">
+                                    {post.user_profiles.business_name}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
                           <div className="flex items-center justify-between text-sm text-tielo-navy/50 border-t border-tielo-navy/5 pt-4 mt-auto">
                             <div className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />

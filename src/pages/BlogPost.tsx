@@ -89,20 +89,29 @@ export function BlogPost({ slug }: BlogPostProps) {
                 )}
 
                 <div className="flex flex-wrap items-center gap-6 text-sm text-white/70">
-                  {post.author_name && (
+                  {(post.user_profiles?.name || post.author_name) && (
                     <div className="flex items-center gap-3">
-                      {post.author_avatar_url ? (
+                      {(post.user_profiles?.profile_picture || post.author_avatar_url) ? (
                         <img
-                          src={post.author_avatar_url}
-                          alt={post.author_name}
-                          className="w-10 h-10 rounded-full border-2 border-white/20"
+                          src={post.user_profiles?.profile_picture || post.author_avatar_url || ''}
+                          alt={post.user_profiles?.name || post.author_name}
+                          className="w-10 h-10 rounded-full border-2 border-white/20 object-cover"
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-tielo-orange/20 flex items-center justify-center border-2 border-tielo-orange/30">
                           <User className="w-5 h-5 text-tielo-orange" />
                         </div>
                       )}
-                      <span className="font-medium text-white">{post.author_name}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-white">
+                          {post.user_profiles?.name || post.author_name}
+                        </span>
+                        {post.user_profiles?.business_name && (
+                          <span className="text-xs text-white/60">
+                            {post.user_profiles.business_name}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
