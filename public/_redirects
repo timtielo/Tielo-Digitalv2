@@ -2,6 +2,9 @@
 https://meerimpactmarketing.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
 https://i-lizard.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
 
+# Dynamic sitemap from Supabase Edge Function
+/sitemap.xml https://omdigostmkxeqgwscmpe.supabase.co/functions/v1/generate-sitemap 200
+
 # Redirects for deprecated pages (301 permanent redirects to preserve SEO)
 /gratis-guide /diensten/websites 301
 /gratis-guide/bedankt /diensten/websites 301
