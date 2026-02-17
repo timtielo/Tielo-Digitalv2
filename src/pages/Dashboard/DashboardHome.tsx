@@ -170,7 +170,7 @@ function DashboardHomeContent() {
     return (
       <DashboardLayout currentPage="home">
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tielo-orange"></div>
         </div>
       </DashboardLayout>
     );
@@ -183,18 +183,19 @@ function DashboardHomeContent() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl md:rounded-2xl p-6 md:p-8 text-white shadow-xl"
+            className="bg-tielo-navy rounded-td p-6 md:p-8 text-white shadow-xl relative overflow-hidden"
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="absolute inset-0 td-striped opacity-10" />
+            <div className="flex items-start justify-between gap-4 relative">
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                <h1 className="text-2xl md:text-3xl font-bold font-rubik mb-2">
                   Welkom terug, {userProfile.name || 'Admin'}
                 </h1>
-                <p className="text-blue-100 text-base md:text-lg">
+                <p className="text-white/80 text-base md:text-lg">
                   Admin Dashboard - Beheer en Overzicht
                 </p>
               </div>
-              <Shield className="h-12 w-12 md:h-16 md:w-16 text-white/30 flex-shrink-0" />
+              <Shield className="h-12 w-12 md:h-16 md:w-16 text-tielo-orange/30 flex-shrink-0" />
             </div>
           </motion.div>
 
@@ -205,18 +206,20 @@ function DashboardHomeContent() {
               transition={{ delay: 0.1 }}
             >
               <Card
-                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-blue-500 hover:scale-105"
+                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 group"
                 onClick={() => handleNavigation('/dashboard/admin')}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <Users className="h-8 w-8 text-blue-600" />
+                  <div className="p-2 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                    <Users className="h-6 w-6 text-tielo-orange" />
+                  </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Total Clients</h3>
+                <h3 className="text-xs font-bold text-tielo-navy/60 mb-1 uppercase tracking-wide">Total Clients</h3>
                 {loading ? (
-                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-9 w-16 bg-tielo-steel/20 rounded animate-pulse"></div>
                 ) : (
-                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.totalUsers}</p>
+                  <p className="text-3xl font-bold font-rubik text-tielo-navy">{adminMetrics.totalUsers}</p>
                 )}
               </Card>
             </motion.div>
@@ -227,18 +230,20 @@ function DashboardHomeContent() {
               transition={{ delay: 0.2 }}
             >
               <Card
-                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-green-500 hover:scale-105"
+                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 group"
                 onClick={() => handleNavigation('/dashboard/admin/projects')}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <div className="p-2 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                    <CheckCircle className="h-6 w-6 text-tielo-orange" />
+                  </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Active Projects</h3>
+                <h3 className="text-xs font-bold text-tielo-navy/60 mb-1 uppercase tracking-wide">Active Projects</h3>
                 {loading ? (
-                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-9 w-16 bg-tielo-steel/20 rounded animate-pulse"></div>
                 ) : (
-                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.activeProjects}</p>
+                  <p className="text-3xl font-bold font-rubik text-tielo-navy">{adminMetrics.activeProjects}</p>
                 )}
               </Card>
             </motion.div>
@@ -249,18 +254,20 @@ function DashboardHomeContent() {
               transition={{ delay: 0.3 }}
             >
               <Card
-                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-amber-500 hover:scale-105"
+                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 group"
                 onClick={() => handleNavigation('/dashboard/tasks')}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <AlertCircle className="h-8 w-8 text-amber-600" />
-                  <Calendar className="h-5 w-5 text-gray-400" />
+                  <div className="p-2 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                    <AlertCircle className="h-6 w-6 text-tielo-orange" />
+                  </div>
+                  <Calendar className="h-5 w-5 text-tielo-navy/40" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Pending Tasks</h3>
+                <h3 className="text-xs font-bold text-tielo-navy/60 mb-1 uppercase tracking-wide">Pending Tasks</h3>
                 {loading ? (
-                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-9 w-16 bg-tielo-steel/20 rounded animate-pulse"></div>
                 ) : (
-                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.pendingTasks}</p>
+                  <p className="text-3xl font-bold font-rubik text-tielo-navy">{adminMetrics.pendingTasks}</p>
                 )}
               </Card>
             </motion.div>
@@ -271,18 +278,20 @@ function DashboardHomeContent() {
               transition={{ delay: 0.4 }}
             >
               <Card
-                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-rose-500 hover:scale-105"
+                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 group"
                 onClick={() => handleNavigation('/dashboard/leads')}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <MessageSquare className="h-8 w-8 text-rose-600" />
+                  <div className="p-2 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                    <MessageSquare className="h-6 w-6 text-tielo-orange" />
+                  </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">New Leads (7d)</h3>
+                <h3 className="text-xs font-bold text-tielo-navy/60 mb-1 uppercase tracking-wide">New Leads (7d)</h3>
                 {loading ? (
-                  <div className="h-9 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-9 w-16 bg-tielo-steel/20 rounded animate-pulse"></div>
                 ) : (
-                  <p className="text-3xl font-bold text-gray-900">{adminMetrics.newLeads}</p>
+                  <p className="text-3xl font-bold font-rubik text-tielo-navy">{adminMetrics.newLeads}</p>
                 )}
               </Card>
             </motion.div>
@@ -293,45 +302,45 @@ function DashboardHomeContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Quick Access</h2>
+            <h2 className="text-xl md:text-2xl font-bold font-rubik text-tielo-navy mb-4 md:mb-6">Quick Access</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <Card
-                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-rose-500"
+                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-tielo-orange"
                 onClick={() => handleNavigation('/dashboard/admin')}
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-rose-100 rounded-xl group-hover:bg-rose-200 transition-colors">
-                    <Shield className="h-8 w-8 text-rose-600" />
+                  <div className="p-4 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                    <Shield className="h-8 w-8 text-tielo-orange" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-xl font-bold font-rubik text-tielo-navy mb-1">
                       User Management
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-tielo-navy/70">
                       Beheer gebruikers, rollen en toegangsrechten
                     </p>
                   </div>
-                  <ArrowRight className="h-6 w-6 text-gray-400 group-hover:text-rose-600 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="h-6 w-6 text-tielo-navy/40 group-hover:text-tielo-orange group-hover:translate-x-1 transition-all" />
                 </div>
               </Card>
 
               <Card
-                className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-teal-500"
+                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-tielo-orange"
                 onClick={() => handleNavigation('/dashboard/mcc')}
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-teal-100 rounded-xl group-hover:bg-teal-200 transition-colors">
-                    <CheckCircle className="h-8 w-8 text-teal-600" />
+                  <div className="p-4 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                    <CheckCircle className="h-8 w-8 text-tielo-orange" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-xl font-bold font-rubik text-tielo-navy mb-1">
                       Mission Control
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-tielo-navy/70">
                       Projecten en taken beheer systeem
                     </p>
                   </div>
-                  <ArrowRight className="h-6 w-6 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="h-6 w-6 text-tielo-navy/40 group-hover:text-tielo-orange group-hover:translate-x-1 transition-all" />
                 </div>
               </Card>
             </div>
@@ -347,22 +356,23 @@ function DashboardHomeContent() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl md:rounded-2xl p-6 md:p-8 text-white shadow-xl"
+          className="bg-tielo-navy rounded-td p-6 md:p-8 text-white shadow-xl relative overflow-hidden"
         >
-          <div className="flex items-start gap-4 md:gap-6">
+          <div className="absolute inset-0 td-striped opacity-10" />
+          <div className="flex items-start gap-4 md:gap-6 relative">
             {userProfile?.profile_picture_url && (
               <img
                 src={userProfile.profile_picture_url}
                 alt="Profile"
-                className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-4 border-white/30 shadow-lg flex-shrink-0"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-4 border-tielo-orange/30 shadow-lg flex-shrink-0"
               />
             )}
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold font-rubik mb-2">
                 Welkom terug, {userProfile?.name || 'User'}
               </h1>
               {userProfile?.business_name && (
-                <p className="text-blue-100 text-base md:text-lg mb-3 truncate">
+                <p className="text-white/80 text-base md:text-lg mb-3 truncate">
                   {userProfile.business_name}
                 </p>
               )}
@@ -371,7 +381,7 @@ function DashboardHomeContent() {
                   href={userProfile.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-tielo-orange hover:bg-tielo-orange/90 rounded-td text-sm font-bold transition-colors"
                 >
                   <ExternalLink className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">{userProfile.website_url.replace(/^https?:\/\//, '')}</span>
@@ -398,10 +408,10 @@ function DashboardHomeContent() {
               className="space-y-4"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Jouw Taken</h2>
+                <h2 className="text-xl md:text-2xl font-bold font-rubik text-tielo-navy">Jouw Taken</h2>
                 <button
                   onClick={() => handleNavigation('/dashboard/tasks')}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 text-blue-700 rounded-xl transition-all font-medium text-sm md:text-base w-full sm:w-auto"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-tielo-orange hover:bg-tielo-orange/90 text-white rounded-td transition-all font-bold text-sm md:text-base w-full sm:w-auto shadow-md hover:shadow-lg"
                 >
                   Alle taken bekijken
                   <ArrowRight className="h-4 w-4 flex-shrink-0" />
@@ -415,29 +425,29 @@ function DashboardHomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Jouw Dashboard Modules</h2>
+              <h2 className="text-xl md:text-2xl font-bold font-rubik text-tielo-navy mb-4 md:mb-6">Jouw Dashboard Modules</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {modules.map((module) => {
                   const Icon = iconMap[module.icon_name] || User;
                   return (
                     <Card
                       key={module.module_key}
-                      className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-blue-500"
+                      className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-tielo-orange"
                       onClick={() => handleNavigation(module.route_path)}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
-                          <Icon className="h-6 w-6 text-blue-600" />
+                        <div className="p-3 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                          <Icon className="h-6 w-6 text-tielo-orange" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-gray-900 mb-1">
+                          <h3 className="text-lg font-bold font-rubik text-tielo-navy mb-1">
                             {module.display_name}
                           </h3>
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-sm text-tielo-navy/70 line-clamp-2">
                             {module.description}
                           </p>
                         </div>
-                        <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                        <ArrowRight className="h-5 w-5 text-tielo-navy/40 group-hover:text-tielo-orange group-hover:translate-x-1 transition-all flex-shrink-0" />
                       </div>
                     </Card>
                   );
@@ -453,16 +463,15 @@ function DashboardHomeContent() {
               transition={{ delay: 0.4 }}
               className="lg:col-span-1"
             >
-              <Card className="p-6 sticky top-24 border-2 border-blue-100">
+              <Card className="td-card p-6 sticky top-24 border-2 border-tielo-orange/20">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <LinkIcon className="w-5 h-5 text-blue-600" />
+                  <div className="p-2 bg-tielo-orange/10 rounded-td">
+                    <LinkIcon className="w-5 h-5 text-tielo-orange" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900">Belangrijke Links</h2>
+                  <h2 className="text-xl font-bold font-rubik text-tielo-navy">Belangrijke Links</h2>
                 </div>
                 <div
-                  className="space-y-2 [&_*]:!text-gray-900 [&_*]:!bg-transparent [&_a]:!text-blue-600 [&_a]:!font-semibold [&_a]:!hover:text-blue-800 [&_a]:!transition-colors [&_a]:!underline [&_a]:!decoration-blue-300 [&_a]:!underline-offset-2 [&_ul]:!space-y-2 [&_li]:!text-sm [&_li]:!leading-relaxed [&_strong]:!text-gray-900 [&_strong]:!font-bold [&_b]:!text-gray-900 [&_b]:!font-bold [&_p]:!text-gray-900 [&_span]:!text-gray-900 [&_div]:!text-gray-900"
-                  style={{ color: '#111827' }}
+                  className="space-y-2 [&_*]:!text-tielo-navy [&_*]:!bg-transparent [&_a]:!text-tielo-orange [&_a]:!font-bold [&_a]:!hover:text-tielo-orange/80 [&_a]:!transition-colors [&_a]:!underline [&_a]:!decoration-tielo-orange/30 [&_a]:!underline-offset-2 [&_ul]:!space-y-2 [&_li]:!text-sm [&_li]:!leading-relaxed [&_strong]:!text-tielo-navy [&_strong]:!font-bold [&_b]:!text-tielo-navy [&_b]:!font-bold [&_p]:!text-tielo-navy [&_span]:!text-tielo-navy [&_div]:!text-tielo-navy"
                   dangerouslySetInnerHTML={{ __html: userProfile.important_links }}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;

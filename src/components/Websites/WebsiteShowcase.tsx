@@ -50,31 +50,33 @@ export function WebsiteShowcase() {
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <section className="py-16 sm:py-20 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 font-rubik">
+    <section className="py-16 sm:py-24 bg-tielo-offwhite overflow-hidden relative">
+      <div className="absolute inset-0 td-micro-grid opacity-20" />
+      <div className="container mx-auto px-4 sm:px-6 text-center relative">
+        <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3 block">
+          Portfolio
+        </span>
+        <h2 className="text-3xl font-bold text-tielo-navy mb-8 sm:mb-10">
           Websites die we hebben gebouwd
         </h2>
-        
+
         <div className="relative max-w-4xl mx-auto">
-          {/* Gradient overlays */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          
-          {/* Scrolling container */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-tielo-offwhite to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-tielo-offwhite to-transparent z-10 pointer-events-none" />
+
           <div
-            className="overflow-hidden whitespace-nowrap py-6 sm:py-8"
+            className="overflow-hidden whitespace-nowrap py-6 sm:py-8 bg-white rounded-xl"
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => setIsPaused(false)}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
             <motion.div
-              animate={isPaused ? {} : {
+              animate={{
                 x: [-100, -2500],
               }}
               transition={{
-                duration: 45,
+                duration: isPaused ? 200 : 45,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -86,7 +88,7 @@ export function WebsiteShowcase() {
                   href={site.url}
                   target="_blank"
                   rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
-                  className="inline-block mx-4 sm:mx-6 hover:opacity-75 transition-all duration-300 touch-manipulation"
+                  className="inline-block mx-4 sm:mx-6 hover:opacity-75 transition-all duration-200 touch-manipulation"
                 >
                   <div className="h-16 sm:h-24 flex items-center justify-center">
                     <img
@@ -97,14 +99,13 @@ export function WebsiteShowcase() {
                   </div>
                 </a>
               ))}
-              {/* Duplicate for seamless loop */}
               {websites.map((site, index) => (
                 <a
                   key={`duplicate-${index}`}
                   href={site.url}
                   target="_blank"
                   rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
-                  className="inline-block mx-4 sm:mx-6 hover:opacity-75 transition-all duration-300 touch-manipulation"
+                  className="inline-block mx-4 sm:mx-6 hover:opacity-75 transition-all duration-200 touch-manipulation"
                 >
                   <div className="h-16 sm:h-24 flex items-center justify-center">
                     <img

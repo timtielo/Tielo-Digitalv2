@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp } from 'lucide-react';
-import { ConsultButton } from '../common/ConsultButton';
-import { ServicesButton } from '../common/ServicesButton';
+import { Zap } from 'lucide-react';
+import { Link } from '../Link';
+import { WhatsAppButton } from '../common/WhatsAppButton';
 
 export function HeroContent() {
   return (
@@ -12,27 +12,31 @@ export function HeroContent() {
       transition={{ duration: 0.6 }}
       className="max-w-2xl"
     >
-      <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-        <TrendingUp className="w-4 h-4" />
-        Terugverdiend in een maand
+      <div className="inline-flex items-center gap-2 bg-tielo-cream text-tielo-navy px-4 py-2 rounded-td text-sm font-medium mb-6">
+        <Zap className="w-4 h-4 text-tielo-orange" />
+        Binnen 2 weken live
       </div>
 
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 font-rubik leading-[1.15] sm:leading-tight text-gray-900">
-        Word zichtbaar voor klanten{' '}
-        <span className="text-blue-600">zonder gedoe</span>
+      <h1 className="text-4xl md:text-5xl font-bold mb-6 text-tielo-navy tracking-tight leading-[1.15]">
+        Meer klussen{' '}
+        <span className="text-tielo-orange">zonder Werkspot</span>
       </h1>
 
-      <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-6 md:mb-8 leading-relaxed">
-        Geen gedoe met Werkspot of DNS settings. Ik maak een gratis website-opzetje voor jouw bouwbedrijf en regel alle techniek, jij hoeft alleen je werk te doen.
+      <p className="text-base sm:text-lg text-tielo-navy/70 mb-8 leading-relaxed max-w-xl">
+        Meer klanten. Professioneel en duidelijk. Vaak binnen een maand terugverdiend.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <ConsultButton>
-          Gratis opzetje aanvragen
-        </ConsultButton>
-        <ServicesButton>
-          Voorbeelden bekijken
-        </ServicesButton>
+        <WhatsAppButton>Kom in contact</WhatsAppButton>
+        <Link
+          href="/diensten/websites"
+          className="bg-white border border-gray-300 text-tielo-navy px-6 py-3 rounded-td font-medium
+                   hover:border-tielo-navy hover:bg-gray-50 transition-all duration-200
+                   active:scale-[0.98] text-base
+                   min-h-[48px] touch-manipulation inline-flex items-center justify-center"
+        >
+          Meer informatie
+        </Link>
       </div>
     </motion.div>
   );

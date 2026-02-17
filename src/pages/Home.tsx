@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { Hero } from '../components/Hero';
+import { WerkspotReviewCard } from '../components/Home/WerkspotReviewCard';
 import { ProblemSolveSection } from '../components/Home/ProblemSolveSection';
-import { AgitateSection } from '../components/Home/AgitateSection';
+import { DependencyQuote } from '../components/Home/DependencyQuote';
 import { OplossingSection } from '../components/Home/OplossingSection';
+import { AgitateSection } from '../components/Home/AgitateSection';
 import { Benefits } from '../components/Home/Benefits';
+
 import { WebsiteShowcase } from '../components/Websites/WebsiteShowcase';
 import { CTASection } from '../components/CTASection';
 import { SEO } from '../components/SEO';
@@ -23,16 +26,16 @@ export function Home() {
   return (
     <>
       <SEO
-        title="Website voor Bouwbedrijven | Word Zichtbaar Zonder Gedoe"
-        description="Geen gedoe met Werkspot of DNS settings. Gratis website-opzetje voor jouw bouwbedrijf. Ik regel alle techniek: domein, hosting, Google Business, WhatsApp. Jij hoeft alleen je werk te doen."
+        title="Meer Klussen Zonder Werkspot | Website voor Vakmensen"
+        description="Ik maak simpele, sterke websites voor vakmensen die zelf controle willen over hun klanten. Binnen 2 weken live. Loodgieters, aannemers, elektriciens, schilders."
         keywords={[
-          'Website Bouwbedrijf',
-          'Gratis Website',
-          'Bouwbedrijf Online',
-          'Google Business',
-          'Website Metselaar',
-          'Website Aannemer',
-          'Domein Registratie'
+          'Website vakmensen',
+          'Website loodgieter',
+          'Website aannemer',
+          'Website elektricien',
+          'Website schilder',
+          'Website metselaar',
+          'Werkspot alternatief'
         ]}
         canonical="https://www.tielo-digital.nl/"
       />
@@ -43,9 +46,11 @@ export function Home() {
         }}
       />
       <Hero />
+      <WerkspotReviewCard />
       <ProblemSolveSection />
-      <AgitateSection />
+      <DependencyQuote />
       <OplossingSection />
+      <AgitateSection />
       <Benefits />
       <div id="voorbeelden">
         <WebsiteShowcase />

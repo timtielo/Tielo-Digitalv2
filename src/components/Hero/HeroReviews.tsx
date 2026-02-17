@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -48,10 +48,10 @@ export function HeroReviews() {
     { reviewIndex: 1, id: 1 },
     { reviewIndex: 2, id: 2 }
   ]);
-  const [nextId, setNextId] = useState(3);
+  const nextIdRef = useRef(3);
+  const prevIndexRef = useRef(0);
 
   useEffect(() => {
-    // Auto-rotate reviews every 5 seconds
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % reviews.length);
     }, 5000);
@@ -60,13 +60,18 @@ export function HeroReviews() {
   }, []);
 
   useEffect(() => {
-    // Add new review at top, shift others down
+    if (currentIndex === prevIndexRef.current && nextIdRef.current > 3) return;
+    prevIndexRef.current = currentIndex;
     const nextReviewIndex = (currentIndex + 3) % reviews.length;
-    setDisplayedReviews([
-      { reviewIndex: nextReviewIndex, id: nextId },
-      ...displayedReviews.slice(0, 2)
-    ]);
-    setNextId(prev => prev + 1);
+    const id = nextIdRef.current++;
+    setDisplayedReviews(prev => {
+      const existingIndices = new Set(prev.slice(0, 2).map(r => r.reviewIndex));
+      if (existingIndices.has(nextReviewIndex)) return prev;
+      return [
+        { reviewIndex: nextReviewIndex, id },
+        ...prev.slice(0, 2)
+      ];
+    });
   }, [currentIndex]);
 
   const nextReview = () => {
@@ -79,7 +84,6 @@ export function HeroReviews() {
 
   return (
     <>
-      {/* Mobile Carousel View */}
       <div className="relative md:hidden">
         <AnimatePresence mode="wait">
           <motion.div
@@ -88,31 +92,30 @@ export function HeroReviews() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-xl p-4 shadow-md"
+            className="td-card p-5 shadow-sharp"
           >
-            <div className="flex items-center gap-1 mb-2">
+            <div className="flex items-center gap-1 mb-3">
               {[...Array(reviews[currentIndex].rating)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
+                <Star key={i} fill="currentColor" className="w-4 h-4 text-tielo-orange" />
               ))}
             </div>
-            <p className="text-gray-700 mb-3 text-sm italic leading-relaxed">
+            <p className="text-tielo-navy/70 mb-4 text-sm italic leading-relaxed">
               "{reviews[currentIndex].quote}"
             </p>
             <div>
-              <p className="font-semibold text-sm text-gray-900">{reviews[currentIndex].name}</p>
-              <p className="text-xs text-gray-500">{reviews[currentIndex].role}</p>
+              <p className="font-semibold text-sm text-tielo-navy">{reviews[currentIndex].name}</p>
+              <p className="text-xs text-gray-400">{reviews[currentIndex].role}</p>
             </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation Controls */}
         <div className="flex items-center justify-between mt-4">
           <button
             onClick={prevReview}
-            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center"
+            className="p-2 rounded-td bg-white border border-gray-200 shadow-sharp hover:shadow-sharp-hover transition-all active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center"
             aria-label="Previous review"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
+            <ChevronLeft className="w-5 h-5 text-tielo-navy" />
           </button>
 
           <div className="flex gap-2">
@@ -121,7 +124,7 @@ export function HeroReviews() {
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 className={`h-2 rounded-full transition-all ${
-                  index === currentIndex ? 'bg-blue-600 w-6' : 'bg-gray-300 w-2'
+                  index === currentIndex ? 'bg-tielo-orange w-6' : 'bg-gray-300 w-2'
                 }`}
                 aria-label={`Go to review ${index + 1}`}
               />
@@ -130,55 +133,58 @@ export function HeroReviews() {
 
           <button
             onClick={nextReview}
-            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center"
+            className="p-2 rounded-td bg-white border border-gray-200 shadow-sharp hover:shadow-sharp-hover transition-all active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center"
             aria-label="Next review"
           >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
+            <ChevronRight className="w-5 h-5 text-tielo-navy" />
           </button>
         </div>
       </div>
 
-      {/* Desktop Animated Vertical Carousel */}
-      <div className="hidden md:block relative overflow-hidden" style={{ height: '460px' }}>
+      <div className="hidden md:block relative overflow-hidden" style={{ height: '420px' }}>
         <AnimatePresence initial={false}>
           {displayedReviews.map((item, position) => {
             const review = reviews[item.reviewIndex];
+            const offsets = [0, 155, 290];
             return (
               <motion.div
                 key={item.id}
                 initial={{
                   opacity: 0,
-                  y: -100,
-                  scale: 0.95
+                  y: -80,
+                  scale: 0.97
                 }}
                 animate={{
-                  opacity: position === 2 ? 0.4 : 1,
-                  y: position * 150,
-                  scale: 1
+                  opacity: position === 2 ? 0.35 : position === 1 ? 0.85 : 1,
+                  y: offsets[position],
+                  scale: 1 - position * 0.02
                 }}
                 exit={{
                   opacity: 0,
-                  y: 450,
+                  y: 420,
                   scale: 0.95
                 }}
                 transition={{
-                  duration: 0.6,
+                  duration: 0.5,
                   ease: [0.4, 0, 0.2, 1]
                 }}
-                className="absolute w-full bg-white rounded-xl p-6 shadow-md"
+                className="absolute left-0 right-0 td-card td-tech-corner p-5 shadow-sharp overflow-hidden"
                 style={{ zIndex: 3 - position }}
               >
-                <div className="flex items-center gap-1 mb-3">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-4 text-base italic leading-relaxed">
-                  "{review.quote}"
-                </p>
-                <div>
-                  <p className="font-semibold text-base text-gray-900">{review.name}</p>
-                  <p className="text-sm text-gray-500">{review.role}</p>
+                <div className="absolute inset-0 td-micro-grid opacity-20 pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center gap-1 mb-2">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} fill="currentColor" className="w-3.5 h-3.5 text-tielo-orange" />
+                    ))}
+                  </div>
+                  <p className="text-tielo-navy/70 mb-3 text-sm italic leading-relaxed line-clamp-3">
+                    "{review.quote}"
+                  </p>
+                  <div>
+                    <p className="font-semibold text-sm text-tielo-navy">{review.name}</p>
+                    <p className="text-xs text-gray-400">{review.role}</p>
+                  </div>
                 </div>
               </motion.div>
             );

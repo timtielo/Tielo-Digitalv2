@@ -1,30 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Link } from '../Link';
+import { WhatsAppButton } from '../common/WhatsAppButton';
 
 export function CasesCTA() {
   return (
-    <section className="py-20 bg-gradient-to-br from-primary/5 to-white">
-      <div className="container mx-auto px-4">
+    <section className="py-16 sm:py-20 bg-tielo-cream relative overflow-hidden">
+      <div className="absolute inset-0 td-striped opacity-40" />
+      <div className="container mx-auto px-4 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="max-w-4xl mx-auto text-center"
         >
-          <h2 className="text-4xl font-bold mb-6 font-rubik">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-tielo-navy tracking-tight">
             En jij bent de volgende!
           </h2>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg 
-                     font-semibold text-lg hover:bg-primary/90 transition-all duration-300
-                     hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Klik hier om contact op te nemen
-            <ArrowRight className="w-6 h-6" />
-          </Link>
+          <WhatsAppButton className="text-lg sm:px-8 sm:py-4" />
         </motion.div>
       </div>
     </section>

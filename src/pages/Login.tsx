@@ -13,13 +13,13 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    avatarSrc: "https://www.tgildegevelwerken.nl/tgildegevelwerkenlogo-transparant.svg",
+    avatarSrc: "https://lh3.googleusercontent.com/a/ACg8ocJLJmHzjw8QkAwM38S1vf98OwWQexkDLvkNXuEgy2HRdB11EA=s72-c-rp-mo-br100",
     name: "Job 't Gilde",
     handle: "'t Gilde Gevelwerken",
     text: "Fijn platform voor het beheren van mijn reviews en portfolio!"
   },
   {
-    avatarSrc: "https://www.herhorizon.nl/images/HerHorizontrans.svg",
+    avatarSrc: "https://lh3.googleusercontent.com/a/ACg8ocI-EzTdjl7fL-QXh25p4h_zMIy7T0OdtBzRO9KnpJWwRRjQCw=s72-c-rp-mo-br100",
     name: "Iris Achtereekte",
     handle: "Her Horizon",
     text: "Top voor inzicht in leads en reviews."
@@ -27,7 +27,7 @@ const testimonials: Testimonial[] = [
 ];
 
 const InputWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-xl border border-gray-300 bg-white transition-colors focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
+  <div className="rounded-td border-2 border-tielo-steel/30 bg-white transition-colors focus-within:border-tielo-orange focus-within:ring-2 focus-within:ring-tielo-orange/20">
     {children}
   </div>
 );
@@ -37,17 +37,17 @@ const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial; del
     initial={{ opacity: 0, y: 20, scale: 0.95 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     transition={{ delay: delay * 0.1, duration: 0.5 }}
-    className="flex items-start gap-3 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 w-72"
+    className="flex items-start gap-3 td-card shadow-sm hover:shadow-md transition-shadow p-5 w-72"
   >
     <img
       src={testimonial.avatarSrc}
-      className="h-10 w-10 object-cover rounded-xl flex-shrink-0"
+      className="h-10 w-10 object-cover rounded-full flex-shrink-0"
       alt="avatar"
     />
     <div className="text-sm leading-snug">
-      <p className="font-medium text-gray-900">{testimonial.name}</p>
-      <p className="text-gray-600 text-xs">{testimonial.handle}</p>
-      <p className="mt-1 text-gray-700">{testimonial.text}</p>
+      <p className="font-bold text-tielo-navy">{testimonial.name}</p>
+      <p className="text-tielo-navy/60 text-xs">{testimonial.handle}</p>
+      <p className="mt-1 text-tielo-navy/80">{testimonial.text}</p>
     </div>
   </motion.div>
 );
@@ -196,7 +196,8 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-tielo-offwhite relative overflow-hidden">
+      <div className="absolute inset-0 td-striped opacity-5" />
       <div className="relative z-10 min-h-screen flex flex-col md:flex-row">
         <section className="flex-1 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
@@ -210,25 +211,25 @@ export function Login() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center shadow-lg"
+                className="mx-auto w-16 h-16 bg-tielo-navy rounded-td flex items-center justify-center shadow-lg"
               >
-                <Lock className="h-8 w-8 text-white" />
+                <Lock className="h-8 w-8 text-tielo-orange" />
               </motion.div>
 
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-4xl md:text-5xl font-bold text-gray-900 text-center leading-tight"
+                className="text-4xl md:text-5xl font-bold font-rubik text-tielo-navy text-center leading-tight"
               >
-                Welkom <span className="font-light">Terug</span>
+                Welkom <span className="font-normal text-tielo-orange">Terug</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-gray-600 text-center"
+                className="text-tielo-navy/70 text-center"
               >
                 {showResetForm
                   ? 'Voer je e-mailadres in om je wachtwoord te resetten'
@@ -242,7 +243,7 @@ export function Login() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                  <label className="text-sm font-bold text-tielo-navy block mb-2 uppercase tracking-wide">
                     Email Adres
                   </label>
                   <InputWrapper>
@@ -254,7 +255,7 @@ export function Login() {
                       onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
                       disabled={loading}
                       required
-                      className="w-full bg-transparent text-sm p-4 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                      className="w-full bg-transparent text-sm p-4 rounded-td focus:outline-none text-tielo-navy placeholder-tielo-navy/30"
                     />
                   </InputWrapper>
                 </motion.div>
@@ -264,7 +265,7 @@ export function Login() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                  <label className="text-sm font-bold text-tielo-navy block mb-2 uppercase tracking-wide">
                     Wachtwoord
                   </label>
                   <InputWrapper>
@@ -277,7 +278,7 @@ export function Login() {
                         onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
                         disabled={loading}
                         required
-                        className="w-full bg-transparent text-sm p-4 pr-12 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                        className="w-full bg-transparent text-sm p-4 pr-12 rounded-td focus:outline-none text-tielo-navy placeholder-tielo-navy/30"
                       />
                       <button
                         type="button"
@@ -285,9 +286,9 @@ export function Login() {
                         className="absolute inset-y-0 right-3 flex items-center"
                       >
                         {showPassword ? (
-                          <EyeOff className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
+                          <EyeOff className="w-5 h-5 text-tielo-navy/50 hover:text-tielo-orange transition-colors" />
                         ) : (
-                          <Eye className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" />
+                          <Eye className="w-5 h-5 text-tielo-navy/50 hover:text-tielo-orange transition-colors" />
                         )}
                       </button>
                     </div>
@@ -298,7 +299,7 @@ export function Login() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-red-700 text-sm text-center bg-red-50 border border-red-200 p-3 rounded-xl"
+                    className="text-red-700 text-sm text-center bg-red-50 border-2 border-red-200 p-3 rounded-td font-medium"
                   >
                     {error}
                   </motion.div>
@@ -310,7 +311,7 @@ export function Login() {
                   transition={{ delay: 0.6 }}
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                  className="w-full rounded-td bg-tielo-orange py-4 font-bold text-white hover:bg-tielo-orange/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                 >
                   {loading ? 'Bezig met inloggen...' : 'Inloggen'}
                 </motion.button>
@@ -321,7 +322,7 @@ export function Login() {
                   transition={{ delay: 0.7 }}
                   type="button"
                   onClick={handleShowResetForm}
-                  className="w-full text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                  className="w-full text-sm text-tielo-navy/70 hover:text-tielo-orange transition-colors font-bold"
                 >
                   Wachtwoord vergeten?
                 </motion.button>
@@ -335,7 +336,7 @@ export function Login() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <label className="text-sm font-medium text-gray-700 block mb-2">
+                      <label className="text-sm font-bold text-tielo-navy block mb-2 uppercase tracking-wide">
                         Email Adres
                       </label>
                       <InputWrapper>
@@ -347,7 +348,7 @@ export function Login() {
                           onChange={(e) => setResetEmail(e.target.value)}
                           disabled={loading}
                           required
-                          className="w-full bg-transparent text-sm p-4 rounded-xl focus:outline-none text-gray-900 placeholder-gray-400"
+                          className="w-full bg-transparent text-sm p-4 rounded-td focus:outline-none text-tielo-navy placeholder-tielo-navy/30"
                         />
                       </InputWrapper>
                     </motion.div>
@@ -356,7 +357,7 @@ export function Login() {
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-red-700 text-sm text-center bg-red-50 border border-red-200 p-3 rounded-xl"
+                        className="text-red-700 text-sm text-center bg-red-50 border-2 border-red-200 p-3 rounded-td font-medium"
                       >
                         {error}
                       </motion.div>
@@ -368,7 +369,7 @@ export function Login() {
                       transition={{ delay: 0.5 }}
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 py-4 font-semibold text-white hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                      className="w-full rounded-td bg-tielo-orange py-4 font-bold text-white hover:bg-tielo-orange/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                     >
                       {loading ? 'Bezig met versturen...' : 'Reset link versturen'}
                     </motion.button>
@@ -378,9 +379,9 @@ export function Login() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-green-700 text-center bg-green-50 border border-green-200 p-6 rounded-xl"
+                    className="text-green-700 text-center bg-green-50 border-2 border-green-200 p-6 rounded-td"
                   >
-                    <p className="text-base font-semibold mb-2">Email verzonden!</p>
+                    <p className="text-base font-bold mb-2">Email verzonden!</p>
                     <p className="text-sm">
                       Controleer je inbox en klik op de link om je wachtwoord te resetten.
                     </p>
@@ -393,7 +394,7 @@ export function Login() {
                   transition={{ delay: 0.6 }}
                   type="button"
                   onClick={handleBackToLogin}
-                  className="w-full text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                  className="w-full text-sm text-tielo-navy/70 hover:text-tielo-orange transition-colors font-bold"
                 >
                   Terug naar inloggen
                 </motion.button>
@@ -406,27 +407,28 @@ export function Login() {
                 transition={{ delay: 0.7 }}
                 className="flex items-center gap-3 mt-6"
               >
-                <div className="flex-1 flex items-center gap-2 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                  <Shield className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                  <span className="text-xs text-gray-700 font-medium">Portfolio beheer</span>
+                <div className="flex-1 flex items-center gap-2 bg-tielo-orange/10 rounded-td p-3 border-2 border-tielo-orange/20">
+                  <Shield className="h-4 w-4 text-tielo-orange flex-shrink-0" />
+                  <span className="text-xs text-tielo-navy font-bold">Portfolio beheer</span>
                 </div>
-                <div className="flex-1 flex items-center gap-2 bg-cyan-50 rounded-xl p-3 border border-cyan-100">
-                  <Zap className="h-4 w-4 text-cyan-600 flex-shrink-0" />
-                  <span className="text-xs text-gray-700 font-medium">Leads bekijken</span>
+                <div className="flex-1 flex items-center gap-2 bg-tielo-navy/10 rounded-td p-3 border-2 border-tielo-navy/20">
+                  <Zap className="h-4 w-4 text-tielo-navy flex-shrink-0" />
+                  <span className="text-xs text-tielo-navy font-bold">Leads bekijken</span>
                 </div>
               </motion.div>
             </motion.div>
           </div>
         </section>
 
-        <section className="hidden lg:flex flex-1 relative p-8 items-end justify-center bg-gradient-to-br from-blue-50 to-cyan-50">
-          <div className="absolute inset-8 rounded-3xl overflow-hidden bg-gradient-to-br from-blue-100 to-cyan-100">
+        <section className="hidden lg:flex flex-1 relative p-8 items-end justify-center bg-tielo-navy">
+          <div className="absolute inset-0 td-striped opacity-10" />
+          <div className="absolute inset-8 rounded-td overflow-hidden bg-tielo-steel/20">
             <img
               src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=1200&h=1600&fit=crop&q=80"
               alt="Construction site"
               className="w-full h-full object-cover opacity-20"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-tielo-navy/90 via-tielo-navy/60 to-transparent"></div>
           </div>
 
           <div className="relative z-10 flex flex-col gap-4 w-full max-w-2xl pb-8">

@@ -1,5 +1,15 @@
 export const colors = {
-  primary: '#e96020', // Action color
+  primary: '#e96020',
+  tielo: {
+    navy: '#0b2027',
+    orange: '#e96020',
+    steel: '#40798c',
+    teal: '#70a9a1',
+    cream: '#f6f1d1',
+    offwhite: '#f7f7f7',
+    sage: '#cfd7c7',
+    black: '#000000',
+  },
   green: {
     dark: '#40798C',
     light: '#70a9a1',

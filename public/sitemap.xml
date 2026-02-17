@@ -3,75 +3,57 @@
   <!-- Main Pages -->
   <url>
     <loc>https://www.tielo-digital.nl/</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.tielo-digital.nl/contact</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.tielo-digital.nl/over-ons</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.tielo-digital.nl/cases</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.tielo-digital.nl/gratis-guide</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.tielo-digital.nl/gratis-guide/bedankt</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://www.tielo-digital.nl/analysis-thank-you</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://www.tielo-digital.nl/call</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.tielo-digital.nl/visitekaartje</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.tielo-digital.nl/login</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://www.tielo-digital.nl/privacy</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.2</priority>
   </url>
   <url>
     <loc>https://www.tielo-digital.nl/terms</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.2</priority>
   </url>
   <url>
     <loc>https://www.tielo-digital.nl/cookies</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.2</priority>
   </url>
 
   <!-- Blog Pages -->
   <url>
     <loc>https://www.tielo-digital.nl/blog</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -79,44 +61,58 @@
   <!-- Services Pages -->
   <url>
     <loc>https://www.tielo-digital.nl/diensten</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.tielo-digital.nl/diensten/websites</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.tielo-digital.nl/diensten/websites/metselaar</loc>
-    <lastmod>2025-11-29</lastmod>
+    <loc>https://www.tielo-digital.nl/diensten/maatwerk</loc>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
+
+  <!-- Trade-Specific Website Pages -->
   <url>
-    <loc>https://www.tielo-digital.nl/diensten/workflow</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.tielo-digital.nl/diensten/websites/metselaar</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.tielo-digital.nl/diensten/outreach</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.tielo-digital.nl/diensten/websites/schilder</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.tielo-digital.nl/diensten/customer-service</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.tielo-digital.nl/diensten/websites/loodgieter</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.tielo-digital.nl/diensten/custom</loc>
-    <lastmod>2025-11-29</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.tielo-digital.nl/diensten/websites/elektricien</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.tielo-digital.nl/diensten/websites/aannemer</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.tielo-digital.nl/diensten/websites/klusbedrijf</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>

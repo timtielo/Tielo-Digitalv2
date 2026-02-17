@@ -14,13 +14,13 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  const baseStyles = 'inline-flex items-center justify-center rounded-td font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tielo-orange focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
 
   const variants = {
-    default: 'bg-primary text-white hover:bg-primary/90',
-    outline: 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
-    ghost: 'text-gray-900 hover:bg-gray-100',
-    destructive: 'bg-red-500 text-white hover:bg-red-600',
+    default: 'bg-tielo-orange text-white hover:bg-tielo-orange/90 shadow-md hover:shadow-lg',
+    outline: 'border-2 border-tielo-steel/30 bg-white text-tielo-navy hover:bg-tielo-offwhite hover:border-tielo-steel/50',
+    ghost: 'text-tielo-navy hover:bg-tielo-orange/10',
+    destructive: 'bg-red-500 text-white hover:bg-red-600 shadow-md hover:shadow-lg',
   };
 
   const sizes = {
