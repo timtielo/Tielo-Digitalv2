@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 export function PricingCard() {
   return (
@@ -40,6 +41,21 @@ export function PricingCard() {
             </div>
             <p className="text-tielo-navy/60">Geen verborgen kosten.</p>
             <p className="text-tielo-navy/40 text-xs mt-4">*voor een standaard website voor een vakman. Neem contact op voor maatwerk.</p>
+
+            <a
+              href="/cases"
+              className="mt-8 flex items-center justify-center gap-3 bg-tielo-offwhite border border-tielo-navy/10 rounded-td px-6 py-4 group hover:border-tielo-orange/40 hover:bg-tielo-orange/5 transition-all"
+            >
+              <div className="text-left flex-1">
+                <p className="text-xs uppercase font-bold tracking-widest text-tielo-orange mb-0.5">Case</p>
+                <p className="text-tielo-navy font-semibold text-sm leading-snug">
+                  Metselaar Job had zijn website in een maand terugverdiend
+                </p>
+              </div>
+              <span className="flex items-center gap-1 text-tielo-orange font-medium text-sm whitespace-nowrap group-hover:gap-2 transition-all">
+                Lees meer <ArrowRight className="w-4 h-4" />
+              </span>
+            </a>
           </motion.div>
         </div>
       </div>
