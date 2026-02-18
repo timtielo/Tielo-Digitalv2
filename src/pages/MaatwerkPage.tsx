@@ -340,7 +340,7 @@ export function MaatwerkPage() {
               className="mt-8"
             >
               <Link
-                href="/succesverhalen"
+                href="/cases#case-batist"
                 className="inline-flex items-center gap-2 text-tielo-teal hover:text-white text-sm font-medium transition-colors duration-200"
               >
                 Bekijk de volledige case

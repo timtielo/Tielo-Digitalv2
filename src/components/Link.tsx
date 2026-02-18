@@ -31,8 +31,17 @@ export function Link({ href, children, className = '', target, rel }: LinkProps)
     const pushStateEvent = new Event('pushstate');
     window.dispatchEvent(pushStateEvent);
     
-    // Scroll to top for internal navigation
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to anchor or top after navigation
+    if (url.hash) {
+      setTimeout(() => {
+        const el = document.querySelector(url.hash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Add active state for current page
