@@ -36,9 +36,9 @@ export function BlogCTA() {
               },
               {
                 label: 'Cases',
-                title: 'Succesverhalen',
+                title: 'Onze cases',
                 description: 'Bekijk hoe wij andere bedrijven hebben geholpen groeien.',
-                href: '/succesverhalen',
+                href: '/cases',
               },
               {
                 label: 'Contact',

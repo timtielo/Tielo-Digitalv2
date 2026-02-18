@@ -17,7 +17,7 @@ export function CasesHero() {
               <Award className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 font-rubik">
-              Succesverhalen
+              Cases
             </h1>
             <p className="text-xl text-gray-600">
               Ontdek hoe wij bedrijven helpen groeien met AI en automatisering
