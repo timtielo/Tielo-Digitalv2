@@ -62,12 +62,6 @@ async function generateSitemap() {
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>${baseUrl}/gratis-guide</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>${baseUrl}/privacy</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>

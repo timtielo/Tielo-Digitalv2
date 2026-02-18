@@ -13,12 +13,7 @@ export function NewsletterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await submitForm(formData);
-    if (success) {
-      window.history.pushState({}, '', '/gratis-guide/bedankt');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    await submitForm(formData);
   };
 
   return (
@@ -35,7 +30,7 @@ export function NewsletterForm() {
           </h2>
           <p className="text-xl text-gray-600 mb-8">
             Blijf op de hoogte van de nieuwste ontwikkelingen en hoe jij dit toepast in jouw bedrijf.
-            Meld je aan voor de nieuwsbrief en ontvang gratis onze AI + Automation guide.
+            Meld je aan voor de nieuwsbrief en blijf op de hoogte van de nieuwste ontwikkelingen in AI en automation.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">

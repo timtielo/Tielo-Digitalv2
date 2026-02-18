@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { GuideForm } from '../Guide/GuideForm';
+import { NewsletterForm } from '../Newsletter/NewsletterForm';
 
 export function BlogNewsletter() {
   return (
@@ -19,13 +19,10 @@ export function BlogNewsletter() {
           <h2 className="text-3xl font-bold mb-4 font-rubik text-white">
             Wil je op de hoogte blijven van de nieuwste ontwikkelingen en innovaties binnen AI en automation?
           </h2>
-          <p className="text-xl text-white/80 mb-4">
-            En wil jij weten hoe je dit zelf kan gebruiken?
-          </p>
           <p className="text-xl text-white/80 mb-12">
-            Meld je aan voor de nieuwsbrief en ontvang gratis onze guide.
+            Meld je aan voor de nieuwsbrief en ontvang updates direct in je inbox.
           </p>
-          <GuideForm />
+          <NewsletterForm />
         </motion.div>
       </div>
     </section>

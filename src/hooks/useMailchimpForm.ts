@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FormData } from '../types/forms';
-import { submitToGoogleSheets } from '../utils/forms';
+import { submitForm as submitToGoogleSheets } from '../utils/forms';
 
 interface UseMailchimpFormReturn {
   isLoading: boolean;
@@ -20,7 +20,7 @@ export function useMailchimpForm(): UseMailchimpFormReturn {
       const formData: FormData = {
         ...data,
         submittedAt: new Date().toISOString(),
-        formType: 'guide'
+        formType: 'analysis'
       };
 
       const success = await submitToGoogleSheets(formData);
