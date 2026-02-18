@@ -1,7 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { NewsletterForm } from './Newsletter/NewsletterForm';
 
 const categories = [
   'Customer Service',
@@ -62,8 +61,6 @@ export function BlogLayout({ children }: BlogLayoutProps) {
           {/* Blog Content */}
           {children}
 
-          {/* Newsletter Signup */}
-          <NewsletterForm />
         </motion.div>
       </div>
     </div>

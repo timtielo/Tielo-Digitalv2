@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BlogNewsletter } from '../components/blog/BlogNewsletter';
+import { BlogCTA } from '../components/blog/BlogNewsletter';
 import { useSupabaseBlogPosts } from '../hooks/useSupabaseBlogPosts';
 import { Loader, Calendar, Clock, ChevronRight, User } from 'lucide-react';
 import { SEO } from '../components/SEO';
@@ -256,7 +256,7 @@ export function Blog() {
         </div>
       </section>
 
-      <BlogNewsletter />
+      <BlogCTA />
     </div>
   );
 }

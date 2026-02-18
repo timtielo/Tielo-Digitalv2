@@ -2,7 +2,7 @@ import React from 'react';
 import { useSupabaseBlogPost } from '../hooks/useSupabaseBlogPost';
 import { Loader, Calendar, User, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { BlogNewsletter } from '../components/blog/BlogNewsletter';
+import { BlogCTA } from '../components/blog/BlogNewsletter';
 import { TipTapRenderer } from '../components/Dashboard/TipTapRenderer';
 import { Link } from '../components/Link';
 import { motion } from 'framer-motion';
@@ -247,8 +247,7 @@ export function BlogPost({ slug }: BlogPostProps) {
           </div>
         </div>
 
-        {/* Newsletter Section */}
-        <BlogNewsletter />
+        <BlogCTA />
       </article>
     </>
   );
