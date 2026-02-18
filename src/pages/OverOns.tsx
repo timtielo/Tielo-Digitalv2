@@ -160,6 +160,39 @@ export function OverOns() {
                 Binnen twee weken staat je website live.
               </p>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="p-6 bg-tielo-offwhite rounded-td border border-gray-200"
+            >
+              <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-3">
+                Websites op maat per vak
+              </p>
+              <p className="text-tielo-navy/70 leading-relaxed mb-4">
+                Ik bouw websites voor{' '}
+                <Link href="/diensten/websites/loodgieter" className="text-tielo-orange hover:underline font-medium">loodgieters</Link>
+                {', '}
+                <Link href="/diensten/websites/schilder" className="text-tielo-orange hover:underline font-medium">schilders</Link>
+                {', '}
+                <Link href="/diensten/websites/elektricien" className="text-tielo-orange hover:underline font-medium">elektriciens</Link>
+                {', '}
+                <Link href="/diensten/websites/aannemer" className="text-tielo-orange hover:underline font-medium">aannemers</Link>
+                {', '}
+                <Link href="/diensten/websites/metselaar" className="text-tielo-orange hover:underline font-medium">metselaars</Link>
+                {' en '}
+                <Link href="/diensten/websites/klusbedrijf" className="text-tielo-orange hover:underline font-medium">klusbedrijven</Link>
+                .
+              </p>
+              <Link
+                href="/diensten/websites"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-tielo-orange hover:text-[#d85515] transition-colors"
+              >
+                Bekijk alle websites
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>

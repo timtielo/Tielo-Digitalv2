@@ -238,17 +238,25 @@ export function SchilderPage() {
               className="mt-10 p-6 bg-white rounded-td border border-gray-200"
             >
               <p className="text-tielo-navy/70 leading-relaxed">
-                Ik bouw ook websites voor andere bouwvakkers. Zie bijvoorbeeld de pagina's voor{' '}
+                Ik bouw ook websites voor andere bouwvakkers. Bekijk de pagina's voor{' '}
                 <Link href="/diensten/websites/elektricien" className="text-tielo-orange hover:underline font-medium">
                   elektriciens
                 </Link>
-                {' of '}
+                {', '}
                 <Link href="/diensten/websites/metselaar" className="text-tielo-orange hover:underline font-medium">
                   metselaars
                 </Link>
-                . Of bekijk{' '}
-                <Link href="/diensten/websites" className="text-tielo-orange hover:underline font-medium">
-                  alle diensten
+                {', '}
+                <Link href="/diensten/websites/aannemer" className="text-tielo-orange hover:underline font-medium">
+                  aannemers
+                </Link>
+                {', '}
+                <Link href="/diensten/websites/loodgieter" className="text-tielo-orange hover:underline font-medium">
+                  loodgieters
+                </Link>
+                {' en '}
+                <Link href="/diensten/websites/klusbedrijf" className="text-tielo-orange hover:underline font-medium">
+                  klusbedrijven
                 </Link>
                 .
               </p>

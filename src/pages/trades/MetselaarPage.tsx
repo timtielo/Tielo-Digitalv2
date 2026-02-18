@@ -157,13 +157,25 @@ export function MetselaarPage() {
               className="mt-10 p-6 bg-tielo-navy/5 rounded-td"
             >
               <p className="text-tielo-navy/70 leading-relaxed">
-                Ook websites voor andere vakmannen in de bouw, zoals{' '}
+                Ook websites voor andere vakmannen in de bouw. Bekijk de pagina's voor{' '}
                 <Link href="/diensten/websites/aannemer" className="text-tielo-orange hover:underline font-medium">
                   aannemers
                 </Link>
-                {' en '}
+                {', '}
                 <Link href="/diensten/websites/klusbedrijf" className="text-tielo-orange hover:underline font-medium">
                   klusbedrijven
+                </Link>
+                {', '}
+                <Link href="/diensten/websites/loodgieter" className="text-tielo-orange hover:underline font-medium">
+                  loodgieters
+                </Link>
+                {', '}
+                <Link href="/diensten/websites/schilder" className="text-tielo-orange hover:underline font-medium">
+                  schilders
+                </Link>
+                {' en '}
+                <Link href="/diensten/websites/elektricien" className="text-tielo-orange hover:underline font-medium">
+                  elektriciens
                 </Link>
                 .
               </p>
