@@ -770,10 +770,10 @@ export function AdminPage() {
         <DashboardLayout currentPage="admin">
           <div className="flex items-center justify-center min-h-[60vh]">
             <Card className="p-12 text-center max-w-md">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Shield className="h-8 w-8 text-white" />
+              <div className="p-4 bg-tielo-orange/10 rounded-td flex items-center justify-center mx-auto mb-6 w-16 h-16">
+                <Shield className="h-8 w-8 text-tielo-orange" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Geen Toegang</h2>
+              <h2 className="text-2xl font-bold font-rubik text-tielo-navy mb-3">Geen Toegang</h2>
               <p className="text-gray-600">Je hebt geen admin rechten om deze pagina te bekijken.</p>
             </Card>
           </div>
@@ -792,36 +792,30 @@ export function AdminPage() {
             transition={{ duration: 0.5 }}
           >
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+            <div className="flex flex-wrap gap-3 mb-6">
+              <button
                 onClick={() => {
                   window.history.pushState({}, '', '/dashboard/mcc');
                   window.dispatchEvent(new PopStateEvent('popstate'));
                 }}
-                className="flex items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 hover:border-yellow-300 transition-all group"
+                className="flex items-center gap-3 px-5 py-3 bg-white border border-tielo-navy/10 rounded-td hover:border-tielo-orange/40 hover:bg-tielo-orange/5 transition-all group"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Target className="w-6 h-6 text-white" />
+                <div className="p-2 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                  <Target className="w-4 h-4 text-tielo-orange" />
                 </div>
-                <div className="text-left">
-                  <h3 className="font-semibold text-gray-900">Mission Control</h3>
-                  <p className="text-sm text-gray-600">Beheer doelen</p>
-                </div>
-              </motion.button>
-            </div>
-
-            <div className="flex gap-4 mb-6">
+                <span className="font-semibold text-tielo-navy text-sm">Mission Control</span>
+              </button>
               <button
                 onClick={() => {
                   window.history.pushState({}, '', '/dashboard/admin/projects');
                   window.dispatchEvent(new PopStateEvent('popstate'));
                 }}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
+                className="flex items-center gap-3 px-5 py-3 bg-white border border-tielo-navy/10 rounded-td hover:border-tielo-orange/40 hover:bg-tielo-orange/5 transition-all group"
               >
-                <Rocket className="w-5 h-5" />
-                Projecten
+                <div className="p-2 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
+                  <Rocket className="w-4 h-4 text-tielo-orange" />
+                </div>
+                <span className="font-semibold text-tielo-navy text-sm">Projecten</span>
               </button>
             </div>
               </motion.div>
@@ -829,7 +823,7 @@ export function AdminPage() {
               {loading ? (
                 <Card className="p-16">
                   <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tielo-orange"></div>
                   </div>
                 </Card>
               ) : (
@@ -842,15 +836,15 @@ export function AdminPage() {
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center flex-shrink-0">
-                          <Shield className="h-6 w-6 text-white" />
+                        <div className="p-3 bg-tielo-orange/10 rounded-td flex-shrink-0">
+                          <Shield className="h-6 w-6 text-tielo-orange" />
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900">Alle Gebruikers</h2>
+                        <h2 className="text-xl font-bold font-rubik text-tielo-navy">Alle Gebruikers</h2>
                       </div>
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                         <button
                           onClick={() => setIsCreatingUser(true)}
-                          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+                          className="flex items-center justify-center gap-2 px-4 py-3 rounded-td bg-tielo-orange hover:bg-tielo-orange/90 text-white font-medium transition-all shadow-sm"
                         >
                           <UserPlus className="h-4 w-4" />
                           Nieuwe Gebruiker
@@ -1052,7 +1046,7 @@ export function AdminPage() {
                   <button
                     onClick={updateUserDetails}
                     disabled={updating === editingUser.id}
-                    className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm disabled:opacity-50"
+                    className="flex-1 px-4 py-3 rounded-td bg-tielo-orange hover:bg-tielo-orange/90 text-white font-medium transition-all shadow-sm disabled:opacity-50"
                   >
                     {updating === editingUser.id ? 'Opslaan...' : 'Opslaan'}
                   </button>
@@ -1110,7 +1104,7 @@ export function AdminPage() {
                 <button
                   onClick={createNewUser}
                   disabled={updating === 'creating'}
-                  className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm disabled:opacity-50"
+                  className="flex-1 px-4 py-3 rounded-td bg-tielo-orange hover:bg-tielo-orange/90 text-white font-medium transition-all shadow-sm disabled:opacity-50"
                 >
                   {updating === 'creating' ? 'Aanmaken...' : 'Aanmaken'}
                 </button>
@@ -1141,10 +1135,10 @@ export function AdminPage() {
                 <button
                   onClick={toggleAdminStatus}
                   disabled={!!updating}
-                  className={`flex-1 px-4 py-3 rounded-xl font-medium text-white transition-all shadow-sm disabled:opacity-50 ${
+                  className={`flex-1 px-4 py-3 rounded-td font-medium text-white transition-all shadow-sm disabled:opacity-50 ${
                     confirmAdminAction?.makeAdmin
-                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
-                      : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700'
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-red-600 hover:bg-red-700'
                   }`}
                 >
                   {updating ? 'Bezig...' : 'Bevestigen'}
@@ -1184,7 +1178,7 @@ export function AdminPage() {
                   <button
                     onClick={deleteUser}
                     disabled={!!updating}
-                    className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-medium transition-all shadow-sm disabled:opacity-50"
+                    className="flex-1 px-4 py-3 rounded-td bg-red-600 hover:bg-red-700 text-white font-medium transition-all shadow-sm disabled:opacity-50"
                   >
                     {updating ? 'Verwijderen...' : 'Verwijderen'}
                   </button>
@@ -1206,7 +1200,7 @@ export function AdminPage() {
 
                 {loadingModules ? (
                   <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-tielo-orange"></div>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -1241,7 +1235,7 @@ export function AdminPage() {
                   <button
                     onClick={saveUserModules}
                     disabled={loadingModules}
-                    className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium transition-all shadow-sm disabled:opacity-50"
+                    className="flex-1 px-4 py-3 rounded-td bg-tielo-orange hover:bg-tielo-orange/90 text-white font-medium transition-all shadow-sm disabled:opacity-50"
                   >
                     {loadingModules ? 'Opslaan...' : 'Opslaan'}
                   </button>

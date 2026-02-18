@@ -222,7 +222,7 @@ function BlogsContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-tielo-orange" />
       </div>
     );
   }
@@ -230,57 +230,57 @@ function BlogsContent() {
   return (
     <>
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Card className="td-card p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Totaal</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-navy/50 mb-1">Totaal</p>
+                <p className="text-3xl font-bold font-rubik text-tielo-navy">{stats.total}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FileText className="h-6 w-6 text-blue-600" />
+              <div className="p-2.5 bg-tielo-orange/10 rounded-td">
+                <FileText className="h-5 w-5 text-tielo-orange" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="td-card p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Gepubliceerd</p>
-                <p className="text-3xl font-bold text-green-600">{stats.published}</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-navy/50 mb-1">Gepubliceerd</p>
+                <p className="text-3xl font-bold font-rubik text-tielo-navy">{stats.published}</p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Eye className="h-6 w-6 text-green-600" />
+              <div className="p-2.5 bg-green-100 rounded-td">
+                <Eye className="h-5 w-5 text-green-600" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="td-card p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Concepten</p>
-                <p className="text-3xl font-bold text-amber-600">{stats.drafts}</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-navy/50 mb-1">Concepten</p>
+                <p className="text-3xl font-bold font-rubik text-tielo-navy">{stats.drafts}</p>
               </div>
-              <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
-                <Edit className="h-6 w-6 text-amber-600" />
+              <div className="p-2.5 bg-amber-100 rounded-td">
+                <Edit className="h-5 w-5 text-amber-600" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="td-card p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Categorieën</p>
-                <p className="text-3xl font-bold text-purple-600">{stats.categories}</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-navy/50 mb-1">Categorieën</p>
+                <p className="text-3xl font-bold font-rubik text-tielo-navy">{stats.categories}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Tag className="h-6 w-6 text-purple-600" />
+              <div className="p-2.5 bg-tielo-navy/10 rounded-td">
+                <Tag className="h-5 w-5 text-tielo-navy" />
               </div>
             </div>
           </Card>
         </div>
 
-        <Card className="p-6">
+        <Card className="td-card p-6">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -356,7 +356,7 @@ function BlogsContent() {
                   animate={{ opacity: 1, y: 0 }}
                   className="group"
                 >
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card className="td-card overflow-hidden hover:shadow-lg transition-shadow">
                     {post.featured_image_url && (
                       <div className="aspect-video overflow-hidden">
                         <img
@@ -382,7 +382,7 @@ function BlogsContent() {
                         )}
                       </div>
 
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+                      <h3 className="font-bold font-rubik text-tielo-navy text-base mb-2 line-clamp-2">
                         {post.title}
                       </h3>
 

@@ -570,24 +570,25 @@ function PortfolioContent() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+          className="bg-tielo-navy rounded-td p-6 text-white shadow-xl relative overflow-hidden"
         >
-          <div className="flex justify-between items-center">
+          <div className="absolute inset-0 td-striped opacity-10" />
+          <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Portfolio</h1>
-              <p className="text-blue-100">Beheer je projecten en referenties</p>
+              <h1 className="text-3xl font-bold font-rubik mb-1">Portfolio</h1>
+              <p className="text-white/70">Beheer je projecten en referenties</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2">
               <Button
                 onClick={handleDownloadTemplate}
-                className="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 font-semibold shadow-lg"
+                className="!bg-white/10 !text-white hover:!bg-white/20 !border-white/20 font-semibold"
               >
                 <Download className="h-4 w-4 mr-2" />
                 CSV Template
               </Button>
               <Button
                 onClick={() => fileInputRef.current?.click()}
-                className="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 font-semibold shadow-lg"
+                className="!bg-white/10 !text-white hover:!bg-white/20 !border-white/20 font-semibold"
               >
                 <FileUp className="h-4 w-4 mr-2" />
                 Importeer CSV
@@ -601,14 +602,14 @@ function PortfolioContent() {
               />
               <Button
                 onClick={() => setCategoryDialogOpen(true)}
-                className="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 font-semibold shadow-lg"
+                className="!bg-white/10 !text-white hover:!bg-white/20 !border-white/20 font-semibold"
               >
                 <Tag className="h-4 w-4 mr-2" />
                 Categorieën
               </Button>
               <Button
                 onClick={openNewDialog}
-                className="!bg-gray-900 !text-white hover:!bg-gray-800 !border-0 font-semibold shadow-xl"
+                className="!bg-tielo-orange !text-white hover:!bg-tielo-orange/90 !border-0 font-semibold shadow-xl"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Nieuw Project
@@ -644,14 +645,14 @@ function PortfolioContent() {
           >
             <span className={`px-4 py-2 transition-all duration-300 ${
               !showFeaturedOnly
-                ? 'bg-blue-600 text-white'
+                ? 'bg-tielo-navy text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}>
               Alle items
             </span>
             <span className={`px-4 py-2 transition-all duration-300 flex items-center gap-1.5 ${
               showFeaturedOnly
-                ? 'bg-blue-600 text-white shadow-inner'
+                ? 'bg-tielo-orange text-white shadow-inner'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}>
               <Check className="h-4 w-4" />
@@ -662,7 +663,7 @@ function PortfolioContent() {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tielo-orange"></div>
           </div>
         ) : filteredItems.length === 0 ? (
           items.length === 0 ? (
@@ -677,7 +678,7 @@ function PortfolioContent() {
               <p className="text-gray-600 mb-6">Begin met het toevoegen van je eerste project</p>
               <Button
                 onClick={openNewDialog}
-                className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
+                className="bg-tielo-orange hover:bg-tielo-orange/90 border-0 text-white"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Voeg je eerste project toe
@@ -725,7 +726,7 @@ function PortfolioContent() {
                 >
                   <Card className={`group relative overflow-hidden transition-all duration-300 ${
                     item.featured
-                      ? 'ring-4 ring-blue-500 hover:shadow-lg'
+                      ? 'ring-2 ring-tielo-orange hover:shadow-lg'
                       : 'hover:shadow-lg'
                   }`}>
                     <div className="aspect-video relative overflow-hidden bg-gray-100">
@@ -741,7 +742,7 @@ function PortfolioContent() {
                         </div>
                       )}
                       {item.featured && (
-                        <div className="absolute top-3 right-3 bg-blue-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                        <div className="absolute top-3 right-3 bg-tielo-orange px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
                           <Check className="h-4 w-4 text-white font-bold" />
                           <span className="text-sm font-bold text-white">Featured</span>
                         </div>
@@ -772,7 +773,7 @@ function PortfolioContent() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(item)}
-                          className="flex-1 bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100"
+                          className="flex-1 bg-tielo-orange/10 border-tielo-orange/30 text-tielo-orange hover:bg-tielo-orange/20"
                         >
                           <Pencil className="h-4 w-4 mr-2" />
                           Bewerken
