@@ -303,46 +303,38 @@ function DashboardHomeContent() {
             transition={{ delay: 0.5 }}
           >
             <h2 className="text-xl md:text-2xl font-bold font-rubik text-tielo-navy mb-4 md:mb-6">Quick Access</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <Card
-                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-tielo-orange"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <button
                 onClick={() => handleNavigation('/dashboard/admin')}
+                className="w-full text-left flex items-center gap-4 bg-white border border-tielo-navy/10 rounded-td px-5 py-4 group hover:border-tielo-orange/40 hover:bg-tielo-orange/5 transition-all"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
-                    <Shield className="h-8 w-8 text-tielo-orange" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold font-rubik text-tielo-navy mb-1">
-                      User Management
-                    </h3>
-                    <p className="text-tielo-navy/70">
-                      Beheer gebruikers, rollen en toegangsrechten
-                    </p>
-                  </div>
-                  <ArrowRight className="h-6 w-6 text-tielo-navy/40 group-hover:text-tielo-orange group-hover:translate-x-1 transition-all" />
+                <div className="p-2.5 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors flex-shrink-0">
+                  <Shield className="h-5 w-5 text-tielo-orange" />
                 </div>
-              </Card>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-0.5">Beheer</p>
+                  <p className="text-tielo-navy font-semibold text-sm leading-snug">User Management</p>
+                </div>
+                <span className="flex items-center gap-1 text-tielo-orange font-medium text-sm whitespace-nowrap group-hover:gap-2 transition-all flex-shrink-0">
+                  Open <ArrowRight className="w-4 h-4" />
+                </span>
+              </button>
 
-              <Card
-                className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-tielo-orange"
+              <button
                 onClick={() => handleNavigation('/dashboard/mcc')}
+                className="w-full text-left flex items-center gap-4 bg-white border border-tielo-navy/10 rounded-td px-5 py-4 group hover:border-tielo-orange/40 hover:bg-tielo-orange/5 transition-all"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
-                    <CheckCircle className="h-8 w-8 text-tielo-orange" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold font-rubik text-tielo-navy mb-1">
-                      Mission Control
-                    </h3>
-                    <p className="text-tielo-navy/70">
-                      Projecten en taken beheer systeem
-                    </p>
-                  </div>
-                  <ArrowRight className="h-6 w-6 text-tielo-navy/40 group-hover:text-tielo-orange group-hover:translate-x-1 transition-all" />
+                <div className="p-2.5 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors flex-shrink-0">
+                  <CheckCircle className="h-5 w-5 text-tielo-orange" />
                 </div>
-              </Card>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-0.5">Projecten</p>
+                  <p className="text-tielo-navy font-semibold text-sm leading-snug">Mission Control</p>
+                </div>
+                <span className="flex items-center gap-1 text-tielo-orange font-medium text-sm whitespace-nowrap group-hover:gap-2 transition-all flex-shrink-0">
+                  Open <ArrowRight className="w-4 h-4" />
+                </span>
+              </button>
             </div>
           </motion.div>
         </div>
@@ -426,30 +418,26 @@ function DashboardHomeContent() {
               transition={{ delay: 0.3 }}
             >
               <h2 className="text-xl md:text-2xl font-bold font-rubik text-tielo-navy mb-4 md:mb-6">Jouw Dashboard Modules</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {modules.map((module) => {
                   const Icon = iconMap[module.icon_name] || User;
                   return (
-                    <Card
+                    <button
                       key={module.module_key}
-                      className="td-card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-tielo-orange"
                       onClick={() => handleNavigation(module.route_path)}
+                      className="w-full text-left flex items-center gap-4 bg-white border border-tielo-navy/10 rounded-td px-5 py-4 group hover:border-tielo-orange/40 hover:bg-tielo-orange/5 transition-all"
                     >
-                      <div className="flex items-start gap-4">
-                        <div className="p-3 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors">
-                          <Icon className="h-6 w-6 text-tielo-orange" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold font-rubik text-tielo-navy mb-1">
-                            {module.display_name}
-                          </h3>
-                          <p className="text-sm text-tielo-navy/70 line-clamp-2">
-                            {module.description}
-                          </p>
-                        </div>
-                        <ArrowRight className="h-5 w-5 text-tielo-navy/40 group-hover:text-tielo-orange group-hover:translate-x-1 transition-all flex-shrink-0" />
+                      <div className="p-2.5 bg-tielo-orange/10 rounded-td group-hover:bg-tielo-orange/20 transition-colors flex-shrink-0">
+                        <Icon className="h-5 w-5 text-tielo-orange" />
                       </div>
-                    </Card>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-0.5">{module.module_key.replace(/_/g, ' ')}</p>
+                        <p className="text-tielo-navy font-semibold text-sm leading-snug truncate">{module.display_name}</p>
+                      </div>
+                      <span className="flex items-center gap-1 text-tielo-orange font-medium text-sm whitespace-nowrap group-hover:gap-2 transition-all flex-shrink-0">
+                        Open <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </button>
                   );
                 })}
               </div>

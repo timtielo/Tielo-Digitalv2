@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowRight, Loader } from 'lucide-react';
+import { ArrowRight, Loader, CheckCircle } from 'lucide-react';
+import { useFormSubmission } from '../../hooks/useFormSubmission';
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -10,25 +11,30 @@ export function ContactForm() {
     message: ''
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { submitForm, isLoading: isSubmitting } = useFormSubmission('contact');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
-    setIsSubmitting(false);
+    const success = await submitForm(formData);
+    if (success) {
+      setIsSuccess(true);
+    }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="space-y-6 bg-white rounded-xl p-8 shadow-sm flex flex-col items-center justify-center text-center min-h-[320px]">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+          <CheckCircle className="w-8 h-8 text-green-600" />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-tielo-navy mb-2">Bericht verzonden!</h3>
+          <p className="text-tielo-navy/60">Bedankt voor je bericht. Ik neem zo snel mogelijk contact met je op.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-8 shadow-sm">

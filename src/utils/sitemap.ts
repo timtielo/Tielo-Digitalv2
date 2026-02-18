@@ -42,12 +42,6 @@ export async function generateSitemap() {
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>${baseUrl}/succesverhalen</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>${baseUrl}/oplossingen</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
@@ -64,12 +58,6 @@ export async function generateSitemap() {
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/gratis-guide</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>${baseUrl}/call</loc>

@@ -1,17 +1,10 @@
-// Base form interface with common fields
 export interface BaseFormData {
   firstName: string;
   email: string;
   submittedAt: string;
-  formType: 'analysis' | 'guide' | 'websites' | 'contact';
+  formType: 'analysis' | 'websites' | 'contact';
 }
 
-// Guide form - simple form with just name and email
-export interface GuideFormData extends BaseFormData {
-  formType: 'guide';
-}
-
-// Analysis form - full contact form with additional fields
 export interface AnalysisFormData extends BaseFormData {
   formType: 'analysis';
   lastName?: string;
@@ -46,4 +39,4 @@ export interface ContactFormData {
   formType: 'contact';
 }
 
-export type FormData = GuideFormData | AnalysisFormData | WebsitesFormData | ContactFormData;
+export type FormData = AnalysisFormData | WebsitesFormData | ContactFormData;

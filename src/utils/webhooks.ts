@@ -3,15 +3,13 @@ import { WEBHOOK_CONFIG } from '../config/webhooks';
 
 export async function submitToWebhook(formData: FormData): Promise<boolean> {
   try {
-    // Determine which webhook URL to use based on form type
-    const webhookUrl = formData.formType === 'analysis' 
-      ? WEBHOOK_CONFIG.URLS.ANALYSIS 
-      : WEBHOOK_CONFIG.URLS.GUIDE;
+    const webhookUrl = WEBHOOK_CONFIG.URLS.ANALYSIS;
+    const sourcePage = typeof window !== 'undefined' ? window.location.pathname : '';
 
-    // Format payload according to Make.com webhook expectations
     const payload = {
       timestamp: formData.submittedAt,
       formType: formData.formType,
+      sourcePage,
       firstName: formData.firstName,
       email: formData.email,
       lastName: formData.formType === 'analysis' ? formData.lastName || '' : '',
@@ -23,6 +21,14 @@ export async function submitToWebhook(formData: FormData): Promise<boolean> {
         automationTasks: formData.automationTasks || '',
         timeSpent: formData.timeSpent || '',
         foundUs: formData.foundUs || ''
+      }),
+      ...((formData.formType === 'websites' || formData.formType === 'contact') && {
+        name: (formData as any).name || '',
+        phone: (formData as any).phone || '',
+        company: (formData as any).company || '',
+        website: (formData as any).website || '',
+        subject: (formData as any).subject || '',
+        message: (formData as any).message || '',
       })
     };
 

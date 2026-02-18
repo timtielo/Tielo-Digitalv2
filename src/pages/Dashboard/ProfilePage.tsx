@@ -245,16 +245,19 @@ function ProfileContent() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+          className="bg-tielo-navy rounded-td p-6 text-white shadow-xl relative overflow-hidden"
         >
-          <h1 className="text-3xl font-bold mb-2">Mijn Profiel</h1>
-          <p className="text-blue-100">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
-          <p className="text-sm text-blue-200 mt-2">⚠️ Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
+          <div className="absolute inset-0 td-striped opacity-10" />
+          <div className="relative">
+            <h1 className="text-3xl font-bold font-rubik mb-2">Mijn Profiel</h1>
+            <p className="text-white/80">Beheer je persoonlijke gegevens en bedrijfsinformatie</p>
+            <p className="text-sm text-white/50 mt-2">Deze gegevens zijn alleen intern zichtbaar en worden niet publiek getoond</p>
+          </div>
         </motion.div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tielo-orange"></div>
           </div>
         ) : (
           <div className="max-w-3xl mx-auto">
@@ -262,7 +265,7 @@ function ProfileContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="overflow-hidden">
+              <Card className="td-card overflow-hidden">
                 <div className="p-8">
                   <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="flex flex-col items-center gap-6 pb-8 border-b border-gray-200">
@@ -400,35 +403,27 @@ function ProfileContent() {
                         <Shield className="h-5 w-5" />
                         <span className="font-medium">Account Type</span>
                       </div>
-                      <div className={`p-6 rounded-2xl border-2 ${
+                      <div className={`p-6 rounded-td border ${
                         profile?.business_type === 'bouw'
-                          ? 'bg-blue-50 border-blue-300'
-                          : 'bg-gray-100 border-gray-300'
+                          ? 'bg-tielo-orange/5 border-tielo-orange/30'
+                          : 'bg-tielo-offwhite border-tielo-navy/10'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-bold text-gray-900 text-lg">
+                            <p className="font-bold text-tielo-navy font-rubik text-lg">
                               {profile?.business_type === 'bouw' ? 'Bouw Profiel' : 'Basis Profiel'}
                             </p>
-                            <p className="text-sm text-gray-700 mt-2">
+                            <p className="text-sm text-tielo-navy/70 mt-2">
                               {profile?.business_type === 'bouw'
                                 ? 'Volledige toegang tot alle dashboard functies inclusief Portfolio en Werkspot'
                                 : 'Toegang tot Reviews, Leads en Profiel beheer'}
                             </p>
                           </div>
-                          <div className={`p-3 rounded-xl ${
-                            profile?.business_type === 'bouw'
-                              ? 'bg-blue-200'
-                              : 'bg-gray-300'
-                          }`}>
-                            <Shield className={`h-8 w-8 ${
-                              profile?.business_type === 'bouw'
-                                ? 'text-blue-700'
-                                : 'text-gray-700'
-                            }`} />
+                          <div className="p-3 bg-tielo-orange/10 rounded-td">
+                            <Shield className="h-8 w-8 text-tielo-orange" />
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mt-4 pt-4 border-t border-gray-300">
+                        <p className="text-xs text-tielo-navy/40 mt-4 pt-4 border-t border-tielo-navy/10">
                           Neem contact op met een beheerder om je account type te wijzigen.
                         </p>
                       </div>
@@ -438,19 +433,17 @@ function ProfileContent() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.35 }}
-                      className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg"
+                      className="bg-tielo-orange/5 border border-tielo-orange/30 p-4 rounded-td"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-0.5">
-                          <svg className="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
+                        <div className="flex-shrink-0 mt-0.5 p-1.5 bg-tielo-orange/10 rounded-td">
+                          <Shield className="h-4 w-4 text-tielo-orange" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-amber-800">
+                          <p className="text-sm font-semibold text-tielo-navy">
                             Wijzigingen opslaan
                           </p>
-                          <p className="text-sm text-amber-700 mt-1">
+                          <p className="text-sm text-tielo-navy/60 mt-1">
                             Vergeet niet om je wijzigingen op te slaan voordat je de pagina verlaat
                           </p>
                         </div>
@@ -466,7 +459,7 @@ function ProfileContent() {
                       <Button
                         type="submit"
                         disabled={saving || uploading}
-                        className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 border-0 shadow-lg"
+                        className="bg-tielo-orange hover:bg-tielo-orange/90 border-0 shadow-lg text-white"
                       >
                         {saving ? 'Opslaan...' : 'Profiel Opslaan'}
                       </Button>
@@ -481,11 +474,11 @@ function ProfileContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="overflow-hidden">
+              <Card className="td-card overflow-hidden">
                 <div className="p-8">
                   <div className="flex items-center gap-2 mb-6">
-                    <Lock className="h-5 w-5 text-gray-700" />
-                    <h3 className="text-2xl font-bold text-gray-900">Wachtwoord Wijzigen</h3>
+                    <Lock className="h-5 w-5 text-tielo-orange" />
+                    <h3 className="text-2xl font-bold font-rubik text-tielo-navy">Wachtwoord Wijzigen</h3>
                   </div>
 
                   <form onSubmit={handlePasswordChange} className="space-y-6">
@@ -537,7 +530,7 @@ function ProfileContent() {
                     <Button
                       type="submit"
                       disabled={changingPassword}
-                      className="bg-gradient-to-r from-purple-500 to-pink-400 hover:from-purple-600 hover:to-pink-500 border-0"
+                      className="bg-tielo-navy hover:bg-tielo-navy/90 border-0 text-white"
                     >
                       {changingPassword ? 'Wijzigen...' : 'Wachtwoord Wijzigen'}
                     </Button>
@@ -552,9 +545,9 @@ function ProfileContent() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
               >
-                <Card className="overflow-hidden bg-white">
-                  <div className="p-8 bg-white">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Belangrijke Links</h3>
+                <Card className="td-card overflow-hidden">
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold font-rubik text-tielo-navy mb-4">Belangrijke Links</h3>
                     <div
                       ref={linksContainerRef}
                       className="space-y-2 [&_*]:!text-gray-900 [&_*]:!bg-transparent [&_a]:!text-blue-600 [&_a]:!underline [&_a]:!decoration-blue-300 [&_a]:!underline-offset-2 [&_a:hover]:!text-blue-800 [&_strong]:!text-gray-900 [&_strong]:!font-bold [&_b]:!text-gray-900 [&_b]:!font-bold [&_p]:!text-gray-900 [&_li]:!text-gray-900 [&_span]:!text-gray-900 [&_div]:!text-gray-900 [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5"

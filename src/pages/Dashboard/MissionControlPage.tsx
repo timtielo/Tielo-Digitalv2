@@ -419,7 +419,7 @@ function MissionControlContent() {
                         type="text"
                         value={item.item}
                         onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                        className="w-full min-w-[250px] px-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                        className="w-full min-w-[250px] px-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:border-tielo-orange focus:ring-2 focus:ring-tielo-orange/20 transition-all"
                       />
                     </td>
                     {item.scores.map((score) => (
@@ -428,7 +428,7 @@ function MissionControlContent() {
                           type="number"
                           value={score.value}
                           onChange={(e) => updateScore(item.id, score.week, parseInt(e.target.value) || 0)}
-                          className="w-16 px-2 py-2 text-sm text-center rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                          className="w-16 px-2 py-2 text-sm text-center rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-tielo-orange focus:ring-2 focus:ring-tielo-orange/20 transition-all"
                         />
                       </td>
                     ))}
@@ -440,14 +440,14 @@ function MissionControlContent() {
                         type="number"
                         value={item.target}
                         onChange={(e) => updateItem(item.id, 'target', parseInt(e.target.value) || 0)}
-                        className="w-20 px-2 py-2 text-sm text-center rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                        className="w-20 px-2 py-2 text-sm text-center rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-tielo-orange focus:ring-2 focus:ring-tielo-orange/20 transition-all"
                       />
                     </td>
                     <td className="px-2 py-2">
                       <select
                         value={item.status}
                         onChange={(e) => updateItem(item.id, 'status', e.target.value)}
-                        className="w-full min-w-[130px] px-2 py-2 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        className="w-full min-w-[130px] px-2 py-2 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-tielo-orange focus:ring-2 focus:ring-tielo-orange/20"
                       >
                         {STATUS_OPTIONS.map(option => (
                           <option key={option.value} value={option.value}>
@@ -474,7 +474,7 @@ function MissionControlContent() {
     return (
       <DashboardLayout currentPage="admin">
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tielo-orange"></div>
         </div>
       </DashboardLayout>
     );
@@ -488,8 +488,8 @@ function MissionControlContent() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-4 md:mb-6"
         >
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Mission Control Center</h1>
-          <p className="text-sm md:text-base text-gray-600">Beheer je maandelijkse doelen en voortgang</p>
+          <h1 className="text-2xl md:text-3xl font-bold font-rubik text-tielo-navy mb-1 md:mb-2">Mission Control Center</h1>
+          <p className="text-sm md:text-base text-tielo-navy/60">Beheer je maandelijkse doelen en voortgang</p>
         </motion.div>
 
         <motion.div
@@ -511,7 +511,7 @@ function MissionControlContent() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                  className="px-2 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="px-2 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-tielo-orange focus:ring-2 focus:ring-tielo-orange/20 transition-all"
                 >
                   {MONTHS.map((month, index) => (
                     <option key={index} value={index + 1}>
@@ -523,7 +523,7 @@ function MissionControlContent() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="px-2 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="px-2 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-tielo-orange focus:ring-2 focus:ring-tielo-orange/20 transition-all"
                 >
                   {[2024, 2025, 2026, 2027].map(year => (
                     <option key={year} value={year}>
@@ -545,7 +545,7 @@ function MissionControlContent() {
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <button
                   onClick={createMonth}
-                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-lg"
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-tielo-orange hover:bg-tielo-orange/90 text-white font-medium transition-all shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
                   <span className="hidden sm:inline">Nieuwe lege maand</span>
@@ -553,7 +553,7 @@ function MissionControlContent() {
                 </button>
                 <button
                   onClick={createMonthFromLastMonth}
-                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium transition-all shadow-lg"
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm md:text-base rounded-xl bg-tielo-navy hover:bg-tielo-navy/90 text-white font-medium transition-all shadow-sm"
                 >
                   <Copy className="w-4 h-4" />
                   <span className="hidden sm:inline">Kopieer vorige maand</span>
@@ -721,14 +721,14 @@ function MissionControlContent() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={createMonth}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all shadow-sm"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-tielo-orange hover:bg-tielo-orange/90 text-white font-medium transition-all shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 Nieuwe lege maand
               </button>
               <button
                 onClick={createMonthFromLastMonth}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium transition-all shadow-sm"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-tielo-navy hover:bg-tielo-navy/90 text-white font-medium transition-all shadow-sm"
               >
                 <Copy className="w-4 h-4" />
                 Kopieer vorige maand
