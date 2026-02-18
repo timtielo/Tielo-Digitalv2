@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Quote, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { Quote, Star, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+import { Link } from '../../../../components/Link';
 
-const testimonials = [
+const testimonials: { name: string; company: string; quote: string; rating: number; caseTeaser?: string; caseLink?: string }[] = [
   {
     name: 'Jack van Eijk',
     company: 'Allround Klusbedrijf Specht',
@@ -19,7 +20,9 @@ const testimonials = [
     name: "Job 't Gilde",
     company: "'t Gilde Gevelwerken",
     quote: "Tim heeft in enkele dagen een mooie website voor mij gebouwd. De communicatie was helder en enkele aanpassingen waren snel gedaan. Ik kan zelf makkelijk mijn portfolio bijwerken. Daarnaast heeft hij mij geholpen met de DNS instellingen en het logo. De prijs was ook prima. Kortom, snelle en zorgeloze ervaring, dikke aanrader.",
-    rating: 5
+    rating: 5,
+    caseTeaser: "Gevelspecialist Job had zijn website in een maand terugverdiend.",
+    caseLink: "/cases#case-gilde"
   },
   {
     name: 'Lars van der Meer',
@@ -43,7 +46,7 @@ const testimonials = [
 
 const MAX_LENGTH = 250;
 
-function TestimonialCard({ testimonial, index }: { testimonial: typeof testimonials[0], index: number }) {
+function TestimonialCard({ testimonial, index }: { testimonial: (typeof testimonials)[0], index: number }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldTruncate = testimonial.quote.length > MAX_LENGTH;
   const displayQuote = shouldTruncate && !isExpanded
@@ -95,6 +98,18 @@ function TestimonialCard({ testimonial, index }: { testimonial: typeof testimoni
             <p className="font-semibold">{testimonial.name}</p>
             <p className="text-gray-500">Eigenaar bij {testimonial.company}</p>
           </div>
+          {testimonial.caseTeaser && testimonial.caseLink && (
+            <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between gap-4">
+              <p className="text-sm text-gray-500 italic">{testimonial.caseTeaser}</p>
+              <Link
+                href={testimonial.caseLink}
+                className="flex items-center gap-1 text-sm font-semibold text-tielo-orange hover:text-[#d85515] whitespace-nowrap transition-colors"
+              >
+                Lees meer
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
