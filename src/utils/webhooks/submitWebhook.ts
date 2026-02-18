@@ -1,16 +1,12 @@
 import { FormData } from '../../types/forms';
-import { WEBHOOK_URLS } from './config';
+import { WEBHOOK_URL } from './config';
 import { formatWebhookPayload } from './formatPayload';
 
-export async function submitWebhook(formData: FormData): Promise<boolean> {
+export async function submitWebhook(formData: FormData, sourcePage?: string): Promise<boolean> {
   try {
-    const webhookUrl = (formData.formType === 'analysis' || formData.formType === 'websites')
-      ? WEBHOOK_URLS.ANALYSIS
-      : WEBHOOK_URLS.GUIDE;
+    const payload = formatWebhookPayload(formData, sourcePage);
 
-    const payload = formatWebhookPayload(formData);
-
-    const response = await fetch(webhookUrl, {
+    const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
