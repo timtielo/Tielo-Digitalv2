@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, Trash2, Eye, EyeOff, Plus, Image as ImageIcon,
   Loader2, X, ZoomIn, ZoomOut, RotateCcw, Pencil, Download,
+  Move,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,39 +13,38 @@ import { Card } from '../../components/ui/Card';
 import { useToast } from '../../components/ui/Toast';
 
 /*
-  Export format: 1080 × 1920 px (standard 9:16 phone screen ratio).
-  The phone frame (phone_1.png, 1024×2048) overlays this image in the frontend.
-  The screen area of phone_1.png fills roughly the full image area when
-  displayed with object-cover / positioned behind the frame overlay.
+  Phone frame: phone_1.png is 1024 × 2048 px (1:2 aspect ratio).
 
-  Preview geometry: the draggable preview shows a 9:16 clip area that
-  exactly matches the export canvas, so WYSIWYG.
-*/
-
-const EXPORT_W = 1080;
-const EXPORT_H = 1920;
-const EXPORT_ASPECT = EXPORT_H / EXPORT_W; // 16/9 ≈ 1.778
-
-/*
-  phone_1.png is 1024×2048 (1:2 aspect).
   The visible screen area inside the bezel (measured as fractions of image size):
-    left:   6.8%  → 0.068
-    right:  6.8%  → 0.068   → screen width fraction = 0.864
-    top:    11.8% → 0.118
-    bottom: 7.5%  → 0.075   → screen height fraction = 0.807
+    left:   6.8%   right:  6.8%   → screen width  fraction = 0.864
+    top:   11.8%   bottom: 7.5%   → screen height fraction = 0.807
 
-  When we render phone_1.png at a given display size (W × H where H = W * 2),
-  the screen rectangle in CSS pixels is:
-    sx = W * 0.068,  sy = H * 0.118
-    sw = W * 0.864,  sh = H * 0.807
+  Screen area pixel dimensions:
+    screen_w = 1024 × 0.864 = 884.7 px
+    screen_h = 2048 × 0.807 = 1653.1 px
+    aspect   = 884.7 / 1653.1 ≈ 0.535 (w:h)  i.e. h/w ≈ 1.8685
+
+  Export canvas: 1080 × 2018 px (maintains exact screen aspect ratio).
+    1080 × 1.8685 = 2017.9 → round to 2018
+
+  Saved images have this exact 1080×2018 ratio.
+  When the frontend displays them with object-cover inside the screen area,
+  they will fill perfectly with no letterboxing.
 */
-const PHONE_IMG_ASPECT = 2048 / 1024; // = 2.0  (height/width)
 
-// Fractions of phone image dimensions where the screen sits
+const PHONE_IMG_ASPECT = 2048 / 1024;   // = 2.0 (height/width)
+
 const SCREEN_LEFT_FRAC   = 0.068;
 const SCREEN_TOP_FRAC    = 0.118;
 const SCREEN_WIDTH_FRAC  = 0.864;
 const SCREEN_HEIGHT_FRAC = 0.807;
+
+// Exact screen aspect ratio (height/width)
+const SCREEN_ASPECT_HW = (SCREEN_HEIGHT_FRAC * 2048) / (SCREEN_WIDTH_FRAC * 1024); // ≈ 1.8685
+
+// Export dimensions that exactly match the screen aspect ratio
+const EXPORT_W = 1080;
+const EXPORT_H = Math.round(EXPORT_W * SCREEN_ASPECT_HW); // 2018
 
 interface PhoneImage {
   id: string;
@@ -66,10 +66,16 @@ const DEFAULT_PANZOOM: PanZoom = { x: 0, y: 0, zoom: 1 };
 /*
   DraggablePhonePreview
   ---------------------
-  Renders the phone frame image at a given width.
-  The photo is clipped and positioned inside the screen area only.
-  The clip rect is computed from the SCREEN_*_FRAC constants so it
-  matches the canvas export exactly.
+  Renders the phone frame with the photo clipped exactly to the screen area.
+  The clip area has the SAME aspect ratio as the export canvas (EXPORT_W × EXPORT_H),
+  so what you see in the preview IS what gets exported — true WYSIWYG.
+
+  Pan: drag to reposition.
+  Zoom: scroll wheel or buttons (0.5x – 4x).
+
+  At zoom=1, the image covers the screen area (object-cover behaviour):
+  the image is scaled so whichever dimension is smaller fills the screen,
+  and the larger dimension overflows (and is hidden by clip).
 */
 function DraggablePhonePreview({
   imageUrl,
@@ -91,7 +97,6 @@ function DraggablePhonePreview({
   useEffect(() => { pzRef.current = panZoom; }, [panZoom]);
   useEffect(() => { cbRef.current = onChange; }, [onChange]);
 
-  // Total display height of the phone image
   const phoneH = Math.round(width * PHONE_IMG_ASPECT);
 
   // Screen area in display pixels
@@ -99,6 +104,10 @@ function DraggablePhonePreview({
   const sy = Math.round(phoneH * SCREEN_TOP_FRAC);
   const sw = Math.round(width * SCREEN_WIDTH_FRAC);
   const sh = Math.round(phoneH * SCREEN_HEIGHT_FRAC);
+
+  // At zoom=1 the image must cover the screen area (object-cover).
+  // We compute cover dimensions from the actual image size via an img element,
+  // but since we don't have the natural size here we use CSS object-fit instead.
 
   const startDrag = (cx: number, cy: number) => {
     if (!imageUrl) return;
@@ -119,9 +128,9 @@ function DraggablePhonePreview({
 
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    const delta = -e.deltaY * 0.0008;
+    const delta = -e.deltaY * 0.001;
     const cur = pzRef.current;
-    const next = Math.min(5, Math.max(0.5, cur.zoom + delta * cur.zoom));
+    const next = Math.min(4, Math.max(0.5, cur.zoom + delta * cur.zoom));
     cbRef.current({ ...cur, zoom: parseFloat(next.toFixed(3)) });
   }, []);
 
@@ -152,7 +161,7 @@ function DraggablePhonePreview({
       className="relative mx-auto select-none flex-shrink-0"
       style={{ width, height: phoneH }}
     >
-      {/* Photo layer — clipped to the screen area */}
+      {/* Photo layer — clipped to screen area, matching export aspect ratio */}
       <div
         className="absolute overflow-hidden"
         style={{
@@ -160,8 +169,8 @@ function DraggablePhonePreview({
           top: sy,
           width: sw,
           height: sh,
-          cursor: imageUrl ? 'grab' : 'default',
-          background: '#e5e5e5',
+          cursor: imageUrl ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
+          background: '#1a1a2e',
         }}
         onMouseDown={e => { startDrag(e.clientX, e.clientY); e.preventDefault(); }}
         onTouchStart={e => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
@@ -174,11 +183,13 @@ function DraggablePhonePreview({
             className="absolute pointer-events-none"
             style={{
               /*
-                Size the image to cover the screen area at zoom=1.
-                The image should cover sw × sh, then zoom and pan on top.
+                Cover the screen area: size image so it covers sw × sh,
+                then apply zoom and pan on top of that.
+                Using width/height 100% + objectFit cover achieves the base cover.
+                We then scale further for zoom and translate for pan.
               */
-              width: sw,
-              height: sh,
+              width: '100%',
+              height: '100%',
               objectFit: 'cover',
               transform: `translate(${panZoom.x}px, ${panZoom.y}px) scale(${panZoom.zoom})`,
               transformOrigin: 'center center',
@@ -186,25 +197,30 @@ function DraggablePhonePreview({
             }}
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
-            <ImageIcon className="w-8 h-8 text-gray-400" />
-            <p className="text-xs text-gray-400 font-medium text-center leading-tight px-2">Upload een foto</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <div className="p-3 bg-white/10 rounded-full">
+              <ImageIcon className="w-6 h-6 text-white/40" />
+            </div>
+            <p className="text-[10px] text-white/30 font-medium text-center leading-tight px-2">
+              Upload een foto
+            </p>
           </div>
         )}
         {imageUrl && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full pointer-events-none backdrop-blur-sm whitespace-nowrap">
+          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white text-[9px] font-medium px-2 py-0.5 rounded-full pointer-events-none backdrop-blur-sm whitespace-nowrap flex items-center gap-1">
+            <Move className="w-2.5 h-2.5" />
             Sleep · Scroll = zoom
           </div>
         )}
       </div>
 
-      {/* Phone frame overlay — always on top */}
+      {/* Phone frame overlay — always on top, never blocks interaction */}
       <img
         src="/assets/phone_1.png"
         alt="Phone frame"
         draggable={false}
-        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-        style={{ zIndex: 10 }}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 10, objectFit: 'contain' }}
       />
     </div>
   );
@@ -226,21 +242,31 @@ function PhotoEditor({
   const [altText, setAltText] = useState(existingImage?.alt_text ?? '');
   const [panZoom, setPanZoom] = useState<PanZoom>(DEFAULT_PANZOOM);
   const [exporting, setExporting] = useState(false);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileSelect = (file: File) => {
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
     setPanZoom(DEFAULT_PANZOOM);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileSelect(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingFile(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) handleFileSelect(file);
   };
 
   const exportAndSave = async () => {
     if (!user) return;
     if (!altText.trim()) { showToast('Vul een omschrijving in', 'error'); return; }
 
-    // Only alt text changed, no new file
     if (!selectedFile && existingImage) {
       setExporting(true);
       try {
@@ -265,29 +291,35 @@ function PhotoEditor({
 
     try {
       /*
-        Export canvas: EXPORT_W × EXPORT_H (1080 × 1920).
-        The preview screen area is sw × sh at the display size.
-        We need to map panZoom (in preview screen pixels) → canvas pixels.
+        Export canvas: EXPORT_W × EXPORT_H (1080 × 2018).
+        This exactly matches the phone screen aspect ratio so the image
+        fills the screen area with no letterboxing when displayed with object-cover.
 
-        Preview screen dimensions at width=260:
-          phoneH = 260 * 2 = 520
-          sw = 260 * 0.864 = 224.6
-          sh = 520 * 0.807 = 419.6
+        The preview shows the image with CSS object-cover + pan/zoom transforms.
+        We replicate the same cover + transform on the canvas:
 
-        Canvas is 1080 × 1920, so scale factors:
-          scaleX = 1080 / sw
-          scaleY = 1920 / sh
+        1. Load the image and compute cover dimensions for 1080×2018.
+        2. Apply pan offset (scaled from preview px → canvas px).
+        3. Apply zoom scale.
+        4. Draw and export.
 
-        Since EXPORT_W/sw ≈ EXPORT_H/sh (both ≈ 4.8), they're approximately equal.
-        We use a single scale factor for translation: EXPORT_W / sw.
+        Preview screen area:
+          previewW = 260, phoneH = 260*2 = 520
+          sw = Math.round(260 * 0.864) = 225
+          sh = Math.round(520 * 0.807) = 420
+
+        Scale from preview to canvas:
+          scaleX = EXPORT_W / sw  (1080 / 225 ≈ 4.8)
+          scaleY = EXPORT_H / sh  (2018 / 420 ≈ 4.8)
+        They're approximately equal (screen aspect ratio is consistent).
+        Use the average for pan scaling.
       */
-      const previewWidth  = 260;
-      const previewPhoneH = Math.round(previewWidth * PHONE_IMG_ASPECT);
-      const sw = Math.round(previewWidth * SCREEN_WIDTH_FRAC);
-      const sh = Math.round(previewPhoneH * SCREEN_HEIGHT_FRAC);
-
-      const scaleX = EXPORT_W / sw;
-      const scaleY = EXPORT_H / sh;
+      const previewW   = 260;
+      const previewH   = Math.round(previewW * PHONE_IMG_ASPECT);
+      const sw         = Math.round(previewW * SCREEN_WIDTH_FRAC);
+      const sh         = Math.round(previewH * SCREEN_HEIGHT_FRAC);
+      const scaleX     = EXPORT_W / sw;
+      const scaleY     = EXPORT_H / sh;
 
       const img = await createImageBitmap(selectedFile);
       const canvas = document.createElement('canvas');
@@ -296,26 +328,28 @@ function PhotoEditor({
       const ctx = canvas.getContext('2d')!;
       ctx.clearRect(0, 0, EXPORT_W, EXPORT_H);
 
-      const cx = EXPORT_W / 2;
-      const cy = EXPORT_H / 2;
-      ctx.translate(cx + panZoom.x * scaleX, cy + panZoom.y * scaleY);
-      ctx.scale(panZoom.zoom, panZoom.zoom);
-
-      // Draw image covering the full canvas at zoom=1
+      // Compute cover dimensions: scale image to cover canvas at zoom=1
       const imgAspect  = img.width / img.height;
       const canvAspect = EXPORT_W / EXPORT_H;
       let drawW: number, drawH: number;
       if (imgAspect > canvAspect) {
+        // Image is wider → fit height, overflow width
         drawH = EXPORT_H;
         drawW = drawH * imgAspect;
       } else {
+        // Image is taller → fit width, overflow height
         drawW = EXPORT_W;
         drawH = drawW / imgAspect;
       }
 
+      // Apply zoom and pan transforms (same logic as CSS transform on preview)
+      const cx = EXPORT_W / 2 + panZoom.x * scaleX;
+      const cy = EXPORT_H / 2 + panZoom.y * scaleY;
+      ctx.translate(cx, cy);
+      ctx.scale(panZoom.zoom, panZoom.zoom);
       ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
 
-      const blob: Blob = await new Promise(res => canvas.toBlob(b => res(b!), 'image/jpeg', 0.92));
+      const blob: Blob = await new Promise(res => canvas.toBlob(b => res(b!), 'image/jpeg', 0.95));
       const filename = `${user.id}/${Date.now()}.jpg`;
 
       const { error: uploadError } = await supabase.storage
@@ -363,10 +397,12 @@ function PhotoEditor({
   };
 
   const isEditing = !!existingImage;
-  const PREVIEW_W = 260;
+  const PREVIEW_W = 240;
+
+  const zoomPresets = [1, 1.25, 1.5, 2];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-tielo-navy/75 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-tielo-navy/80 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -396,26 +432,37 @@ function PhotoEditor({
           </div>
 
           <div className="p-6 space-y-5 flex-1">
-            {/* File picker */}
+            {/* File picker — supports drag & drop */}
             <div
               onClick={() => fileInputRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
+              onDragLeave={() => setIsDraggingFile(false)}
+              onDrop={handleDrop}
               className={`border-2 border-dashed rounded-td p-5 text-center cursor-pointer transition-all group ${
-                selectedFile
+                isDraggingFile
+                  ? 'border-tielo-orange bg-tielo-orange/10 scale-[1.01]'
+                  : selectedFile
                   ? 'border-tielo-orange bg-tielo-orange/5'
-                  : 'border-tielo-steel/40 hover:border-tielo-orange'
+                  : 'border-tielo-steel/40 hover:border-tielo-orange hover:bg-tielo-orange/5'
               }`}
             >
               <div className="p-2.5 bg-tielo-orange/10 rounded-td w-fit mx-auto mb-2 group-hover:bg-tielo-orange/20 transition-colors">
                 <Upload className="w-5 h-5 text-tielo-orange" />
               </div>
               <p className="text-sm font-bold text-tielo-navy leading-snug">
-                {selectedFile ? selectedFile.name : isEditing ? 'Nieuwe foto uploaden' : 'Klik om foto te selecteren'}
+                {isDraggingFile
+                  ? 'Laat los om te uploaden'
+                  : selectedFile
+                  ? selectedFile.name
+                  : isEditing
+                  ? 'Nieuwe foto uploaden'
+                  : 'Klik of sleep een foto hier'}
               </p>
               {isEditing && !selectedFile && (
                 <p className="text-xs text-tielo-navy/40 mt-1">Laat leeg om huidige foto te behouden</p>
               )}
               <p className="text-[11px] text-tielo-navy/40 mt-1">PNG, JPG of WebP</p>
-              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleInputChange} className="hidden" />
             </div>
 
             {/* Alt text */}
@@ -432,11 +479,11 @@ function PhotoEditor({
               />
             </div>
 
-            {/* Zoom controls — only when a photo is loaded */}
+            {/* Zoom controls — only shown when a photo is loaded */}
             {previewUrl && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide">Zoom</label>
+                  <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide">Uitsnede</label>
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.max(0.5, p.zoom - 0.1).toFixed(2)) }))}
@@ -448,7 +495,7 @@ function PhotoEditor({
                       {panZoom.zoom.toFixed(2)}x
                     </span>
                     <button
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.min(5, p.zoom + 0.1).toFixed(2)) }))}
+                      onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.min(4, p.zoom + 0.1).toFixed(2)) }))}
                       className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
                     >
                       <ZoomIn className="w-3.5 h-3.5" />
@@ -456,23 +503,25 @@ function PhotoEditor({
                     <button
                       onClick={() => setPanZoom(DEFAULT_PANZOOM)}
                       className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/30 hover:text-tielo-orange transition-all"
-                      title="Reset"
+                      title="Reset naar standaard"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
+
                 <input
                   type="range"
                   min={0.5}
-                  max={5}
+                  max={4}
                   step={0.01}
                   value={panZoom.zoom}
                   onChange={e => setPanZoom(p => ({ ...p, zoom: Number(e.target.value) }))}
                   className="w-full h-2 appearance-none bg-tielo-steel/20 rounded-full accent-tielo-orange cursor-pointer"
                 />
+
                 <div className="grid grid-cols-4 gap-1.5 text-center">
-                  {[0.8, 1, 1.5, 2].map(z => (
+                  {zoomPresets.map(z => (
                     <button
                       key={z}
                       onClick={() => setPanZoom(p => ({ ...p, zoom: z }))}
@@ -487,10 +536,19 @@ function PhotoEditor({
                   ))}
                 </div>
 
-                <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed">
-                  <span className="font-bold text-tielo-navy/70">Exportformaat:</span>{' '}
-                  {EXPORT_W} × {EXPORT_H} px — wat je ziet is exact wat wordt opgeslagen.
+                <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
+                  <p><span className="font-bold text-tielo-navy/70">Exportformaat:</span> {EXPORT_W} × {EXPORT_H} px</p>
+                  <p className="text-tielo-navy/40">De preview is 1:1 — wat je ziet wordt exact opgeslagen.</p>
                 </div>
+              </div>
+            )}
+
+            {/* Tips */}
+            {!previewUrl && (
+              <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
+                <p className="font-bold text-tielo-navy/70 mb-1">Tips voor de beste uitsnede</p>
+                <p>Gebruik een <strong>portretfoto</strong> (hoger dan breed) voor het mooiste resultaat in het telefoon-frame.</p>
+                <p>Sleep de foto na upload om de uitsnede te bepalen.</p>
               </div>
             )}
           </div>
@@ -521,6 +579,11 @@ function PhotoEditor({
             onChange={setPanZoom}
             width={PREVIEW_W}
           />
+          {previewUrl && (
+            <p className="text-[10px] text-tielo-navy/30 mt-4 text-center">
+              De uitsnede in het schermgebied is exact wat wordt opgeslagen
+            </p>
+          )}
         </div>
       </motion.div>
     </div>
@@ -543,7 +606,7 @@ function PhoneThumbnail({ image, onClick }: { image: PhoneImage; onClick?: () =>
       onClick={onClick}
     >
       <div
-        className="absolute overflow-hidden bg-gray-200"
+        className="absolute overflow-hidden bg-gray-900"
         style={{ left: sx, top: sy, width: sw, height: sh }}
       >
         <img
@@ -556,8 +619,8 @@ function PhoneThumbnail({ image, onClick }: { image: PhoneImage; onClick?: () =>
       <img
         src="/assets/phone_1.png"
         alt=""
-        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-        style={{ zIndex: 10 }}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 10, objectFit: 'contain' }}
       />
       {onClick && (
         <div className="absolute inset-0 rounded bg-tielo-navy/0 group-hover:bg-tielo-navy/20 transition-colors z-20 flex items-center justify-center">
@@ -580,10 +643,10 @@ function PhoneSidebarThumb({ image, onClick }: { image: PhoneImage; onClick: () 
   return (
     <div className="flex flex-col items-center cursor-pointer group" onClick={onClick}>
       <div className="relative" style={{ width: W, height: phoneH }}>
-        <div className="absolute overflow-hidden bg-gray-200" style={{ left: sx, top: sy, width: sw, height: sh }}>
+        <div className="absolute overflow-hidden bg-gray-900" style={{ left: sx, top: sy, width: sw, height: sh }}>
           <img src={image.image_url} alt={image.alt_text} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
         </div>
-        <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full object-contain pointer-events-none" style={{ zIndex: 10 }} />
+        <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 10, objectFit: 'contain' }} />
         <div className="absolute inset-0 bg-tielo-navy/0 group-hover:bg-tielo-navy/15 transition-colors rounded z-20" />
       </div>
       <p className="text-xs text-tielo-navy/50 text-center mt-1.5 truncate max-w-[110px]">{image.alt_text}</p>
@@ -828,6 +891,16 @@ function MobilePhotosContent() {
                 </div>
               </div>
             </Card>
+
+            <Card className="td-card p-5 space-y-2">
+              <h3 className="text-sm font-bold font-rubik text-tielo-navy">Exportformaat</h3>
+              <p className="text-xs text-tielo-navy/50 leading-relaxed">
+                Foto's worden opgeslagen als <strong className="text-tielo-navy/70">{EXPORT_W} × {EXPORT_H} px</strong> — exact de verhouding van het telefoon-schermgebied.
+              </p>
+              <p className="text-xs text-tielo-navy/40 leading-relaxed">
+                Dit zorgt ervoor dat de foto altijd perfect in het frame past zonder bij te snijden of letterboxing.
+              </p>
+            </Card>
           </motion.div>
         </div>
       </div>
@@ -868,10 +941,10 @@ function MobilePhotosContent() {
                 onClick={e => e.stopPropagation()}
               >
                 <div className="relative" style={{ width: W, height: pH }}>
-                  <div className="absolute overflow-hidden bg-gray-200" style={{ left: sx, top: sy, width: sw, height: sh }}>
+                  <div className="absolute overflow-hidden bg-gray-900" style={{ left: sx, top: sy, width: sw, height: sh }}>
                     <img src={previewImage.image_url} alt={previewImage.alt_text} className="absolute inset-0 w-full h-full object-cover" />
                   </div>
-                  <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full object-contain pointer-events-none" style={{ zIndex: 10 }} />
+                  <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 10, objectFit: 'contain' }} />
                 </div>
                 <p className="text-white/80 text-center mt-3 text-sm font-medium">{previewImage.alt_text}</p>
                 <button
