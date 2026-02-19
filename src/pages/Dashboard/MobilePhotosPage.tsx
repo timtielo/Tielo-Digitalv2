@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, Trash2, Eye, EyeOff, Plus, Image as ImageIcon,
-  Loader2, X, ZoomIn, ZoomOut, RotateCcw, Pencil, Download,
-  Move,
+  Loader2, X, ZoomIn, ZoomOut, RotateCw, Pencil, Check, Move,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,39 +11,8 @@ import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { Card } from '../../components/ui/Card';
 import { useToast } from '../../components/ui/Toast';
 
-/*
-  Phone frame: phone_1.png is 1024 × 2048 px (1:2 aspect ratio).
-
-  The visible screen area inside the bezel (measured as fractions of image size):
-    left:   6.8%   right:  6.8%   → screen width  fraction = 0.864
-    top:   11.8%   bottom: 7.5%   → screen height fraction = 0.807
-
-  Screen area pixel dimensions:
-    screen_w = 1024 × 0.864 = 884.7 px
-    screen_h = 2048 × 0.807 = 1653.1 px
-    aspect   = 884.7 / 1653.1 ≈ 0.535 (w:h)  i.e. h/w ≈ 1.8685
-
-  Export canvas: 1080 × 2018 px (maintains exact screen aspect ratio).
-    1080 × 1.8685 = 2017.9 → round to 2018
-
-  Saved images have this exact 1080×2018 ratio.
-  When the frontend displays them with object-cover inside the screen area,
-  they will fill perfectly with no letterboxing.
-*/
-
-const PHONE_IMG_ASPECT = 2048 / 1024;   // = 2.0 (height/width)
-
-const SCREEN_LEFT_FRAC   = 0.068;
-const SCREEN_TOP_FRAC    = 0.118;
-const SCREEN_WIDTH_FRAC  = 0.864;
-const SCREEN_HEIGHT_FRAC = 0.807;
-
-// Exact screen aspect ratio (height/width)
-const SCREEN_ASPECT_HW = (SCREEN_HEIGHT_FRAC * 2048) / (SCREEN_WIDTH_FRAC * 1024); // ≈ 1.8685
-
-// Export dimensions that exactly match the screen aspect ratio
-const EXPORT_W = 1080;
-const EXPORT_H = Math.round(EXPORT_W * SCREEN_ASPECT_HW); // 2018
+const EXPORT_W = 937;
+const EXPORT_H = 1937;
 
 interface PhoneImage {
   id: string;
@@ -55,186 +23,7 @@ interface PhoneImage {
   created_at: string;
 }
 
-interface PanZoom {
-  x: number;
-  y: number;
-  zoom: number;
-}
-
-const DEFAULT_PANZOOM: PanZoom = { x: 0, y: 0, zoom: 1 };
-
-/*
-  DraggablePhonePreview
-  ---------------------
-  Renders the phone frame with the photo clipped exactly to the screen area.
-  The clip area has the SAME aspect ratio as the export canvas (EXPORT_W × EXPORT_H),
-  so what you see in the preview IS what gets exported — true WYSIWYG.
-
-  Pan: drag to reposition.
-  Zoom: scroll wheel or buttons (0.5x – 4x).
-
-  At zoom=1, the image covers the screen area (object-cover behaviour):
-  the image is scaled so whichever dimension is smaller fills the screen,
-  and the larger dimension overflows (and is hidden by clip).
-*/
-function DraggablePhonePreview({
-  imageUrl,
-  panZoom,
-  onChange,
-  width = 260,
-  readonly = false,
-}: {
-  imageUrl: string | null;
-  panZoom: PanZoom;
-  onChange: (pz: PanZoom) => void;
-  width?: number;
-  readonly?: boolean;
-}) {
-  const wrapRef    = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const lastPos    = useRef({ x: 0, y: 0 });
-  const pzRef      = useRef(panZoom);
-  const cbRef      = useRef(onChange);
-
-  useEffect(() => { pzRef.current = panZoom; }, [panZoom]);
-  useEffect(() => { cbRef.current = onChange; }, [onChange]);
-
-  const phoneH = Math.round(width * PHONE_IMG_ASPECT);
-
-  // Screen area in display pixels
-  const sx = Math.round(width * SCREEN_LEFT_FRAC);
-  const sy = Math.round(phoneH * SCREEN_TOP_FRAC);
-  const sw = Math.round(width * SCREEN_WIDTH_FRAC);
-  const sh = Math.round(phoneH * SCREEN_HEIGHT_FRAC);
-
-  // At zoom=1 the image must cover the screen area (object-cover).
-  // We compute cover dimensions from the actual image size via an img element,
-  // but since we don't have the natural size here we use CSS object-fit instead.
-
-  const startDrag = (cx: number, cy: number) => {
-    if (!imageUrl || readonly) return;
-    isDragging.current = true;
-    lastPos.current = { x: cx, y: cy };
-  };
-
-  const moveDrag = useCallback((cx: number, cy: number) => {
-    if (!isDragging.current) return;
-    const dx = cx - lastPos.current.x;
-    const dy = cy - lastPos.current.y;
-    lastPos.current = { x: cx, y: cy };
-    const cur = pzRef.current;
-    cbRef.current({ ...cur, x: cur.x + dx, y: cur.y + dy });
-  }, []);
-
-  const endDrag = useCallback(() => { isDragging.current = false; }, []);
-
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-    const delta = -e.deltaY * 0.001;
-    const cur = pzRef.current;
-    const next = Math.min(4, Math.max(1, cur.zoom + delta * cur.zoom));
-    cbRef.current({ ...cur, zoom: parseFloat(next.toFixed(3)) });
-  }, []);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const onMM = (e: MouseEvent) => moveDrag(e.clientX, e.clientY);
-    const onTM = (e: TouchEvent) => {
-      if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    };
-    window.addEventListener('mousemove', onMM);
-    window.addEventListener('mouseup', endDrag);
-    window.addEventListener('touchmove', onTM, { passive: false });
-    window.addEventListener('touchend', endDrag);
-    el.addEventListener('wheel', handleWheel, { passive: false });
-    return () => {
-      window.removeEventListener('mousemove', onMM);
-      window.removeEventListener('mouseup', endDrag);
-      window.removeEventListener('touchmove', onTM);
-      window.removeEventListener('touchend', endDrag);
-      el.removeEventListener('wheel', handleWheel);
-    };
-  }, [moveDrag, endDrag, handleWheel]);
-
-  return (
-    <div
-      ref={wrapRef}
-      className="relative mx-auto select-none flex-shrink-0 overflow-hidden rounded-[28px]"
-      style={{
-        width,
-        height: phoneH,
-        cursor: imageUrl && !readonly ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
-      }}
-      onMouseDown={e => { startDrag(e.clientX, e.clientY); e.preventDefault(); }}
-      onTouchStart={e => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
-    >
-      {/* Photo fills the entire phone frame */}
-      {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt="Preview"
-          draggable={false}
-          className="absolute inset-0 pointer-events-none"
-          style={readonly ? {
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          } : {
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            transform: `translate(${panZoom.x}px, ${panZoom.y}px) scale(${panZoom.zoom})`,
-            transformOrigin: 'center center',
-            willChange: 'transform',
-          }}
-        />
-      ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#1a1a2e]">
-          <div className="p-3 bg-white/10 rounded-full">
-            <ImageIcon className="w-6 h-6 text-white/40" />
-          </div>
-          <p className="text-[10px] text-white/30 font-medium text-center leading-tight px-2">
-            Upload een foto
-          </p>
-        </div>
-      )}
-
-      {/* Screen area indicator — dashed outline shows what gets exported */}
-      {imageUrl && !readonly && (
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            left: sx,
-            top: sy,
-            width: sw,
-            height: sh,
-            border: '2px dashed rgba(255,255,255,0.5)',
-            borderRadius: Math.round(sw * 0.05),
-            zIndex: 11,
-          }}
-        />
-      )}
-
-      {/* Phone frame overlay — always on top */}
-      <img
-        src="/assets/phone_1.png"
-        alt="Phone frame"
-        draggable={false}
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ zIndex: 10, objectFit: 'contain' }}
-      />
-
-      {imageUrl && !readonly && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-black/50 text-white text-[9px] font-medium px-2 py-0.5 rounded-full pointer-events-none backdrop-blur-sm whitespace-nowrap flex items-center gap-1">
-          <Move className="w-2.5 h-2.5" />
-          Sleep · Scroll = zoom
-        </div>
-      )}
-    </div>
-  );
-}
-
+/* ─── Canvas Photo Editor ───────────────────────────────────────────────────── */
 function PhotoEditor({
   existingImage,
   onClose,
@@ -246,29 +35,39 @@ function PhotoEditor({
 }) {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [newFileUrl, setNewFileUrl] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [scale, setScale] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [altText, setAltText] = useState(existingImage?.alt_text ?? '');
-  const [panZoom, setPanZoom] = useState<PanZoom>(DEFAULT_PANZOOM);
-  const [exporting, setExporting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // What to show in the preview panel:
-  // - newFileUrl: user just picked a new file → show with pan/zoom (WYSIWYG)
-  // - existingImage.image_url: editing mode, no new file → show saved image as-is (already processed)
-  const previewUrl = newFileUrl ?? existingImage?.image_url ?? null;
-  const isNewFile = !!newFileUrl;
+  const DISPLAY_W = 400;
+  const DISPLAY_H = Math.round(DISPLAY_W * (EXPORT_H / EXPORT_W));
+
+  const loadImage = useCallback((file: File) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      setImage(img);
+      const initialScale = Math.max(DISPLAY_W / img.width, DISPLAY_H / img.height);
+      setScale(initialScale);
+      setPosition({ x: 0, y: 0 });
+      setRotation(0);
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  }, [DISPLAY_W, DISPLAY_H]);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
-    setNewFileUrl(URL.createObjectURL(file));
-    setPanZoom(DEFAULT_PANZOOM);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFileSelect(file);
+    loadImage(file);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -278,129 +77,110 @@ function PhotoEditor({
     if (file && file.type.startsWith('image/')) handleFileSelect(file);
   };
 
-  const exportAndSave = async () => {
+  useEffect(() => {
+    if (!existingImage?.image_url || selectedFile) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      setImage(img);
+      const initialScale = Math.max(DISPLAY_W / img.width, DISPLAY_H / img.height);
+      setScale(initialScale);
+      setPosition({ x: 0, y: 0 });
+    };
+    img.src = existingImage.image_url;
+  }, [existingImage?.image_url, selectedFile, DISPLAY_W, DISPLAY_H]);
+
+  useEffect(() => {
+    if (!image || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = DISPLAY_W;
+    canvas.height = DISPLAY_H;
+
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, DISPLAY_W, DISPLAY_H);
+
+    ctx.save();
+    ctx.translate(DISPLAY_W / 2 + position.x, DISPLAY_H / 2 + position.y);
+    ctx.rotate((rotation * Math.PI) / 180);
+    const sw = image.width * scale;
+    const sh = image.height * scale;
+    ctx.drawImage(image, -sw / 2, -sh / 2, sw, sh);
+    ctx.restore();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(1, 1, DISPLAY_W - 2, DISPLAY_H - 2);
+    ctx.setLineDash([]);
+  }, [image, scale, rotation, position, DISPLAY_W, DISPLAY_H]);
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!image) return;
+    setIsDragging(true);
+    setDragStart({ x: e.nativeEvent.offsetX - position.x, y: e.nativeEvent.offsetY - position.y });
+  };
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDragging) return;
+    setPosition({ x: e.nativeEvent.offsetX - dragStart.x, y: e.nativeEvent.offsetY - dragStart.y });
+  };
+  const handleMouseUp = () => setIsDragging(false);
+
+  const handleZoomIn  = () => setScale(p => Math.min(p * 1.2, 10));
+  const handleZoomOut = () => setScale(p => Math.max(p / 1.2, 0.05));
+  const handleRotate  = () => setRotation(p => (p + 90) % 360);
+  const handleReset   = () => {
+    if (!image) return;
+    setScale(Math.max(DISPLAY_W / image.width, DISPLAY_H / image.height));
+    setRotation(0);
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const handleSave = async () => {
     if (!user) return;
     if (!altText.trim()) { showToast('Vul een omschrijving in', 'error'); return; }
 
-    if (!selectedFile && existingImage) {
-      setExporting(true);
-      try {
+    setSaving(true);
+    try {
+      if (!selectedFile && existingImage && !image) {
         const { error } = await supabase
           .from('hero_phone_images')
           .update({ alt_text: altText.trim() })
           .eq('id', existingImage.id);
         if (error) throw error;
         showToast('Opgeslagen!', 'success');
-        onSaved();
-        onClose();
-      } catch (err: any) {
-        showToast(err.message || 'Fout bij opslaan', 'error');
-      } finally {
-        setExporting(false);
-      }
-      return;
-    }
-
-    if (!selectedFile) return;
-    setExporting(true);
-
-    try {
-      /*
-        Export canvas: EXPORT_W × EXPORT_H (1080 × 2018).
-        This exactly matches the phone screen aspect ratio so the image
-        fills the screen area with no letterboxing when displayed with object-cover.
-
-        The preview shows the image with CSS object-cover + pan/zoom transforms.
-        We replicate the same cover + transform on the canvas:
-
-        1. Load the image and compute cover dimensions for 1080×2018.
-        2. Apply pan offset (scaled from preview px → canvas px).
-        3. Apply zoom scale.
-        4. Draw and export.
-
-        Preview screen area:
-          previewW = 260, phoneH = 260*2 = 520
-          sw = Math.round(260 * 0.864) = 225
-          sh = Math.round(520 * 0.807) = 420
-
-        Scale from preview to canvas:
-          scaleX = EXPORT_W / sw  (1080 / 225 ≈ 4.8)
-          scaleY = EXPORT_H / sh  (2018 / 420 ≈ 4.8)
-        They're approximately equal (screen aspect ratio is consistent).
-        Use the average for pan scaling.
-      */
-      // Preview uses the full phone frame for layout.
-      // The image is cover-fitted to the phone frame and pan/zoom is applied.
-      // For export we render at EXPORT_W × EXPORT_H (screen area dimensions).
-      //
-      // Step 1: render image onto a full-phone-sized intermediate canvas
-      //         (same proportions as preview, scaled up to export resolution)
-      // Step 2: copy only the screen area onto the final export canvas.
-
-      const previewW   = 380;
-      const previewH   = Math.round(previewW * PHONE_IMG_ASPECT);
-
-      // Export-scale phone dimensions (same aspect as preview phone)
-      const exportPhoneW = Math.round(EXPORT_W / SCREEN_WIDTH_FRAC);
-      const exportPhoneH = Math.round(EXPORT_H / SCREEN_HEIGHT_FRAC);
-
-      // Screen area in export-phone coords
-      const esx = Math.round(exportPhoneW * SCREEN_LEFT_FRAC);
-      const esy = Math.round(exportPhoneH * SCREEN_TOP_FRAC);
-
-      // Scale from preview-phone px to export-phone px
-      const previewToExportX = exportPhoneW / previewW;
-      const previewToExportY = exportPhoneH / previewH;
-
-      const img = await createImageBitmap(selectedFile);
-
-      // --- Intermediate canvas: full phone size at export scale ---
-      const phoneCanvas = document.createElement('canvas');
-      phoneCanvas.width  = exportPhoneW;
-      phoneCanvas.height = exportPhoneH;
-      const pCtx = phoneCanvas.getContext('2d')!;
-      pCtx.clearRect(0, 0, exportPhoneW, exportPhoneH);
-
-      // Cover dimensions: image covers the phone frame
-      const imgAspect   = img.width / img.height;
-      const phoneAspect = exportPhoneW / exportPhoneH;
-      let drawW: number, drawH: number;
-      if (imgAspect > phoneAspect) {
-        drawH = exportPhoneH;
-        drawW = drawH * imgAspect;
-      } else {
-        drawW = exportPhoneW;
-        drawH = drawW / imgAspect;
+        onSaved(); onClose();
+        return;
       }
 
-      // Apply pan/zoom (pan scaled from preview-phone px to export-phone px)
-      const cx = exportPhoneW / 2 + panZoom.x * previewToExportX;
-      const cy = exportPhoneH / 2 + panZoom.y * previewToExportY;
-      pCtx.translate(cx, cy);
-      pCtx.scale(panZoom.zoom, panZoom.zoom);
-      pCtx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      if (!image) { showToast('Selecteer eerst een foto', 'error'); return; }
 
-      // --- Final export canvas: screen area only ---
-      const canvas = document.createElement('canvas');
-      canvas.width  = EXPORT_W;
-      canvas.height = EXPORT_H;
-      const ctx = canvas.getContext('2d')!;
-      ctx.clearRect(0, 0, EXPORT_W, EXPORT_H);
+      const outputCanvas = document.createElement('canvas');
+      outputCanvas.width  = EXPORT_W;
+      outputCanvas.height = EXPORT_H;
+      const ctx = outputCanvas.getContext('2d')!;
 
-      const cornerRadius = Math.round(EXPORT_W * 0.05);
-      ctx.beginPath();
-      ctx.roundRect(0, 0, EXPORT_W, EXPORT_H, cornerRadius);
-      ctx.clip();
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, EXPORT_W, EXPORT_H);
 
-      // Copy screen area from intermediate canvas to export canvas
-      ctx.drawImage(phoneCanvas, esx, esy, EXPORT_W, EXPORT_H, 0, 0, EXPORT_W, EXPORT_H);
+      const scaleX = EXPORT_W / DISPLAY_W;
+      const scaleY = EXPORT_H / DISPLAY_H;
 
-      const blob: Blob = await new Promise(res => canvas.toBlob(b => res(b!), 'image/png'));
-      const filename = `${user.id}/${Date.now()}.png`;
+      ctx.save();
+      ctx.translate(EXPORT_W / 2 + position.x * scaleX, EXPORT_H / 2 + position.y * scaleY);
+      ctx.rotate((rotation * Math.PI) / 180);
+      const exportScale = scale * scaleX;
+      ctx.drawImage(image, -(image.width * exportScale) / 2, -(image.height * exportScale) / 2, image.width * exportScale, image.height * exportScale);
+      ctx.restore();
+
+      const blob: Blob = await new Promise(res => outputCanvas.toBlob(b => res(b!), 'image/jpeg', 0.92));
+      const filename = `${user.id}/${Date.now()}.jpg`;
 
       const { error: uploadError } = await supabase.storage
         .from('hero-images')
-        .upload(filename, blob, { contentType: 'image/png', upsert: false });
+        .upload(filename, blob, { contentType: 'image/jpeg', upsert: false });
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage.from('hero-images').getPublicUrl(filename);
@@ -432,289 +212,207 @@ function PhotoEditor({
       }
 
       showToast('Foto succesvol opgeslagen!', 'success');
-      onSaved();
-      onClose();
+      onSaved(); onClose();
     } catch (err: any) {
-      console.error(err);
       showToast(err.message || 'Fout bij opslaan', 'error');
     } finally {
-      setExporting(false);
+      setSaving(false);
     }
   };
 
-  const isEditing = !!existingImage;
-  const PREVIEW_W = 380;
-
-  const zoomPresets = [1, 1.25, 1.5, 2];
-
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-tielo-navy/80 backdrop-blur-sm">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 overflow-hidden"
+    >
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 12 }}
-        transition={{ duration: 0.2 }}
-        className="relative w-full max-w-7xl bg-white flex flex-col md:flex-row shadow-2xl md:my-4 md:mx-4 md:rounded-td overflow-hidden"
+        initial={{ scale: 0.92, y: 16 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.92, y: 16 }}
+        className="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-5xl h-[95vh] flex flex-col"
       >
-        {/* Mobile header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-tielo-steel/20 md:hidden">
-          <h2 className="text-lg font-bold font-rubik text-tielo-navy">
-            {isEditing ? 'Foto Bewerken' : 'Nieuwe Foto'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-tielo-orange/10 rounded-td transition-colors">
-            <X className="w-5 h-5 text-tielo-navy" />
+        <div className="p-5 flex-shrink-0 border-b border-white/10 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-white font-rubik">
+              {existingImage ? 'Foto Bewerken' : 'Nieuwe Foto'}
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">Exportformaat: {EXPORT_W} × {EXPORT_H} px</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+            <X className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Controls panel */}
-        <div className="w-full md:w-[300px] border-b md:border-b-0 md:border-r border-tielo-steel/20 flex flex-col overflow-y-auto flex-shrink-0">
-          <div className="hidden md:flex items-center justify-between px-6 py-5 border-b border-tielo-steel/20">
-            <h2 className="text-xl font-bold font-rubik text-tielo-navy">
-              {isEditing ? 'Foto Bewerken' : 'Nieuwe Foto'}
-            </h2>
-            <button onClick={onClose} className="p-2 hover:bg-tielo-orange/10 rounded-td transition-colors">
-              <X className="w-5 h-5 text-tielo-navy" />
-            </button>
-          </div>
-
-          <div className="p-6 space-y-5 flex-1">
-            {/* File picker — supports drag & drop */}
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
-              onDragLeave={() => setIsDraggingFile(false)}
-              onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-td p-5 text-center cursor-pointer transition-all group ${
-                isDraggingFile
-                  ? 'border-tielo-orange bg-tielo-orange/10 scale-[1.01]'
-                  : selectedFile
-                  ? 'border-tielo-orange bg-tielo-orange/5'
-                  : 'border-tielo-steel/40 hover:border-tielo-orange hover:bg-tielo-orange/5'
-              }`}
-            >
-              <div className="p-2.5 bg-tielo-orange/10 rounded-td w-fit mx-auto mb-2 group-hover:bg-tielo-orange/20 transition-colors">
-                <Upload className="w-5 h-5 text-tielo-orange" />
+        <div className="flex-1 overflow-y-auto">
+          <div className="flex flex-col lg:flex-row gap-6 p-6 h-full">
+            {/* Canvas preview */}
+            <div className="flex-1 flex flex-col items-center">
+              <div className="bg-gray-950 rounded-xl p-4 w-full flex justify-center">
+                {image ? (
+                  <canvas
+                    ref={canvasRef}
+                    className="border-2 border-white/20 rounded-lg"
+                    style={{
+                      width: `${DISPLAY_W}px`,
+                      height: `${DISPLAY_H}px`,
+                      maxWidth: '100%',
+                      cursor: isDragging ? 'grabbing' : 'grab',
+                    }}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                  />
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
+                    onDragLeave={() => setIsDraggingFile(false)}
+                    onDrop={handleDrop}
+                    className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed cursor-pointer transition-all ${
+                      isDraggingFile
+                        ? 'border-tielo-orange bg-tielo-orange/10'
+                        : 'border-white/20 hover:border-tielo-orange hover:bg-tielo-orange/5'
+                    }`}
+                    style={{ width: DISPLAY_W, height: DISPLAY_H, maxWidth: '100%' }}
+                  >
+                    <div className="p-4 bg-white/10 rounded-full mb-3">
+                      <ImageIcon className="w-8 h-8 text-white/40" />
+                    </div>
+                    <p className="text-white/60 font-medium text-sm">
+                      {isDraggingFile ? 'Laat los' : 'Klik of sleep een foto'}
+                    </p>
+                    <p className="text-white/30 text-xs mt-1">PNG, JPG of WebP</p>
+                    <input ref={fileInputRef} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} className="hidden" />
+                  </div>
+                )}
               </div>
-              <p className="text-sm font-bold text-tielo-navy leading-snug">
-                {isDraggingFile
-                  ? 'Laat los om te uploaden'
-                  : selectedFile
-                  ? selectedFile.name
-                  : isEditing
-                  ? 'Nieuwe foto uploaden'
-                  : 'Klik of sleep een foto hier'}
-              </p>
-              {isEditing && !selectedFile && (
-                <p className="text-xs text-tielo-navy/40 mt-1">Laat leeg om huidige foto te behouden</p>
+
+              {image && (
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mt-3 w-full max-w-[400px]">
+                  <div className="flex items-start gap-2">
+                    <Move className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-blue-200">Sleep de afbeelding om te positioneren · Exportformaat: {EXPORT_W}×{EXPORT_H}px</p>
+                  </div>
+                </div>
               )}
-              <p className="text-[11px] text-tielo-navy/40 mt-1">PNG, JPG of WebP</p>
-              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleInputChange} className="hidden" />
             </div>
 
-            {/* Alt text */}
-            <div>
-              <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">
-                Omschrijving *
-              </label>
-              <input
-                type="text"
-                value={altText}
-                onChange={e => setAltText(e.target.value)}
-                placeholder="bijv. Badkamer renovatie Amersfoort"
-                className="w-full px-3 py-2.5 text-sm border border-tielo-steel/30 rounded-td bg-tielo-offwhite focus:outline-none focus:border-tielo-orange transition-colors text-tielo-navy placeholder-tielo-navy/30"
-              />
-            </div>
+            {/* Controls */}
+            <div className="w-full lg:w-72 flex flex-col gap-4 flex-shrink-0">
+              {/* File picker when image already loaded */}
+              {image && (
+                <div>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-2">Foto</label>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
+                    onDragLeave={() => setIsDraggingFile(false)}
+                    onDrop={handleDrop}
+                    className={`w-full border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+                      isDraggingFile ? 'border-tielo-orange bg-tielo-orange/10' : 'border-white/20 hover:border-tielo-orange hover:bg-white/5'
+                    }`}
+                  >
+                    <Upload className="w-4 h-4 text-white/40 mx-auto mb-1" />
+                    <p className="text-xs text-white/50">{selectedFile ? selectedFile.name : 'Andere foto kiezen'}</p>
+                    <input ref={fileInputRef} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} className="hidden" />
+                  </button>
+                </div>
+              )}
 
-            {/* Zoom/pan controls — only for newly selected files */}
-            {isNewFile && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide">Uitsnede</label>
-                  <div className="flex items-center gap-1.5">
+              {/* Omschrijving */}
+              <div>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-2">Omschrijving *</label>
+                <input
+                  type="text"
+                  value={altText}
+                  onChange={e => setAltText(e.target.value)}
+                  placeholder="bijv. Badkamer renovatie Amersfoort"
+                  className="w-full px-3 py-2.5 text-sm border border-white/20 rounded-lg bg-white/5 focus:outline-none focus:border-tielo-orange transition-colors text-white placeholder-white/30"
+                />
+              </div>
+
+              {/* Zoom / rotate controls */}
+              {image && (
+                <div>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-2">Aanpassen</label>
+                  <div className="flex flex-wrap gap-2">
                     <button
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.max(1, p.zoom - 0.1).toFixed(2)) }))}
-                      className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
+                      onClick={handleZoomIn}
+                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
                     >
-                      <ZoomOut className="w-3.5 h-3.5" />
+                      <ZoomIn className="w-3.5 h-3.5" /> Zoom In
                     </button>
-                    <span className="text-sm font-bold text-tielo-navy w-12 text-center tabular-nums">
-                      {panZoom.zoom.toFixed(2)}x
-                    </span>
                     <button
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.min(4, p.zoom + 0.1).toFixed(2)) }))}
-                      className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
+                      onClick={handleZoomOut}
+                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
                     >
-                      <ZoomIn className="w-3.5 h-3.5" />
+                      <ZoomOut className="w-3.5 h-3.5" /> Zoom Out
                     </button>
                     <button
-                      onClick={() => setPanZoom(DEFAULT_PANZOOM)}
-                      className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/30 hover:text-tielo-orange transition-all"
-                      title="Reset naar standaard"
+                      onClick={handleRotate}
+                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" />
+                      <RotateCw className="w-3.5 h-3.5" /> Roteren
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
+                    >
+                      Reset
                     </button>
                   </div>
                 </div>
-
-                <input
-                  type="range"
-                  min={1}
-                  max={4}
-                  step={0.01}
-                  value={panZoom.zoom}
-                  onChange={e => setPanZoom(p => ({ ...p, zoom: Number(e.target.value) }))}
-                  className="w-full h-2 appearance-none bg-tielo-steel/20 rounded-full accent-tielo-orange cursor-pointer"
-                />
-
-                <div className="grid grid-cols-4 gap-1.5 text-center">
-                  {zoomPresets.map(z => (
-                    <button
-                      key={z}
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: z }))}
-                      className={`text-xs font-bold py-1.5 rounded-td border transition-all ${
-                        Math.abs(panZoom.zoom - z) < 0.04
-                          ? 'border-tielo-orange bg-tielo-orange/10 text-tielo-orange'
-                          : 'border-tielo-steel/20 text-tielo-navy/50 hover:border-tielo-orange/40 hover:text-tielo-orange'
-                      }`}
-                    >
-                      {z}x
-                    </button>
-                  ))}
-                </div>
-
-                <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
-                  <p><span className="font-bold text-tielo-navy/70">Exportformaat:</span> {EXPORT_W} × {EXPORT_H} px</p>
-                  <p className="text-tielo-navy/40">De preview is 1:1 — wat je ziet wordt exact opgeslagen.</p>
-                </div>
-              </div>
-            )}
-
-            {/* Existing image info — shown when editing without a new upload */}
-            {!isNewFile && existingImage && (
-              <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
-                <p className="font-bold text-tielo-navy/70 mb-1">Foto wijzigen</p>
-                <p>Upload een nieuwe foto om de uitsnede aan te passen. Laat leeg om alleen de omschrijving op te slaan.</p>
-              </div>
-            )}
-
-            {/* Tips — only when nothing is loaded yet */}
-            {!previewUrl && (
-              <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
-                <p className="font-bold text-tielo-navy/70 mb-1">Tips voor de beste uitsnede</p>
-                <p>Gebruik een <strong>portretfoto</strong> (hoger dan breed) voor het mooiste resultaat in het telefoon-frame.</p>
-                <p>Sleep de foto na upload om de uitsnede te bepalen.</p>
-              </div>
-            )}
-          </div>
-
-          <div className="p-6 border-t border-tielo-steel/20">
-            <button
-              onClick={exportAndSave}
-              disabled={(!selectedFile && !existingImage) || exporting}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-td transition-all shadow-md text-sm"
-            >
-              {exporting ? (
-                <><Loader2 className="w-4 h-4 animate-spin" />Opslaan...</>
-              ) : (
-                <><Download className="w-4 h-4" />{selectedFile ? 'Exporteren & Opslaan' : 'Opslaan'}</>
               )}
-            </button>
+            </div>
           </div>
         </div>
 
-        {/* Preview panel */}
-        <div className="flex-1 bg-[#f0f0ee] flex flex-col items-center justify-center p-8 min-h-[700px]">
-          <p className="text-xs font-bold text-tielo-navy/40 uppercase tracking-widest mb-6">
-            Live Preview
-          </p>
-          <DraggablePhonePreview
-            imageUrl={previewUrl}
-            panZoom={panZoom}
-            onChange={setPanZoom}
-            width={PREVIEW_W}
-            readonly={!isNewFile}
-          />
-          {previewUrl && isNewFile && (
-            <p className="text-[10px] text-tielo-navy/30 mt-4 text-center">
-              De uitsnede in het schermgebied is exact wat wordt opgeslagen
-            </p>
-          )}
-          {previewUrl && !isNewFile && (
-            <p className="text-[10px] text-tielo-navy/30 mt-4 text-center">
-              Huidige opgeslagen foto — upload een nieuwe om aan te passen
-            </p>
-          )}
+        <div className="p-5 flex-shrink-0 border-t border-white/10 bg-gray-900 flex gap-3">
+          <button
+            onClick={handleSave}
+            disabled={saving || (!image && !existingImage)}
+            className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-md"
+          >
+            {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Opslaan...</> : <><Check className="w-4 h-4" />Opslaan</>}
+          </button>
+          <button
+            onClick={onClose}
+            className="px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all"
+          >
+            Annuleren
+          </button>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
-/* ─── Thumbnail used in the image list ─────────────────────────────────────── */
-function PhoneThumbnail({ image, onClick }: { image: PhoneImage; onClick?: () => void }) {
-  const W = 64;
-  const phoneH = Math.round(W * PHONE_IMG_ASPECT);
-  const sw = Math.round(W * SCREEN_WIDTH_FRAC);
-  const sh = Math.round(phoneH * SCREEN_HEIGHT_FRAC);
-  const sx = Math.round(W * SCREEN_LEFT_FRAC);
-  const sy = Math.round(phoneH * SCREEN_TOP_FRAC);
-
+/* ─── Thumbnail ─────────────────────────────────────────────────────────────── */
+function ImageThumbnail({ image, onClick }: { image: PhoneImage; onClick?: () => void }) {
   return (
     <div
-      className="relative flex-shrink-0 cursor-pointer group"
-      style={{ width: W, height: phoneH }}
+      className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer group bg-gray-900"
       onClick={onClick}
     >
-      <div
-        className="absolute overflow-hidden bg-gray-900"
-        style={{ left: sx, top: sy, width: sw, height: sh }}
-      >
-        <img
-          src={image.image_url}
-          alt={image.alt_text}
-          className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105"
-          style={{ opacity: image.active ? 1 : 0.4 }}
-        />
-      </div>
       <img
-        src="/assets/phone_1.png"
-        alt=""
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ zIndex: 10, objectFit: 'contain' }}
+        src={image.image_url}
+        alt={image.alt_text}
+        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+        style={{ opacity: image.active ? 1 : 0.4 }}
       />
       {onClick && (
-        <div className="absolute inset-0 rounded bg-tielo-navy/0 group-hover:bg-tielo-navy/20 transition-colors z-20 flex items-center justify-center">
-          <Pencil className="w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-tielo-navy/0 group-hover:bg-tielo-navy/30 transition-colors flex items-center justify-center">
+          <Pencil className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       )}
     </div>
   );
 }
 
-/* ─── Sidebar preview card thumbnail ───────────────────────────────────────── */
-function PhoneSidebarThumb({ image, onClick }: { image: PhoneImage; onClick: () => void }) {
-  const W = 110;
-  const phoneH = Math.round(W * PHONE_IMG_ASPECT);
-  const sw = Math.round(W * SCREEN_WIDTH_FRAC);
-  const sh = Math.round(phoneH * SCREEN_HEIGHT_FRAC);
-  const sx = Math.round(W * SCREEN_LEFT_FRAC);
-  const sy = Math.round(phoneH * SCREEN_TOP_FRAC);
-
-  return (
-    <div className="flex flex-col items-center cursor-pointer group" onClick={onClick}>
-      <div className="relative" style={{ width: W, height: phoneH }}>
-        <div className="absolute overflow-hidden bg-gray-900" style={{ left: sx, top: sy, width: sw, height: sh }}>
-          <img src={image.image_url} alt={image.alt_text} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform" />
-        </div>
-        <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 10, objectFit: 'contain' }} />
-        <div className="absolute inset-0 bg-tielo-navy/0 group-hover:bg-tielo-navy/15 transition-colors rounded z-20" />
-      </div>
-      <p className="text-xs text-tielo-navy/50 text-center mt-1.5 truncate max-w-[110px]">{image.alt_text}</p>
-    </div>
-  );
-}
-
-/* ─── Image list row ────────────────────────────────────────────────────────── */
+/* ─── List row ──────────────────────────────────────────────────────────────── */
 function ImageCard({
   image, onToggle, onDelete, onEdit, onMoveUp, onMoveDown, isFirst, isLast,
 }: {
@@ -743,7 +441,7 @@ function ImageCard({
         </button>
       </div>
 
-      <PhoneThumbnail image={image} onClick={onEdit} />
+      <ImageThumbnail image={image} onClick={onEdit} />
 
       <div className="flex-1 min-w-0">
         <p className="font-bold text-sm text-tielo-navy truncate">{image.alt_text || 'Geen beschrijving'}</p>
@@ -767,6 +465,19 @@ function ImageCard({
         </button>
       </div>
     </motion.div>
+  );
+}
+
+/* ─── Sidebar square thumb ──────────────────────────────────────────────────── */
+function SidebarThumb({ image, onClick }: { image: PhoneImage; onClick: () => void }) {
+  return (
+    <div className="flex flex-col items-center cursor-pointer group" onClick={onClick}>
+      <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-900">
+        <img src={image.image_url} alt={image.alt_text} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+        <div className="absolute inset-0 bg-tielo-navy/0 group-hover:bg-tielo-navy/20 transition-colors" />
+      </div>
+      <p className="text-xs text-tielo-navy/50 text-center mt-1.5 truncate max-w-[96px]">{image.alt_text}</p>
+    </div>
   );
 }
 
@@ -854,7 +565,7 @@ function MobilePhotosContent() {
           <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold font-rubik mb-1">Foto's Mobiel Websites</h1>
-              <p className="text-white/70">Upload en beheer foto's voor het telefoon-frame op jouw website</p>
+              <p className="text-white/70">Upload en beheer foto's voor jouw website · {EXPORT_W} × {EXPORT_H} px</p>
             </div>
             <button
               onClick={() => setEditorTarget('new')}
@@ -888,7 +599,7 @@ function MobilePhotosContent() {
                   <ImageIcon className="w-8 h-8 text-tielo-orange" />
                 </div>
                 <p className="text-tielo-navy font-bold mb-1">Nog geen foto's</p>
-                <p className="text-sm text-tielo-navy/50 mb-4">Upload je eerste foto voor het telefoon-frame</p>
+                <p className="text-sm text-tielo-navy/50 mb-4">Upload je eerste foto</p>
                 <button
                   onClick={() => setEditorTarget('new')}
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-tielo-orange hover:bg-tielo-orange/90 text-white font-bold rounded-td transition-all"
@@ -925,12 +636,12 @@ function MobilePhotosContent() {
             <Card className="td-card p-5">
               <h3 className="text-sm font-bold font-rubik text-tielo-navy mb-4">Actieve Foto's</h3>
               {activeImages.length > 0 ? (
-                <div className="flex flex-col items-center gap-4">
-                  {activeImages.slice(0, 3).map(img => (
-                    <PhoneSidebarThumb key={img.id} image={img} onClick={() => setPreviewImage(img)} />
+                <div className="flex flex-wrap gap-3">
+                  {activeImages.slice(0, 4).map(img => (
+                    <SidebarThumb key={img.id} image={img} onClick={() => setPreviewImage(img)} />
                   ))}
-                  {activeImages.length > 3 && (
-                    <p className="text-xs text-tielo-navy/40">+{activeImages.length - 3} meer</p>
+                  {activeImages.length > 4 && (
+                    <p className="text-xs text-tielo-navy/40 w-full text-center">+{activeImages.length - 4} meer</p>
                   )}
                 </div>
               ) : (
@@ -955,10 +666,7 @@ function MobilePhotosContent() {
             <Card className="td-card p-5 space-y-2">
               <h3 className="text-sm font-bold font-rubik text-tielo-navy">Exportformaat</h3>
               <p className="text-xs text-tielo-navy/50 leading-relaxed">
-                Foto's worden opgeslagen als <strong className="text-tielo-navy/70">{EXPORT_W} × {EXPORT_H} px</strong> — exact de verhouding van het telefoon-schermgebied.
-              </p>
-              <p className="text-xs text-tielo-navy/40 leading-relaxed">
-                Dit zorgt ervoor dat de foto altijd perfect in het frame past zonder bij te snijden of letterboxing.
+                Foto's worden opgeslagen als <strong className="text-tielo-navy/70">{EXPORT_W} × {EXPORT_H} px</strong> (staand formaat).
               </p>
             </Card>
           </motion.div>
@@ -975,48 +683,36 @@ function MobilePhotosContent() {
         )}
       </AnimatePresence>
 
-      {/* Full-screen preview modal */}
       <AnimatePresence>
-        {previewImage && (() => {
-          const W = 280;
-          const pH = Math.round(W * PHONE_IMG_ASPECT);
-          const sw = Math.round(W * SCREEN_WIDTH_FRAC);
-          const sh = Math.round(pH * SCREEN_HEIGHT_FRAC);
-          const sx = Math.round(W * SCREEN_LEFT_FRAC);
-          const sy = Math.round(pH * SCREEN_TOP_FRAC);
-          return (
+        {previewImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-tielo-navy/85 backdrop-blur-sm p-4"
+            onClick={() => setPreviewImage(null)}
+          >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-tielo-navy/85 backdrop-blur-sm p-4"
-              onClick={() => setPreviewImage(null)}
+              initial={{ scale: 0.88 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.88 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              className="relative max-w-sm w-full"
+              onClick={e => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ scale: 0.88 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.88 }}
-                transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-                className="relative"
-                onClick={e => e.stopPropagation()}
+              <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: `${EXPORT_W}/${EXPORT_H}` }}>
+                <img src={previewImage.image_url} alt={previewImage.alt_text} className="w-full h-full object-cover" />
+              </div>
+              <p className="text-white/80 text-center mt-3 text-sm font-medium">{previewImage.alt_text}</p>
+              <button
+                onClick={() => setPreviewImage(null)}
+                className="absolute -top-3 -right-3 bg-white rounded-full p-1.5 shadow-xl hover:bg-gray-100 transition-colors"
               >
-                <div className="relative" style={{ width: W, height: pH }}>
-                  <div className="absolute overflow-hidden bg-gray-900" style={{ left: sx, top: sy, width: sw, height: sh }}>
-                    <img src={previewImage.image_url} alt={previewImage.alt_text} className="absolute inset-0 w-full h-full object-cover" />
-                  </div>
-                  <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 10, objectFit: 'contain' }} />
-                </div>
-                <p className="text-white/80 text-center mt-3 text-sm font-medium">{previewImage.alt_text}</p>
-                <button
-                  onClick={() => setPreviewImage(null)}
-                  className="absolute -top-3 -right-3 bg-white rounded-full p-1.5 shadow-xl hover:bg-gray-100 transition-colors z-20"
-                >
-                  <X className="w-4 h-4 text-tielo-navy" />
-                </button>
-              </motion.div>
+                <X className="w-4 h-4 text-tielo-navy" />
+              </button>
             </motion.div>
-          );
-        })()}
+          </motion.div>
+        )}
       </AnimatePresence>
     </DashboardLayout>
   );
