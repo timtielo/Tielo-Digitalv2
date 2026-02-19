@@ -16,7 +16,8 @@ import {
   Target,
   Home,
   ListTodo,
-  FileText
+  FileText,
+  Smartphone
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -24,7 +25,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs';
+  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs' | 'mobile_photos';
 }
 
 interface DashboardModule {
@@ -49,6 +50,7 @@ const iconMap: Record<string, any> = {
   User,
   Shield,
   FileText,
+  Smartphone,
 };
 
 export function DashboardLayout({ children, currentPage }: DashboardLayoutProps) {
@@ -393,11 +395,11 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                 </button>
                 <ChevronRight className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
                 <span className="text-tielo-navy font-bold capitalize truncate">
-                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : currentPage === 'mobile_photos' ? "Foto's Mobiel" : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
                 </span>
               </div>
               <h2 className="text-lg md:text-2xl font-bold font-rubik text-tielo-navy truncate">
-                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : currentPage === 'mobile_photos' ? "Foto's Mobiel" : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
               </h2>
             </div>
           </header>

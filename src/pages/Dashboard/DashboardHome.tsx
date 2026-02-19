@@ -7,6 +7,7 @@ import {
   Users,
   User,
   Shield,
+  Smartphone,
   ArrowRight,
   ExternalLink,
   Link as LinkIcon,
@@ -48,6 +49,7 @@ const iconMap: Record<string, any> = {
   Users,
   User,
   Shield,
+  Smartphone,
 };
 
 interface AdminMetrics {
