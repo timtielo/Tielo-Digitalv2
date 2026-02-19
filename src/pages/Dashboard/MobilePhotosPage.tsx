@@ -334,16 +334,23 @@ function PhotoEditor({
       const ctx = canvas.getContext('2d')!;
       ctx.clearRect(0, 0, EXPORT_W, EXPORT_H);
 
+      // Rounded corner radius — matches the phone screen corner radius
+      // proportional to the export size (≈ 5% of width)
+      const cornerRadius = Math.round(EXPORT_W * 0.05);
+
+      // Clip to rounded rectangle so corners are transparent in the PNG
+      ctx.beginPath();
+      ctx.roundRect(0, 0, EXPORT_W, EXPORT_H, cornerRadius);
+      ctx.clip();
+
       // Compute cover dimensions: scale image to cover canvas at zoom=1
       const imgAspect  = img.width / img.height;
       const canvAspect = EXPORT_W / EXPORT_H;
       let drawW: number, drawH: number;
       if (imgAspect > canvAspect) {
-        // Image is wider → fit height, overflow width
         drawH = EXPORT_H;
         drawW = drawH * imgAspect;
       } else {
-        // Image is taller → fit width, overflow height
         drawW = EXPORT_W;
         drawH = drawW / imgAspect;
       }
@@ -355,12 +362,12 @@ function PhotoEditor({
       ctx.scale(panZoom.zoom, panZoom.zoom);
       ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
 
-      const blob: Blob = await new Promise(res => canvas.toBlob(b => res(b!), 'image/jpeg', 0.95));
-      const filename = `${user.id}/${Date.now()}.jpg`;
+      const blob: Blob = await new Promise(res => canvas.toBlob(b => res(b!), 'image/png'));
+      const filename = `${user.id}/${Date.now()}.png`;
 
       const { error: uploadError } = await supabase.storage
         .from('hero-images')
-        .upload(filename, blob, { contentType: 'image/jpeg', upsert: false });
+        .upload(filename, blob, { contentType: 'image/png', upsert: false });
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage.from('hero-images').getPublicUrl(filename);
