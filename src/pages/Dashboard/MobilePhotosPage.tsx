@@ -82,11 +82,13 @@ function DraggablePhonePreview({
   panZoom,
   onChange,
   width = 260,
+  readonly = false,
 }: {
   imageUrl: string | null;
   panZoom: PanZoom;
   onChange: (pz: PanZoom) => void;
   width?: number;
+  readonly?: boolean;
 }) {
   const wrapRef    = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -110,7 +112,7 @@ function DraggablePhonePreview({
   // but since we don't have the natural size here we use CSS object-fit instead.
 
   const startDrag = (cx: number, cy: number) => {
-    if (!imageUrl) return;
+    if (!imageUrl || readonly) return;
     isDragging.current = true;
     lastPos.current = { x: cx, y: cy };
   };
@@ -130,7 +132,7 @@ function DraggablePhonePreview({
     e.preventDefault();
     const delta = -e.deltaY * 0.001;
     const cur = pzRef.current;
-    const next = Math.min(4, Math.max(0.5, cur.zoom + delta * cur.zoom));
+    const next = Math.min(4, Math.max(1, cur.zoom + delta * cur.zoom));
     cbRef.current({ ...cur, zoom: parseFloat(next.toFixed(3)) });
   }, []);
 
@@ -169,7 +171,7 @@ function DraggablePhonePreview({
           top: sy,
           width: sw,
           height: sh,
-          cursor: imageUrl ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
+          cursor: imageUrl && !readonly ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
           background: '#1a1a2e',
         }}
         onMouseDown={e => { startDrag(e.clientX, e.clientY); e.preventDefault(); }}
@@ -181,13 +183,11 @@ function DraggablePhonePreview({
             alt="Preview"
             draggable={false}
             className="absolute pointer-events-none"
-            style={{
-              /*
-                Cover the screen area: size image so it covers sw × sh,
-                then apply zoom and pan on top of that.
-                Using width/height 100% + objectFit cover achieves the base cover.
-                We then scale further for zoom and translate for pan.
-              */
+            style={readonly ? {
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            } : {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
@@ -206,7 +206,7 @@ function DraggablePhonePreview({
             </p>
           </div>
         )}
-        {imageUrl && (
+        {imageUrl && !readonly && (
           <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white text-[9px] font-medium px-2 py-0.5 rounded-full pointer-events-none backdrop-blur-sm whitespace-nowrap flex items-center gap-1">
             <Move className="w-2.5 h-2.5" />
             Sleep · Scroll = zoom
@@ -238,16 +238,22 @@ function PhotoEditor({
   const { user } = useAuth();
   const { showToast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(existingImage?.image_url ?? null);
+  const [newFileUrl, setNewFileUrl] = useState<string | null>(null);
   const [altText, setAltText] = useState(existingImage?.alt_text ?? '');
   const [panZoom, setPanZoom] = useState<PanZoom>(DEFAULT_PANZOOM);
   const [exporting, setExporting] = useState(false);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // What to show in the preview panel:
+  // - newFileUrl: user just picked a new file → show with pan/zoom (WYSIWYG)
+  // - existingImage.image_url: editing mode, no new file → show saved image as-is (already processed)
+  const previewUrl = newFileUrl ?? existingImage?.image_url ?? null;
+  const isNewFile = !!newFileUrl;
+
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    setNewFileUrl(URL.createObjectURL(file));
     setPanZoom(DEFAULT_PANZOOM);
   };
 
@@ -479,14 +485,14 @@ function PhotoEditor({
               />
             </div>
 
-            {/* Zoom controls — only shown when a photo is loaded */}
-            {previewUrl && (
+            {/* Zoom/pan controls — only for newly selected files */}
+            {isNewFile && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide">Uitsnede</label>
                   <div className="flex items-center gap-1.5">
                     <button
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.max(0.5, p.zoom - 0.1).toFixed(2)) }))}
+                      onClick={() => setPanZoom(p => ({ ...p, zoom: parseFloat(Math.max(1, p.zoom - 0.1).toFixed(2)) }))}
                       className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
                     >
                       <ZoomOut className="w-3.5 h-3.5" />
@@ -512,7 +518,7 @@ function PhotoEditor({
 
                 <input
                   type="range"
-                  min={0.5}
+                  min={1}
                   max={4}
                   step={0.01}
                   value={panZoom.zoom}
@@ -543,7 +549,15 @@ function PhotoEditor({
               </div>
             )}
 
-            {/* Tips */}
+            {/* Existing image info — shown when editing without a new upload */}
+            {!isNewFile && existingImage && (
+              <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
+                <p className="font-bold text-tielo-navy/70 mb-1">Foto wijzigen</p>
+                <p>Upload een nieuwe foto om de uitsnede aan te passen. Laat leeg om alleen de omschrijving op te slaan.</p>
+              </div>
+            )}
+
+            {/* Tips — only when nothing is loaded yet */}
             {!previewUrl && (
               <div className="bg-tielo-offwhite rounded-td p-3 text-xs text-tielo-navy/50 leading-relaxed space-y-1">
                 <p className="font-bold text-tielo-navy/70 mb-1">Tips voor de beste uitsnede</p>
@@ -578,10 +592,16 @@ function PhotoEditor({
             panZoom={panZoom}
             onChange={setPanZoom}
             width={PREVIEW_W}
+            readonly={!isNewFile}
           />
-          {previewUrl && (
+          {previewUrl && isNewFile && (
             <p className="text-[10px] text-tielo-navy/30 mt-4 text-center">
               De uitsnede in het schermgebied is exact wat wordt opgeslagen
+            </p>
+          )}
+          {previewUrl && !isNewFile && (
+            <p className="text-[10px] text-tielo-navy/30 mt-4 text-center">
+              Huidige opgeslagen foto — upload een nieuwe om aan te passen
             </p>
           )}
         </div>
