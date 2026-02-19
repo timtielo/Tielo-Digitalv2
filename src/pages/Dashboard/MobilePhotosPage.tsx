@@ -160,61 +160,63 @@ function DraggablePhonePreview({
   return (
     <div
       ref={wrapRef}
-      className="relative mx-auto select-none flex-shrink-0"
-      style={{ width, height: phoneH }}
+      className="relative mx-auto select-none flex-shrink-0 overflow-hidden rounded-[28px]"
+      style={{
+        width,
+        height: phoneH,
+        cursor: imageUrl && !readonly ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
+      }}
+      onMouseDown={e => { startDrag(e.clientX, e.clientY); e.preventDefault(); }}
+      onTouchStart={e => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
     >
-      {/* Photo layer — clipped to screen area, matching export aspect ratio */}
-      <div
-        className="absolute overflow-hidden"
-        style={{
-          left: sx,
-          top: sy,
-          width: sw,
-          height: sh,
-          cursor: imageUrl && !readonly ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
-          background: '#1a1a2e',
-        }}
-        onMouseDown={e => { startDrag(e.clientX, e.clientY); e.preventDefault(); }}
-        onTouchStart={e => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
-      >
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Preview"
-            draggable={false}
-            className="absolute pointer-events-none"
-            style={readonly ? {
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            } : {
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              transform: `translate(${panZoom.x}px, ${panZoom.y}px) scale(${panZoom.zoom})`,
-              transformOrigin: 'center center',
-              willChange: 'transform',
-            }}
-          />
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-            <div className="p-3 bg-white/10 rounded-full">
-              <ImageIcon className="w-6 h-6 text-white/40" />
-            </div>
-            <p className="text-[10px] text-white/30 font-medium text-center leading-tight px-2">
-              Upload een foto
-            </p>
+      {/* Photo fills the entire phone frame */}
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt="Preview"
+          draggable={false}
+          className="absolute inset-0 pointer-events-none"
+          style={readonly ? {
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          } : {
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transform: `translate(${panZoom.x}px, ${panZoom.y}px) scale(${panZoom.zoom})`,
+            transformOrigin: 'center center',
+            willChange: 'transform',
+          }}
+        />
+      ) : (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#1a1a2e]">
+          <div className="p-3 bg-white/10 rounded-full">
+            <ImageIcon className="w-6 h-6 text-white/40" />
           </div>
-        )}
-        {imageUrl && !readonly && (
-          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white text-[9px] font-medium px-2 py-0.5 rounded-full pointer-events-none backdrop-blur-sm whitespace-nowrap flex items-center gap-1">
-            <Move className="w-2.5 h-2.5" />
-            Sleep · Scroll = zoom
-          </div>
-        )}
-      </div>
+          <p className="text-[10px] text-white/30 font-medium text-center leading-tight px-2">
+            Upload een foto
+          </p>
+        </div>
+      )}
 
-      {/* Phone frame overlay — always on top, never blocks interaction */}
+      {/* Screen area indicator — dashed outline shows what gets exported */}
+      {imageUrl && !readonly && (
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            left: sx,
+            top: sy,
+            width: sw,
+            height: sh,
+            border: '2px dashed rgba(255,255,255,0.5)',
+            borderRadius: Math.round(sw * 0.05),
+            zIndex: 11,
+          }}
+        />
+      )}
+
+      {/* Phone frame overlay — always on top */}
       <img
         src="/assets/phone_1.png"
         alt="Phone frame"
@@ -222,6 +224,13 @@ function DraggablePhonePreview({
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ zIndex: 10, objectFit: 'contain' }}
       />
+
+      {imageUrl && !readonly && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-black/50 text-white text-[9px] font-medium px-2 py-0.5 rounded-full pointer-events-none backdrop-blur-sm whitespace-nowrap flex items-center gap-1">
+          <Move className="w-2.5 h-2.5" />
+          Sleep · Scroll = zoom
+        </div>
+      )}
     </div>
   );
 }
@@ -320,47 +329,71 @@ function PhotoEditor({
         They're approximately equal (screen aspect ratio is consistent).
         Use the average for pan scaling.
       */
-      const previewW   = 260;
+      // Preview uses the full phone frame for layout.
+      // The image is cover-fitted to the phone frame and pan/zoom is applied.
+      // For export we render at EXPORT_W × EXPORT_H (screen area dimensions).
+      //
+      // Step 1: render image onto a full-phone-sized intermediate canvas
+      //         (same proportions as preview, scaled up to export resolution)
+      // Step 2: copy only the screen area onto the final export canvas.
+
+      const previewW   = 380;
       const previewH   = Math.round(previewW * PHONE_IMG_ASPECT);
-      const sw         = Math.round(previewW * SCREEN_WIDTH_FRAC);
-      const sh         = Math.round(previewH * SCREEN_HEIGHT_FRAC);
-      const scaleX     = EXPORT_W / sw;
-      const scaleY     = EXPORT_H / sh;
+
+      // Export-scale phone dimensions (same aspect as preview phone)
+      const exportPhoneW = Math.round(EXPORT_W / SCREEN_WIDTH_FRAC);
+      const exportPhoneH = Math.round(EXPORT_H / SCREEN_HEIGHT_FRAC);
+
+      // Screen area in export-phone coords
+      const esx = Math.round(exportPhoneW * SCREEN_LEFT_FRAC);
+      const esy = Math.round(exportPhoneH * SCREEN_TOP_FRAC);
+
+      // Scale from preview-phone px to export-phone px
+      const previewToExportX = exportPhoneW / previewW;
+      const previewToExportY = exportPhoneH / previewH;
 
       const img = await createImageBitmap(selectedFile);
+
+      // --- Intermediate canvas: full phone size at export scale ---
+      const phoneCanvas = document.createElement('canvas');
+      phoneCanvas.width  = exportPhoneW;
+      phoneCanvas.height = exportPhoneH;
+      const pCtx = phoneCanvas.getContext('2d')!;
+      pCtx.clearRect(0, 0, exportPhoneW, exportPhoneH);
+
+      // Cover dimensions: image covers the phone frame
+      const imgAspect   = img.width / img.height;
+      const phoneAspect = exportPhoneW / exportPhoneH;
+      let drawW: number, drawH: number;
+      if (imgAspect > phoneAspect) {
+        drawH = exportPhoneH;
+        drawW = drawH * imgAspect;
+      } else {
+        drawW = exportPhoneW;
+        drawH = drawW / imgAspect;
+      }
+
+      // Apply pan/zoom (pan scaled from preview-phone px to export-phone px)
+      const cx = exportPhoneW / 2 + panZoom.x * previewToExportX;
+      const cy = exportPhoneH / 2 + panZoom.y * previewToExportY;
+      pCtx.translate(cx, cy);
+      pCtx.scale(panZoom.zoom, panZoom.zoom);
+      pCtx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+
+      // --- Final export canvas: screen area only ---
       const canvas = document.createElement('canvas');
       canvas.width  = EXPORT_W;
       canvas.height = EXPORT_H;
       const ctx = canvas.getContext('2d')!;
       ctx.clearRect(0, 0, EXPORT_W, EXPORT_H);
 
-      // Rounded corner radius — matches the phone screen corner radius
-      // proportional to the export size (≈ 5% of width)
       const cornerRadius = Math.round(EXPORT_W * 0.05);
-
-      // Clip to rounded rectangle so corners are transparent in the PNG
       ctx.beginPath();
       ctx.roundRect(0, 0, EXPORT_W, EXPORT_H, cornerRadius);
       ctx.clip();
 
-      // Compute cover dimensions: scale image to cover canvas at zoom=1
-      const imgAspect  = img.width / img.height;
-      const canvAspect = EXPORT_W / EXPORT_H;
-      let drawW: number, drawH: number;
-      if (imgAspect > canvAspect) {
-        drawH = EXPORT_H;
-        drawW = drawH * imgAspect;
-      } else {
-        drawW = EXPORT_W;
-        drawH = drawW / imgAspect;
-      }
-
-      // Apply zoom and pan transforms (same logic as CSS transform on preview)
-      const cx = EXPORT_W / 2 + panZoom.x * scaleX;
-      const cy = EXPORT_H / 2 + panZoom.y * scaleY;
-      ctx.translate(cx, cy);
-      ctx.scale(panZoom.zoom, panZoom.zoom);
-      ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      // Copy screen area from intermediate canvas to export canvas
+      ctx.drawImage(phoneCanvas, esx, esy, EXPORT_W, EXPORT_H, 0, 0, EXPORT_W, EXPORT_H);
 
       const blob: Blob = await new Promise(res => canvas.toBlob(b => res(b!), 'image/png'));
       const filename = `${user.id}/${Date.now()}.png`;
