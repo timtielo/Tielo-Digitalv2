@@ -15,9 +15,6 @@ const CANVAS_SIZE = 2000;
 const RECT_W = 914;
 const RECT_H = 1847;
 const CORNER_RADIUS = 80;
-
-const PREVIEW_W = 280;
-const PREVIEW_H = 280;
 const PHONE_ASPECT = RECT_H / RECT_W;
 
 interface PhoneImage {
@@ -34,6 +31,8 @@ interface PanZoom {
   y: number;
   zoom: number;
 }
+
+const DEFAULT_PANZOOM: PanZoom = { x: 0, y: 0, zoom: 1 };
 
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
@@ -56,76 +55,84 @@ function DraggablePhonePreview({
   imageUrl,
   panZoom,
   onChange,
-  size = 280,
+  width = 340,
 }: {
   imageUrl: string | null;
   panZoom: PanZoom;
   onChange: (pz: PanZoom) => void;
-  size?: number;
+  width?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
+  const isDragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
+  const panZoomRef = useRef(panZoom);
+  const onChangeRef = useRef(onChange);
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  useEffect(() => { panZoomRef.current = panZoom; }, [panZoom]);
+  useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
+
+  const phoneH = Math.round(width * PHONE_ASPECT * 0.72);
+
+  const startDrag = (clientX: number, clientY: number) => {
     if (!imageUrl) return;
-    dragging.current = true;
-    lastPos.current = { x: e.clientX, y: e.clientY };
+    isDragging.current = true;
+    lastPos.current = { x: clientX, y: clientY };
+  };
+
+  const moveDrag = useCallback((clientX: number, clientY: number) => {
+    if (!isDragging.current) return;
+    const dx = clientX - lastPos.current.x;
+    const dy = clientY - lastPos.current.y;
+    lastPos.current = { x: clientX, y: clientY };
+    const cur = panZoomRef.current;
+    onChangeRef.current({ ...cur, x: cur.x + dx, y: cur.y + dy });
+  }, []);
+
+  const endDrag = useCallback(() => { isDragging.current = false; }, []);
+
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-  };
-
-  const onMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragging.current) return;
-    const dx = e.clientX - lastPos.current.x;
-    const dy = e.clientY - lastPos.current.y;
-    lastPos.current = { x: e.clientX, y: e.clientY };
-    onChange({ ...panZoom, x: panZoom.x + dx, y: panZoom.y + dy });
-  }, [panZoom, onChange]);
-
-  const onMouseUp = () => { dragging.current = false; };
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    if (!imageUrl) return;
-    dragging.current = true;
-    lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  };
-
-  const onTouchMove = useCallback((e: TouchEvent) => {
-    if (!dragging.current) return;
-    const dx = e.touches[0].clientX - lastPos.current.x;
-    const dy = e.touches[0].clientY - lastPos.current.y;
-    lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    onChange({ ...panZoom, x: panZoom.x + dx, y: panZoom.y + dy });
-  }, [panZoom, onChange]);
-
-  const onTouchEnd = () => { dragging.current = false; };
+    const delta = -e.deltaY * 0.001;
+    const cur = panZoomRef.current;
+    const next = Math.min(4, Math.max(0.5, cur.zoom + delta * cur.zoom));
+    onChangeRef.current({ ...cur, zoom: next });
+  }, []);
 
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onMouseMove = (e: MouseEvent) => moveDrag(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    };
+
     window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    window.addEventListener('touchmove', onTouchMove);
-    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', endDrag);
+    el.addEventListener('wheel', handleWheel, { passive: false });
+
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mouseup', endDrag);
       window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchend', endDrag);
+      el.removeEventListener('wheel', handleWheel);
     };
-  }, [onMouseMove, onTouchMove]);
-
-  const phoneH = size * PHONE_ASPECT * 0.72;
+  }, [moveDrag, endDrag, handleWheel]);
 
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto select-none"
-      style={{ width: size, height: phoneH }}
+      className="relative mx-auto select-none flex-shrink-0"
+      style={{ width, height: phoneH }}
     >
       <div
-        className="absolute inset-0 overflow-hidden rounded-[28px] bg-gray-100"
-        style={{ cursor: imageUrl ? (dragging.current ? 'grabbing' : 'grab') : 'default' }}
-        onMouseDown={onMouseDown}
-        onTouchStart={onTouchStart}
+        className="absolute inset-0 overflow-hidden rounded-[36px] bg-gray-100"
+        style={{ cursor: imageUrl ? 'grab' : 'default' }}
+        onMouseDown={e => { startDrag(e.clientX, e.clientY); e.preventDefault(); }}
+        onTouchStart={e => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
       >
         {imageUrl ? (
           <img
@@ -136,12 +143,13 @@ function DraggablePhonePreview({
             style={{
               transform: `translate(${panZoom.x}px, ${panZoom.y}px) scale(${panZoom.zoom})`,
               transformOrigin: 'center center',
+              willChange: 'transform',
             }}
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-            <ImageIcon className="w-10 h-10 text-gray-300" />
-            <p className="text-xs text-gray-400">Upload een foto</p>
+            <ImageIcon className="w-12 h-12 text-gray-300" />
+            <p className="text-sm text-gray-400 font-medium">Upload een foto</p>
           </div>
         )}
       </div>
@@ -153,8 +161,8 @@ function DraggablePhonePreview({
         style={{ zIndex: 10 }}
       />
       {imageUrl && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-black/40 text-white text-[10px] px-2 py-0.5 rounded-full pointer-events-none">
-          Sleep om te positioneren
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/50 text-white text-[11px] font-medium px-3 py-1 rounded-full pointer-events-none backdrop-blur-sm">
+          Sleep · Scroll om te zoomen
         </div>
       )}
     </div>
@@ -175,7 +183,7 @@ function PhotoEditor({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(existingImage?.image_url ?? null);
   const [altText, setAltText] = useState(existingImage?.alt_text ?? '');
-  const [panZoom, setPanZoom] = useState<PanZoom>({ x: 0, y: 0, zoom: 1 });
+  const [panZoom, setPanZoom] = useState<PanZoom>(DEFAULT_PANZOOM);
   const [exporting, setExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -184,21 +192,14 @@ function PhotoEditor({
     if (!file) return;
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
-    setPanZoom({ x: 0, y: 0, zoom: 1 });
+    setPanZoom(DEFAULT_PANZOOM);
   };
-
-  const handlePanZoomChange = useCallback((pz: PanZoom) => {
-    setPanZoom(pz);
-  }, []);
 
   const exportAndSave = async () => {
     if (!user) return;
     if (!altText.trim()) { showToast('Vul een alt-tekst in', 'error'); return; }
 
-    const isNewFile = !!selectedFile;
-    if (!isNewFile && !existingImage) return;
-
-    if (!isNewFile && existingImage) {
+    if (!selectedFile && existingImage) {
       setExporting(true);
       try {
         const { error } = await supabase
@@ -217,9 +218,11 @@ function PhotoEditor({
       return;
     }
 
+    if (!selectedFile) return;
     setExporting(true);
+
     try {
-      const img = await createImageBitmap(selectedFile!);
+      const img = await createImageBitmap(selectedFile);
       const canvas = document.createElement('canvas');
       canvas.width = CANVAS_SIZE;
       canvas.height = CANVAS_SIZE;
@@ -233,10 +236,10 @@ function PhotoEditor({
       ctx.save();
       ctx.clip();
 
-      const previewSize = PREVIEW_W;
-      const previewPhoneH = previewSize * PHONE_ASPECT * 0.72;
-      const scaleX = RECT_W / previewSize;
-      const scaleY = RECT_H / previewPhoneH;
+      const previewW = 340;
+      const previewH = Math.round(previewW * PHONE_ASPECT * 0.72);
+      const scaleX = RECT_W / previewW;
+      const scaleY = RECT_H / previewH;
 
       const cx = CANVAS_SIZE / 2;
       const cy = CANVAS_SIZE / 2;
@@ -307,54 +310,58 @@ function PhotoEditor({
   const isEditing = !!existingImage;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tielo-navy/70 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-tielo-navy/75 backdrop-blur-sm">
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96 }}
-        className="relative w-full max-w-2xl bg-white rounded-td shadow-2xl my-4"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 12 }}
+        transition={{ duration: 0.2 }}
+        className="relative w-full max-w-5xl bg-white flex flex-col md:flex-row shadow-2xl md:my-6 md:mx-4 md:rounded-td overflow-hidden"
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-tielo-steel/20">
-          <h2 className="text-xl font-bold font-rubik text-tielo-navy">
-            {isEditing ? 'Foto Bewerken' : 'Nieuwe Foto Toevoegen'}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-tielo-steel/20 md:hidden">
+          <h2 className="text-lg font-bold font-rubik text-tielo-navy">
+            {isEditing ? 'Foto Bewerken' : 'Nieuwe Foto'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-tielo-orange/10 rounded-td transition-colors">
             <X className="w-5 h-5 text-tielo-navy" />
           </button>
         </div>
 
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-5">
+        <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-tielo-steel/20 flex flex-col overflow-y-auto flex-shrink-0">
+          <div className="hidden md:flex items-center justify-between px-6 py-5 border-b border-tielo-steel/20">
+            <h2 className="text-xl font-bold font-rubik text-tielo-navy">
+              {isEditing ? 'Foto Bewerken' : 'Nieuwe Foto'}
+            </h2>
+            <button onClick={onClose} className="p-2 hover:bg-tielo-orange/10 rounded-td transition-colors">
+              <X className="w-5 h-5 text-tielo-navy" />
+            </button>
+          </div>
+
+          <div className="p-6 space-y-5 flex-1">
             <div
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-td p-6 text-center cursor-pointer transition-colors group ${
+              className={`border-2 border-dashed rounded-td p-5 text-center cursor-pointer transition-all group ${
                 selectedFile
-                  ? 'border-tielo-orange/50 bg-tielo-orange/5'
-                  : 'border-tielo-steel/40 hover:border-tielo-orange'
+                  ? 'border-tielo-orange bg-tielo-orange/5'
+                  : 'border-tielo-steel/40 hover:border-tielo-orange hover:bg-tielo-orange/3'
               }`}
             >
-              <div className="p-3 bg-tielo-orange/10 rounded-td w-fit mx-auto mb-2 group-hover:bg-tielo-orange/20 transition-colors">
+              <div className="p-2.5 bg-tielo-orange/10 rounded-td w-fit mx-auto mb-2 group-hover:bg-tielo-orange/20 transition-colors">
                 <Upload className="w-5 h-5 text-tielo-orange" />
               </div>
-              <p className="text-sm font-bold text-tielo-navy">
+              <p className="text-sm font-bold text-tielo-navy leading-snug">
                 {selectedFile ? selectedFile.name : isEditing ? 'Nieuwe foto uploaden' : 'Klik om foto te selecteren'}
               </p>
               {isEditing && !selectedFile && (
                 <p className="text-xs text-tielo-navy/40 mt-1">Laat leeg om huidige foto te behouden</p>
               )}
-              <p className="text-xs text-tielo-navy/40 mt-1">PNG, JPG of WebP</p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
+              <p className="text-[11px] text-tielo-navy/40 mt-1">PNG, JPG of WebP</p>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
             </div>
 
             <div>
               <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">
-                Alt-tekst / Omschrijving *
+                Omschrijving *
               </label>
               <input
                 type="text"
@@ -366,29 +373,29 @@ function PhotoEditor({
             </div>
 
             {previewUrl && (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide">Zoom</label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <button
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: Math.max(0.5, p.zoom - 0.1) }))}
-                      className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/50 hover:text-tielo-orange transition-colors"
+                      onClick={() => setPanZoom(p => ({ ...p, zoom: Math.max(0.5, +(p.zoom - 0.1).toFixed(2)) }))}
+                      className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
                     >
-                      <ZoomOut className="w-4 h-4" />
+                      <ZoomOut className="w-3.5 h-3.5" />
                     </button>
-                    <span className="text-xs font-bold text-tielo-navy w-10 text-center tabular-nums">
-                      {panZoom.zoom.toFixed(1)}x
+                    <span className="text-sm font-bold text-tielo-navy w-12 text-center tabular-nums">
+                      {panZoom.zoom.toFixed(2)}x
                     </span>
                     <button
-                      onClick={() => setPanZoom(p => ({ ...p, zoom: Math.min(4, p.zoom + 0.1) }))}
-                      className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/50 hover:text-tielo-orange transition-colors"
+                      onClick={() => setPanZoom(p => ({ ...p, zoom: Math.min(4, +(p.zoom + 0.1).toFixed(2)) }))}
+                      className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
                     >
-                      <ZoomIn className="w-4 h-4" />
+                      <ZoomIn className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => setPanZoom({ x: 0, y: 0, zoom: 1 })}
-                      className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/30 hover:text-tielo-orange transition-colors"
-                      title="Reset"
+                      onClick={() => setPanZoom(DEFAULT_PANZOOM)}
+                      className="p-1.5 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/30 hover:text-tielo-orange transition-all"
+                      title="Reset positie"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                     </button>
@@ -398,18 +405,35 @@ function PhotoEditor({
                   type="range"
                   min={0.5}
                   max={4}
-                  step={0.05}
+                  step={0.01}
                   value={panZoom.zoom}
                   onChange={e => setPanZoom(p => ({ ...p, zoom: Number(e.target.value) }))}
-                  className="w-full h-1.5 appearance-none bg-tielo-steel/30 rounded-full accent-tielo-orange cursor-pointer"
+                  className="w-full h-2 appearance-none bg-tielo-steel/20 rounded-full accent-tielo-orange cursor-pointer"
                 />
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  {[1, 1.5, 2].map(z => (
+                    <button
+                      key={z}
+                      onClick={() => setPanZoom(p => ({ ...p, zoom: z }))}
+                      className={`text-xs font-bold py-1.5 rounded-td border transition-all ${
+                        Math.abs(panZoom.zoom - z) < 0.05
+                          ? 'border-tielo-orange bg-tielo-orange/10 text-tielo-orange'
+                          : 'border-tielo-steel/20 text-tielo-navy/50 hover:border-tielo-orange/40 hover:text-tielo-orange'
+                      }`}
+                    >
+                      {z}x
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
+          </div>
 
+          <div className="p-6 border-t border-tielo-steel/20">
             <button
               onClick={exportAndSave}
               disabled={(!selectedFile && !existingImage) || exporting}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-td transition-all shadow-md"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-td transition-all shadow-md text-sm"
             >
               {exporting ? (
                 <>
@@ -424,23 +448,18 @@ function PhotoEditor({
               )}
             </button>
           </div>
+        </div>
 
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-xs font-bold text-tielo-navy/50 uppercase tracking-widest">
-              {previewUrl ? 'Sleep de foto om te positioneren' : 'Preview'}
-            </p>
-            <DraggablePhonePreview
-              imageUrl={previewUrl}
-              panZoom={panZoom}
-              onChange={handlePanZoomChange}
-              size={PREVIEW_W}
-            />
-            {previewUrl && (
-              <p className="text-xs text-tielo-navy/40 text-center leading-relaxed max-w-[200px]">
-                Gebruik de zoom-slider en sleep om het juiste gedeelte te tonen
-              </p>
-            )}
-          </div>
+        <div className="flex-1 bg-[#f4f4f2] flex flex-col items-center justify-center p-8 min-h-[500px]">
+          <p className="text-xs font-bold text-tielo-navy/40 uppercase tracking-widest mb-6">
+            {previewUrl ? 'Sleep · Scroll om te zoomen' : 'Preview'}
+          </p>
+          <DraggablePhonePreview
+            imageUrl={previewUrl}
+            panZoom={panZoom}
+            onChange={setPanZoom}
+            width={340}
+          />
         </div>
       </motion.div>
     </div>
@@ -474,37 +493,22 @@ function ImageCard({
       className="flex items-center gap-4 p-4 bg-white border border-tielo-steel/20 rounded-td hover:border-tielo-orange/30 transition-all"
     >
       <div className="flex flex-col gap-1 flex-shrink-0">
-        <button
-          onClick={onMoveUp}
-          disabled={isFirst}
-          className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/40 hover:text-tielo-orange disabled:opacity-20 transition-colors"
-        >
+        <button onClick={onMoveUp} disabled={isFirst} className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/40 hover:text-tielo-orange disabled:opacity-20 transition-colors">
           <svg className="w-3 h-3" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2l4 5H2l4-5z" /></svg>
         </button>
-        <button
-          onClick={onMoveDown}
-          disabled={isLast}
-          className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/40 hover:text-tielo-orange disabled:opacity-20 transition-colors"
-        >
+        <button onClick={onMoveDown} disabled={isLast} className="p-1 rounded hover:bg-tielo-orange/10 text-tielo-navy/40 hover:text-tielo-orange disabled:opacity-20 transition-colors">
           <svg className="w-3 h-3" viewBox="0 0 12 12" fill="currentColor"><path d="M6 10L2 5h8l-4 5z" /></svg>
         </button>
       </div>
 
-      <div
-        className="relative w-16 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 cursor-pointer group"
-        onClick={onEdit}
-      >
+      <div className="relative w-16 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 cursor-pointer group" onClick={onEdit}>
         <img
           src={image.image_url}
           alt={image.alt_text}
           className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105"
           style={{ opacity: image.active ? 1 : 0.4 }}
         />
-        <img
-          src="/assets/phone_1.png"
-          alt=""
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-        />
+        <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full object-contain pointer-events-none" />
         <div className="absolute inset-0 bg-tielo-navy/0 group-hover:bg-tielo-navy/30 transition-colors flex items-center justify-center">
           <Pencil className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
@@ -521,25 +525,13 @@ function ImageCard({
       </div>
 
       <div className="flex items-center gap-2 flex-shrink-0">
-        <button
-          onClick={onEdit}
-          title="Bewerken"
-          className="p-2 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
-        >
+        <button onClick={onEdit} title="Bewerken" className="p-2 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all">
           <Pencil className="w-4 h-4" />
         </button>
-        <button
-          onClick={onToggle}
-          title={image.active ? 'Verbergen' : 'Tonen'}
-          className="p-2 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/40 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all"
-        >
+        <button onClick={onToggle} title={image.active ? 'Verbergen' : 'Tonen'} className="p-2 rounded-td border border-tielo-steel/20 hover:border-tielo-orange/40 hover:bg-tielo-orange/5 text-tielo-navy/50 hover:text-tielo-orange transition-all">
           {image.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
         </button>
-        <button
-          onClick={onDelete}
-          title="Verwijderen"
-          className="p-2 rounded-td border border-red-200 hover:bg-red-50 text-red-400 hover:text-red-600 transition-all"
-        >
+        <button onClick={onDelete} title="Verwijderen" className="p-2 rounded-td border border-red-200 hover:bg-red-50 text-red-400 hover:text-red-600 transition-all">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -579,10 +571,7 @@ function MobilePhotosContent() {
     const next = !image.active;
     setImages(prev => prev.map(i => i.id === image.id ? { ...i, active: next } : i));
     try {
-      const { error } = await supabase
-        .from('hero_phone_images')
-        .update({ active: next })
-        .eq('id', image.id);
+      const { error } = await supabase.from('hero_phone_images').update({ active: next }).eq('id', image.id);
       if (error) throw error;
     } catch {
       setImages(prev => prev.map(i => i.id === image.id ? { ...i, active: !next } : i));
@@ -610,9 +599,9 @@ function MobilePhotosContent() {
     const updated = newImages.map((img, i) => ({ ...img, sort_order: i }));
     setImages(updated);
     try {
-      await Promise.all(
-        updated.map(img => supabase.from('hero_phone_images').update({ sort_order: img.sort_order }).eq('id', img.id))
-      );
+      await Promise.all(updated.map(img =>
+        supabase.from('hero_phone_images').update({ sort_order: img.sort_order }).eq('id', img.id)
+      ));
     } catch {
       showToast('Fout bij opslaan volgorde', 'error');
       fetchImages();
@@ -704,26 +693,14 @@ function MobilePhotosContent() {
             <Card className="td-card p-5">
               <h3 className="text-sm font-bold font-rubik text-tielo-navy mb-3">Actieve Foto's Preview</h3>
               {activeImages.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {activeImages.slice(0, 3).map(img => (
-                    <div
-                      key={img.id}
-                      className="relative cursor-pointer group"
-                      onClick={() => setPreviewImage(img)}
-                    >
-                      <div className="relative mx-auto" style={{ width: 120, height: 120 * PHONE_ASPECT * 0.72 }}>
+                    <div key={img.id} className="relative cursor-pointer group" onClick={() => setPreviewImage(img)}>
+                      <div className="relative mx-auto" style={{ width: 120, height: Math.round(120 * PHONE_ASPECT * 0.72) }}>
                         <div className="absolute inset-0 overflow-hidden rounded-[14px] bg-gray-100">
-                          <img
-                            src={img.image_url}
-                            alt={img.alt_text}
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
+                          <img src={img.image_url} alt={img.alt_text} className="absolute inset-0 w-full h-full object-cover" />
                         </div>
-                        <img
-                          src="/assets/phone_1.png"
-                          alt=""
-                          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                        />
+                        <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full object-contain pointer-events-none" />
                         <div className="absolute inset-0 bg-tielo-navy/0 group-hover:bg-tielo-navy/20 rounded-[14px] transition-colors" />
                       </div>
                       <p className="text-xs text-tielo-navy/50 text-center mt-1 truncate max-w-[120px] mx-auto">{img.alt_text}</p>
@@ -771,26 +748,27 @@ function MobilePhotosContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-tielo-navy/80 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-tielo-navy/85 backdrop-blur-sm p-4"
             onClick={() => setPreviewImage(null)}
           >
             <motion.div
-              initial={{ scale: 0.9 }}
+              initial={{ scale: 0.88 }}
               animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
+              exit={{ scale: 0.88 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
               className="relative"
               onClick={e => e.stopPropagation()}
             >
-              <div className="relative" style={{ width: 300, height: 300 * PHONE_ASPECT * 0.72 }}>
+              <div className="relative" style={{ width: 300, height: Math.round(300 * PHONE_ASPECT * 0.72) }}>
                 <div className="absolute inset-0 overflow-hidden rounded-[32px] bg-gray-100">
                   <img src={previewImage.image_url} alt={previewImage.alt_text} className="absolute inset-0 w-full h-full object-cover" />
                 </div>
                 <img src="/assets/phone_1.png" alt="" className="absolute inset-0 w-full h-full object-contain pointer-events-none" />
               </div>
-              <p className="text-white text-center mt-3 text-sm font-bold">{previewImage.alt_text}</p>
+              <p className="text-white/80 text-center mt-3 text-sm font-medium">{previewImage.alt_text}</p>
               <button
                 onClick={() => setPreviewImage(null)}
-                className="absolute -top-3 -right-3 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-100 transition-colors"
+                className="absolute -top-3 -right-3 bg-white rounded-full p-1.5 shadow-xl hover:bg-gray-100 transition-colors"
               >
                 <X className="w-4 h-4 text-tielo-navy" />
               </button>
