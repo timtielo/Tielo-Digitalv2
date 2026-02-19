@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, TrendingUp, Edit } from 'lucide-react';
+import { Star, TrendingUp, Edit, Loader2, Save, X } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Label } from '../../components/ui/Label';
+import { Card } from '../../components/ui/Card';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -126,158 +124,184 @@ function WerkspotContent() {
   };
 
   return (
-    <>
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-tielo-navy rounded-td p-6 text-white shadow-xl relative overflow-hidden"
+      >
+        <div className="absolute inset-0 td-striped opacity-10" />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold font-rubik mb-1">Werkspot</h1>
+            <p className="text-white/70">Beheer je Werkspot statistieken</p>
+          </div>
+          {!editing && !loading && (
+            <button
+              onClick={() => setEditing(true)}
+              className="flex items-center gap-2 px-5 py-3 bg-tielo-orange hover:bg-tielo-orange/90 text-white font-bold rounded-td shadow-lg transition-all flex-shrink-0"
+            >
+              <Edit className="w-4 h-4" />
+              Bewerken
+            </button>
+          )}
+        </div>
+      </motion.div>
+
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-8 h-8 animate-spin text-tielo-orange" />
         </div>
       ) : (
         <>
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="grid sm:grid-cols-2 gap-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-4 bg-amber-50 rounded-2xl">
-                  <Star className="h-8 w-8 text-amber-500" fill="currentColor" />
+              <Card className="td-card p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-tielo-orange/10 rounded-td flex-shrink-0">
+                    <Star className="w-7 h-7 text-tielo-orange" fill="currentColor" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-tielo-navy/50 uppercase tracking-wide mb-0.5">Gemiddelde Sterren</p>
+                    <p className="text-4xl font-bold font-rubik text-tielo-navy tabular-nums">
+                      {editing && formData.avgstars
+                        ? parseFloat(formData.avgstars || '0').toFixed(1)
+                        : data?.avgstars?.toFixed(1) || '0.0'}
+                    </p>
+                    <p className="text-xs text-tielo-navy/40 mt-0.5">van de 5.0</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600">Gemiddelde Sterren</p>
-                  <p className="text-5xl font-bold text-gray-900">
-                    {editing && formData.avgstars
-                      ? parseFloat(formData.avgstars).toFixed(1)
-                      : data?.avgstars?.toFixed(1) || '0.0'}
-                  </p>
-                </div>
-              </div>
-              <p className="text-gray-500 text-sm">van de 5.0</p>
+              </Card>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-4 bg-blue-50 rounded-2xl">
-                  <TrendingUp className="h-8 w-8 text-blue-600" />
+              <Card className="td-card p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-tielo-navy/10 rounded-td flex-shrink-0">
+                    <TrendingUp className="w-7 h-7 text-tielo-navy" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-tielo-navy/50 uppercase tracking-wide mb-0.5">Aantal Reviews</p>
+                    <p className="text-4xl font-bold font-rubik text-tielo-navy tabular-nums">
+                      {editing && formData.reviewamount
+                        ? formData.reviewamount
+                        : data?.reviewamount || 0}
+                    </p>
+                    <p className="text-xs text-tielo-navy/40 mt-0.5">totaal ontvangen</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600">Aantal Reviews</p>
-                  <p className="text-5xl font-bold text-gray-900">
-                    {editing && formData.reviewamount
-                      ? formData.reviewamount
-                      : data?.reviewamount || 0}
-                  </p>
-                </div>
-              </div>
-              <p className="text-gray-500 text-sm">totaal ontvangen</p>
+              </Card>
             </motion.div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
-          >
-            {editing ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="avgstars" className="text-gray-700">
-                      Gemiddelde Sterren (0-5)
-                    </Label>
-                    <Input
-                      id="avgstars"
-                      type="text"
-                      inputMode="decimal"
-                      placeholder="Bijv. 4.5"
-                      value={formData.avgstars}
-                      onChange={(e) =>
-                        setFormData({ ...formData, avgstars: e.target.value })
-                      }
-                      required
-                      className="bg-gray-50 border-gray-300 text-gray-900"
-                    />
+          {editing && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Card className="td-card p-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <h3 className="text-base font-bold font-rubik text-tielo-navy">Gegevens bijwerken</h3>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">
+                        Gemiddelde Sterren (0-5) *
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        placeholder="Bijv. 4.5"
+                        value={formData.avgstars}
+                        onChange={e => setFormData({ ...formData, avgstars: e.target.value })}
+                        required
+                        className="w-full px-3 py-2.5 text-sm border border-tielo-steel/30 rounded-td bg-tielo-offwhite focus:outline-none focus:border-tielo-orange transition-colors text-tielo-navy placeholder-tielo-navy/30"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">
+                        Aantal Reviews *
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Bijv. 25"
+                        value={formData.reviewamount}
+                        onChange={e => setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })}
+                        required
+                        className="w-full px-3 py-2.5 text-sm border border-tielo-steel/30 rounded-td bg-tielo-offwhite focus:outline-none focus:border-tielo-orange transition-colors text-tielo-navy placeholder-tielo-navy/30"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="reviewamount" className="text-gray-700">
-                      Aantal Reviews
-                    </Label>
-                    <Input
-                      id="reviewamount"
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="Bijv. 25"
-                      value={formData.reviewamount}
-                      onChange={(e) =>
-                        setFormData({ ...formData, reviewamount: e.target.value.replace(/\D/g, '') })
-                      }
-                      required
-                      className="bg-gray-50 border-gray-300 text-gray-900"
-                    />
+                  <div className="flex gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditing(false);
+                        if (data) {
+                          setFormData({
+                            reviewamount: String(data.reviewamount || ''),
+                            avgstars: String(data.avgstars || ''),
+                          });
+                        }
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 border border-tielo-steel/20 hover:bg-tielo-offwhite text-tielo-navy/70 font-bold text-sm rounded-td transition-all"
+                    >
+                      <X className="w-4 h-4" />
+                      Annuleren
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 text-white font-bold text-sm rounded-td transition-all shadow-md"
+                    >
+                      {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Opslaan...</> : <><Save className="w-4 h-4" />Opslaan</>}
+                    </button>
                   </div>
-                </div>
+                </form>
+              </Card>
+            </motion.div>
+          )}
 
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    type="submit"
-                    disabled={saving}
-                    className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0"
-                  >
-                    {saving ? 'Opslaan...' : 'Opslaan'}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setEditing(false);
-                      if (data) {
-                        setFormData({
-                          reviewamount: String(data.reviewamount || ''),
-                          avgstars: String(data.avgstars || ''),
-                        });
-                      }
-                    }}
-                    className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
-                  >
-                    Annuleren
-                  </Button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex justify-between items-center">
-                <p className="text-gray-600">
-                  Klik op bewerken om je Werkspot gegevens bij te werken
-                </p>
-                <Button
-                  onClick={() => setEditing(true)}
-                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Bewerken
-                </Button>
-              </div>
-            )}
-          </motion.div>
+          {!editing && !data && (
+            <Card className="td-card p-8 text-center">
+              <p className="text-tielo-navy/50 text-sm mb-4">Nog geen Werkspot gegevens ingesteld</p>
+              <button
+                onClick={() => setEditing(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-tielo-orange hover:bg-tielo-orange/90 text-white font-bold rounded-td transition-all text-sm"
+              >
+                <Edit className="w-4 h-4" />
+                Gegevens Instellen
+              </button>
+            </Card>
+          )}
         </>
       )}
-    </>
+    </div>
+  );
+}
+
+function WerkspotPageInner() {
+  return (
+    <DashboardLayout currentPage="werkspot">
+      <WerkspotContent />
+    </DashboardLayout>
   );
 }
 
 export function WerkspotPage() {
   return (
     <ProtectedRoute>
-      <DashboardLayout currentPage="werkspot">
-        <WerkspotContent />
-      </DashboardLayout>
+      <WerkspotPageInner />
     </ProtectedRoute>
   );
 }

@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, MessageSquare, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, MessageSquare, Star, X, Loader2 } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Textarea } from '../../components/ui/Textarea';
-import { Label } from '../../components/ui/Label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '../../components/ui/Dialog';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -167,53 +162,50 @@ function ReviewsContent() {
     <DashboardLayout currentPage="reviews">
       <div className="space-y-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-white shadow-xl"
+          className="bg-tielo-navy rounded-td p-6 text-white shadow-xl relative overflow-hidden"
         >
-          <div className="flex justify-between items-center">
+          <div className="absolute inset-0 td-striped opacity-10" />
+          <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Reviews</h1>
-              <p className="text-blue-100">Beheer klantbeoordelingen</p>
+              <h1 className="text-3xl font-bold font-rubik mb-1">Reviews</h1>
+              <p className="text-white/70">Beheer klantbeoordelingen</p>
             </div>
-            <Button
+            <button
               onClick={openNewDialog}
-              className="!bg-gray-900 !text-white hover:!bg-gray-800 !border-0 font-semibold shadow-xl"
+              className="flex items-center gap-2 px-5 py-3 bg-tielo-orange hover:bg-tielo-orange/90 text-white font-bold rounded-td shadow-lg transition-all flex-shrink-0"
             >
-                <Plus className="h-4 w-4 mr-2" />
-                Nieuwe Review
-              </Button>
-            </div>
+              <Plus className="w-4 h-4" />
+              Nieuwe Review
+            </button>
+          </div>
         </motion.div>
 
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-tielo-orange" />
           </div>
         ) : reviews.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-20"
-          >
-            <Card className="p-12 max-w-md mx-auto">
-              <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Nog geen reviews</h3>
-              <p className="text-gray-600 mb-6">Begin met het toevoegen van je eerste review</p>
-              <Button
-                onClick={openNewDialog}
-                className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 border-0"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Voeg je eerste review toe
-              </Button>
-            </Card>
-          </motion.div>
+          <Card className="td-card p-12 text-center max-w-md mx-auto">
+            <div className="p-4 bg-tielo-orange/10 rounded-td w-fit mx-auto mb-4">
+              <MessageSquare className="w-8 h-8 text-tielo-orange" />
+            </div>
+            <h3 className="text-xl font-bold font-rubik text-tielo-navy mb-2">Nog geen reviews</h3>
+            <p className="text-sm text-tielo-navy/50 mb-6">Begin met het toevoegen van je eerste klantbeoordeling</p>
+            <button
+              onClick={openNewDialog}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-tielo-orange hover:bg-tielo-orange/90 text-white font-bold rounded-td transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Eerste Review Toevoegen
+            </button>
+          </Card>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
           >
             <AnimatePresence>
               {reviews.map((review, index) => (
@@ -221,53 +213,45 @@ function ReviewsContent() {
                   key={review.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-300">
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center flex-shrink-0">
-                            <Star className="h-6 w-6 text-white" fill="white" />
-                          </div>
-                          <div className="min-w-0">
-                            <h3 className="text-lg font-bold text-gray-900 truncate">{review.name}</h3>
-                            <p className="text-xs text-gray-600">
-                              {new Date(review.date).toLocaleDateString('nl-NL', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })}
-                            </p>
-                          </div>
+                  <Card className="td-card overflow-hidden hover:border-tielo-orange/30 transition-all duration-200">
+                    <div className="p-5">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-tielo-orange rounded-td flex items-center justify-center flex-shrink-0">
+                          <Star className="w-5 h-5 text-white" fill="white" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-bold text-tielo-navy truncate">{review.name}</h3>
+                          <p className="text-xs text-tielo-navy/40 mt-0.5">
+                            {new Date(review.date).toLocaleDateString('nl-NL', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            })}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="mb-4 min-h-[100px]">
-                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-4">
-                          "{review.review}"
-                        </p>
-                      </div>
+                      <p className="text-sm text-tielo-navy/70 leading-relaxed line-clamp-4 min-h-[80px] mb-4">
+                        "{review.review}"
+                      </p>
 
-                      <div className="flex gap-2 pt-4 border-t border-gray-200">
-                        <Button
-                          variant="outline"
-                          size="sm"
+                      <div className="flex gap-2 pt-4 border-t border-tielo-steel/15">
+                        <button
                           onClick={() => handleEdit(review)}
-                          className="flex-1 bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 border border-tielo-steel/20 hover:border-tielo-orange/50 hover:bg-tielo-orange/5 text-tielo-navy/60 hover:text-tielo-orange rounded-td text-xs font-bold transition-all"
                         >
-                          <Pencil className="h-4 w-4 mr-2" />
+                          <Pencil className="w-3.5 h-3.5" />
                           Bewerken
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
+                        </button>
+                        <button
                           onClick={() => handleDelete(review.id)}
-                          className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
+                          className="p-2 border border-red-200 hover:bg-red-50 text-red-400 hover:text-red-600 rounded-td transition-all"
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   </Card>
@@ -278,63 +262,81 @@ function ReviewsContent() {
         )}
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingReview ? 'Review Bewerken' : 'Nieuwe Review'}
-            </DialogTitle>
-            <DialogClose onClose={() => setDialogOpen(false)} />
-          </DialogHeader>
+      <AnimatePresence>
+        {dialogOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-tielo-navy/75 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-td shadow-2xl w-full max-w-md"
+            >
+              <div className="flex items-center justify-between px-6 py-5 border-b border-tielo-steel/20">
+                <h2 className="text-xl font-bold font-rubik text-tielo-navy">
+                  {editingReview ? 'Review Bewerken' : 'Nieuwe Review'}
+                </h2>
+                <button onClick={() => setDialogOpen(false)} className="p-2 hover:bg-tielo-orange/10 rounded-td transition-colors">
+                  <X className="w-5 h-5 text-tielo-navy" />
+                </button>
+              </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            <div>
-              <Label htmlFor="name">Naam *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-              />
-            </div>
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">Naam *</label>
+                  <input
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    placeholder="Naam klant"
+                    className="w-full px-3 py-2.5 text-sm border border-tielo-steel/30 rounded-td bg-tielo-offwhite focus:outline-none focus:border-tielo-orange transition-colors text-tielo-navy placeholder-tielo-navy/30"
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="review">Review *</Label>
-              <Textarea
-                id="review"
-                value={formData.review}
-                onChange={(e) => setFormData({ ...formData, review: e.target.value })}
-                rows={4}
-                required
-              />
-            </div>
+                <div>
+                  <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">Review *</label>
+                  <textarea
+                    value={formData.review}
+                    onChange={e => setFormData({ ...formData, review: e.target.value })}
+                    required
+                    rows={4}
+                    placeholder="Wat zei de klant?"
+                    className="w-full px-3 py-2.5 text-sm border border-tielo-steel/30 rounded-td bg-tielo-offwhite focus:outline-none focus:border-tielo-orange transition-colors text-tielo-navy placeholder-tielo-navy/30 resize-none"
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="date">Datum *</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                required
-              />
-            </div>
+                <div>
+                  <label className="text-xs font-bold text-tielo-navy/60 uppercase tracking-wide block mb-1.5">Datum *</label>
+                  <input
+                    type="date"
+                    value={formData.date}
+                    onChange={e => setFormData({ ...formData, date: e.target.value })}
+                    required
+                    className="w-full px-3 py-2.5 text-sm border border-tielo-steel/30 rounded-td bg-tielo-offwhite focus:outline-none focus:border-tielo-orange transition-colors text-tielo-navy"
+                  />
+                </div>
 
-            <div className="flex gap-2 pt-4">
-              <Button type="submit" disabled={saving}>
-                {saving ? 'Opslaan...' : editingReview ? 'Bijwerken' : 'Toevoegen'}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setDialogOpen(false)}
-              >
-                Annuleren
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setDialogOpen(false)}
+                    className="flex-1 px-4 py-2.5 border border-tielo-steel/20 hover:bg-tielo-offwhite text-tielo-navy/70 font-bold text-sm rounded-td transition-all"
+                  >
+                    Annuleren
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 text-white font-bold text-sm rounded-td transition-all"
+                  >
+                    {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Opslaan...</> : editingReview ? 'Bijwerken' : 'Toevoegen'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </DashboardLayout>
   );
 }
