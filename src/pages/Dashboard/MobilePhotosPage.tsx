@@ -48,8 +48,9 @@ function PhotoEditor({
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const DISPLAY_W = 400;
-  const DISPLAY_H = Math.round(DISPLAY_W * (EXPORT_H / EXPORT_W));
+  const ASPECT = EXPORT_H / EXPORT_W;
+  const DISPLAY_H = 520;
+  const DISPLAY_W = Math.round(DISPLAY_H / ASPECT);
 
   const loadImage = useCallback((file: File) => {
     const img = new Image();
@@ -225,165 +226,151 @@ function PhotoEditor({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 overflow-hidden"
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
     >
       <motion.div
         initial={{ scale: 0.92, y: 16 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.92, y: 16 }}
-        className="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-5xl h-[95vh] flex flex-col"
+        className="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-5xl flex flex-col overflow-hidden"
+        style={{ maxHeight: 'calc(100vh - 2rem)' }}
       >
-        <div className="p-5 flex-shrink-0 border-b border-white/10 flex items-center justify-between">
+        {/* Header */}
+        <div className="px-5 py-3 flex-shrink-0 border-b border-white/10 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white font-rubik">
+            <h2 className="text-lg font-bold text-white font-rubik">
               {existingImage ? 'Foto Bewerken' : 'Nieuwe Foto'}
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">Exportformaat: {EXPORT_W} × {EXPORT_H} px</p>
+            <p className="text-[11px] text-gray-400">{EXPORT_W} × {EXPORT_H} px</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
-            <X className="h-6 w-6" />
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors p-1">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="flex flex-col lg:flex-row gap-6 p-6 h-full">
-            {/* Canvas preview */}
-            <div className="flex-1 flex flex-col items-center">
-              <div className="bg-gray-950 rounded-xl p-4 w-full flex justify-center">
-                {image ? (
-                  <canvas
-                    ref={canvasRef}
-                    className="border-2 border-white/20 rounded-lg"
-                    style={{
-                      width: `${DISPLAY_W}px`,
-                      height: `${DISPLAY_H}px`,
-                      maxWidth: '100%',
-                      cursor: isDragging ? 'grabbing' : 'grab',
-                    }}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                  />
-                ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
-                    onDragLeave={() => setIsDraggingFile(false)}
-                    onDrop={handleDrop}
-                    className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed cursor-pointer transition-all ${
-                      isDraggingFile
-                        ? 'border-tielo-orange bg-tielo-orange/10'
-                        : 'border-white/20 hover:border-tielo-orange hover:bg-tielo-orange/5'
-                    }`}
-                    style={{ width: DISPLAY_W, height: DISPLAY_H, maxWidth: '100%' }}
-                  >
-                    <div className="p-4 bg-white/10 rounded-full mb-3">
-                      <ImageIcon className="w-8 h-8 text-white/40" />
-                    </div>
-                    <p className="text-white/60 font-medium text-sm">
-                      {isDraggingFile ? 'Laat los' : 'Klik of sleep een foto'}
-                    </p>
-                    <p className="text-white/30 text-xs mt-1">PNG, JPG of WebP</p>
-                    <input ref={fileInputRef} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} className="hidden" />
-                  </div>
-                )}
+        {/* Body: canvas left, controls right — no scroll */}
+        <div className="flex flex-row flex-1 min-h-0 gap-0">
+          {/* Canvas panel */}
+          <div className="flex-1 min-w-0 bg-gray-950 flex flex-col items-center justify-center p-4 gap-3">
+            {image ? (
+              <>
+                <canvas
+                  ref={canvasRef}
+                  className="border-2 border-white/20 rounded-lg"
+                  style={{
+                    width: `${DISPLAY_W}px`,
+                    height: `${DISPLAY_H}px`,
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    cursor: isDragging ? 'grabbing' : 'grab',
+                  }}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                />
+                <div className="flex items-center gap-1.5 text-[11px] text-blue-300/70">
+                  <Move className="h-3 w-3 flex-shrink-0" />
+                  Sleep om te positioneren
+                </div>
+              </>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
+                onDragLeave={() => setIsDraggingFile(false)}
+                onDrop={handleDrop}
+                className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed cursor-pointer transition-all ${
+                  isDraggingFile
+                    ? 'border-tielo-orange bg-tielo-orange/10'
+                    : 'border-white/20 hover:border-tielo-orange hover:bg-tielo-orange/5'
+                }`}
+                style={{ width: DISPLAY_W, height: DISPLAY_H, maxWidth: '100%', maxHeight: '100%' }}
+              >
+                <div className="p-4 bg-white/10 rounded-full mb-3">
+                  <ImageIcon className="w-8 h-8 text-white/40" />
+                </div>
+                <p className="text-white/60 font-medium text-sm">
+                  {isDraggingFile ? 'Laat los' : 'Klik of sleep een foto'}
+                </p>
+                <p className="text-white/30 text-xs mt-1">PNG, JPG of WebP</p>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} className="hidden" />
               </div>
+            )}
+          </div>
 
-              {image && (
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mt-3 w-full max-w-[400px]">
-                  <div className="flex items-start gap-2">
-                    <Move className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-blue-200">Sleep de afbeelding om te positioneren · Exportformaat: {EXPORT_W}×{EXPORT_H}px</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Controls */}
-            <div className="w-full lg:w-72 flex flex-col gap-4 flex-shrink-0">
-              {/* File picker when image already loaded */}
-              {image && (
-                <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-2">Foto</label>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
-                    onDragLeave={() => setIsDraggingFile(false)}
-                    onDrop={handleDrop}
-                    className={`w-full border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
-                      isDraggingFile ? 'border-tielo-orange bg-tielo-orange/10' : 'border-white/20 hover:border-tielo-orange hover:bg-white/5'
-                    }`}
-                  >
-                    <Upload className="w-4 h-4 text-white/40 mx-auto mb-1" />
-                    <p className="text-xs text-white/50">{selectedFile ? selectedFile.name : 'Andere foto kiezen'}</p>
-                    <input ref={fileInputRef} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} className="hidden" />
-                  </button>
-                </div>
-              )}
+          {/* Controls panel */}
+          <div className="w-64 flex-shrink-0 flex flex-col border-l border-white/10 overflow-y-auto">
+            <div className="p-4 flex flex-col gap-4 flex-1">
+              {/* File picker */}
+              <div>
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-2">Foto</label>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={e => { e.preventDefault(); setIsDraggingFile(true); }}
+                  onDragLeave={() => setIsDraggingFile(false)}
+                  onDrop={handleDrop}
+                  className={`w-full border-2 border-dashed rounded-xl p-3 text-center cursor-pointer transition-all ${
+                    isDraggingFile ? 'border-tielo-orange bg-tielo-orange/10' : 'border-white/20 hover:border-tielo-orange hover:bg-white/5'
+                  }`}
+                >
+                  <Upload className="w-4 h-4 text-white/40 mx-auto mb-1" />
+                  <p className="text-xs text-white/50 truncate">{selectedFile ? selectedFile.name : image ? 'Andere foto kiezen' : 'Klik of sleep'}</p>
+                  <input ref={fileInputRef} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} className="hidden" />
+                </button>
+              </div>
 
               {/* Omschrijving */}
               <div>
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-2">Omschrijving *</label>
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-2">Omschrijving *</label>
                 <input
                   type="text"
                   value={altText}
                   onChange={e => setAltText(e.target.value)}
-                  placeholder="bijv. Badkamer renovatie Amersfoort"
-                  className="w-full px-3 py-2.5 text-sm border border-white/20 rounded-lg bg-white/5 focus:outline-none focus:border-tielo-orange transition-colors text-white placeholder-white/30"
+                  placeholder="bijv. Badkamer renovatie"
+                  className="w-full px-3 py-2 text-sm border border-white/20 rounded-lg bg-white/5 focus:outline-none focus:border-tielo-orange transition-colors text-white placeholder-white/30"
                 />
               </div>
 
               {/* Zoom / rotate controls */}
               {image && (
                 <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-2">Aanpassen</label>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={handleZoomIn}
-                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
-                    >
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-2">Aanpassen</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={handleZoomIn} className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all">
                       <ZoomIn className="w-3.5 h-3.5" /> Zoom In
                     </button>
-                    <button
-                      onClick={handleZoomOut}
-                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
-                    >
+                    <button onClick={handleZoomOut} className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all">
                       <ZoomOut className="w-3.5 h-3.5" /> Zoom Out
                     </button>
-                    <button
-                      onClick={handleRotate}
-                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
-                    >
+                    <button onClick={handleRotate} className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all">
                       <RotateCw className="w-3.5 h-3.5" /> Roteren
                     </button>
-                    <button
-                      onClick={handleReset}
-                      className="px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all"
-                    >
+                    <button onClick={handleReset} className="px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg transition-all">
                       Reset
                     </button>
                   </div>
                 </div>
               )}
             </div>
-          </div>
-        </div>
 
-        <div className="p-5 flex-shrink-0 border-t border-white/10 bg-gray-900 flex gap-3">
-          <button
-            onClick={handleSave}
-            disabled={saving || (!image && !existingImage)}
-            className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-md"
-          >
-            {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Opslaan...</> : <><Check className="w-4 h-4" />Opslaan</>}
-          </button>
-          <button
-            onClick={onClose}
-            className="px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all"
-          >
-            Annuleren
-          </button>
+            {/* Save / Cancel */}
+            <div className="p-4 border-t border-white/10 flex flex-col gap-2">
+              <button
+                onClick={handleSave}
+                disabled={saving || (!image && !existingImage)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-tielo-orange hover:bg-tielo-orange/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-md text-sm"
+              >
+                {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Opslaan...</> : <><Check className="w-4 h-4" />Opslaan</>}
+              </button>
+              <button
+                onClick={onClose}
+                className="w-full px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all text-sm"
+              >
+                Annuleren
+              </button>
+            </div>
+          </div>
         </div>
       </motion.div>
     </motion.div>
