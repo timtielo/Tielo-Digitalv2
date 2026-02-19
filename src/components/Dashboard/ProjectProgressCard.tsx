@@ -66,19 +66,19 @@ export const ProjectProgressCard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200 animate-pulse">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gray-200 rounded-2xl"></div>
+      <div className="bg-white rounded-xl shadow-md p-4 border border-gray-200 animate-pulse">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-200 rounded-xl"></div>
             <div>
-              <div className="h-6 w-40 bg-gray-200 rounded mb-2"></div>
-              <div className="h-4 w-32 bg-gray-200 rounded"></div>
+              <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
+              <div className="h-3 w-24 bg-gray-200 rounded"></div>
             </div>
           </div>
-          <div className="h-10 w-20 bg-gray-200 rounded-full"></div>
+          <div className="h-7 w-16 bg-gray-200 rounded-full"></div>
         </div>
-        <div className="h-4 bg-gray-200 rounded-full mb-2"></div>
-        <div className="h-20 bg-gray-200 rounded-xl"></div>
+        <div className="h-3 bg-gray-200 rounded-full mb-2"></div>
+        <div className="h-14 bg-gray-200 rounded-lg"></div>
       </div>
     );
   }
@@ -99,14 +99,14 @@ export const ProjectProgressCard: React.FC = () => {
 
   if (!project) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-8">
-        <div className="flex flex-col items-center text-center gap-4">
-          <div className="p-4 bg-blue-100 rounded-2xl">
-            <Rocket className="w-10 h-10 text-blue-600" />
+      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-5">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-blue-100 rounded-xl flex-shrink-0">
+            <Rocket className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-blue-900 mb-2">Geen Actief Project</h3>
-            <p className="text-blue-700">Er is momenteel geen actief project voor jouw account. Neem contact op met ons team voor meer informatie.</p>
+            <h3 className="text-sm font-bold text-blue-900">Geen Actief Project</h3>
+            <p className="text-xs text-blue-700 mt-0.5">Neem contact op met ons team voor meer informatie.</p>
           </div>
         </div>
       </div>
@@ -118,47 +118,47 @@ export const ProjectProgressCard: React.FC = () => {
   const PhaseIcon = phaseInfo.icon;
 
   return (
-    <div className={`bg-white rounded-2xl shadow-xl p-8 border-2 ${colors.border} transition-all duration-300 hover:shadow-2xl`}>
-      <div className="flex items-start justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className={`p-4 ${colors.bg} rounded-2xl ring-4 ${colors.ring} ring-opacity-20`}>
-            <Rocket className={`w-8 h-8 ${colors.text}`} />
+    <div className={`bg-white rounded-xl shadow-md p-4 border ${colors.border} transition-all duration-300 hover:shadow-lg`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className={`p-2 ${colors.bg} rounded-xl`}>
+            <Rocket className={`w-5 h-5 ${colors.text}`} />
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-1">Jouw Project</h3>
-            <div className="flex items-center gap-2">
-              <PhaseIcon className={`w-4 h-4 ${colors.text}`} />
-              <span className={`text-sm font-semibold ${colors.text}`}>{phaseInfo.phase}</span>
+            <h3 className="text-sm font-bold text-gray-900">Jouw Project</h3>
+            <div className="flex items-center gap-1.5">
+              <PhaseIcon className={`w-3 h-3 ${colors.text}`} />
+              <span className={`text-xs font-semibold ${colors.text}`}>{phaseInfo.phase}</span>
             </div>
           </div>
         </div>
-        <div className={`px-5 py-2 ${colors.badge} rounded-full font-bold text-lg`}>
+        <div className={`px-3 py-1 ${colors.badge} rounded-full font-bold text-sm`}>
           {project.progress}%
         </div>
       </div>
 
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-semibold text-gray-700">Voortgang</span>
-          <span className={`text-sm font-bold ${colors.text}`}>{project.status_label}</span>
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-xs font-semibold text-gray-600">Voortgang</span>
+          <span className={`text-xs font-bold ${colors.text}`}>{project.status_label}</span>
         </div>
-        <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden">
+        <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-700 ease-out`}
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-700 ease-out"
             style={{ width: `${project.progress}%` }}
           />
         </div>
       </div>
 
-      <div className={`${colors.bg} rounded-xl p-5 border ${colors.border}`}>
-        <h4 className={`text-sm font-bold ${colors.text} mb-2 uppercase tracking-wide`}>Status Update</h4>
-        <p className="text-gray-700 leading-relaxed">{project.status_explanation}</p>
+      <div className={`${colors.bg} rounded-lg px-3 py-2.5 border ${colors.border}`}>
+        <h4 className={`text-[10px] font-bold ${colors.text} mb-1 uppercase tracking-wide`}>Status Update</h4>
+        <p className="text-xs text-gray-700 leading-relaxed">{project.status_explanation}</p>
       </div>
 
       {project.is_online && (
-        <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-xl">
-          <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-          <span className="text-sm font-semibold text-green-700">Jouw website is live!</span>
+        <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+          <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+          <span className="text-xs font-semibold text-green-700">Jouw website is live!</span>
         </div>
       )}
     </div>
