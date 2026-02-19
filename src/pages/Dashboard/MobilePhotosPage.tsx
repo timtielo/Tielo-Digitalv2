@@ -410,7 +410,7 @@ function PhotoEditor({
   };
 
   const isEditing = !!existingImage;
-  const PREVIEW_W = 240;
+  const PREVIEW_W = 380;
 
   const zoomPresets = [1, 1.25, 1.5, 2];
 
@@ -421,7 +421,7 @@ function PhotoEditor({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 12 }}
         transition={{ duration: 0.2 }}
-        className="relative w-full max-w-5xl bg-white flex flex-col md:flex-row shadow-2xl md:my-6 md:mx-4 md:rounded-td overflow-hidden"
+        className="relative w-full max-w-7xl bg-white flex flex-col md:flex-row shadow-2xl md:my-4 md:mx-4 md:rounded-td overflow-hidden"
       >
         {/* Mobile header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-tielo-steel/20 md:hidden">
@@ -590,7 +590,7 @@ function PhotoEditor({
         </div>
 
         {/* Preview panel */}
-        <div className="flex-1 bg-[#f0f0ee] flex flex-col items-center justify-center p-8 min-h-[560px]">
+        <div className="flex-1 bg-[#f0f0ee] flex flex-col items-center justify-center p-8 min-h-[700px]">
           <p className="text-xs font-bold text-tielo-navy/40 uppercase tracking-widest mb-6">
             Live Preview
           </p>
