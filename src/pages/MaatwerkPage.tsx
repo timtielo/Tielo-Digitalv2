@@ -49,12 +49,6 @@ const dashboardItems = [
   'Waar vertraging ontstaat',
 ];
 
-const results = [
-  { value: '1–2 uur', label: 'bespaard per meeting' },
-  { value: '±20%', label: 'tijdswinst op e-mail' },
-  { value: '100%', label: 'gestructureerde onboarding' },
-];
-
 const audiences = [
   { icon: Calculator, label: 'Accountants- en administratiekantoren', fits: true },
   { icon: Building2, label: 'MKB-bedrijven met meerdere medewerkers', fits: true },
@@ -287,7 +281,7 @@ export function MaatwerkPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mb-12"
+              className="mb-4"
             >
               <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-3 block">
                 Resultaten in de praktijk
@@ -295,58 +289,16 @@ export function MaatwerkPage() {
               <h2 className="text-3xl sm:text-4xl font-bold text-white">
                 Batist Administratieve Dienstverlening
               </h2>
-              <p className="text-white/50 mt-2 text-sm">5–10 FTE, 300+ klanten</p>
             </motion.div>
-
-            <div className="grid sm:grid-cols-3 gap-px bg-white/10 rounded-td overflow-hidden mb-10">
-              {results.map((result, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-tielo-navy p-8 text-center"
-                >
-                  <div className="text-3xl sm:text-4xl font-bold text-tielo-teal mb-2">{result.value}</div>
-                  <div className="text-white/50 text-sm">{result.label}</div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="grid sm:grid-cols-3 gap-6"
-            >
-              {[
-                { label: 'Situatie', text: 'Veel handmatig werk, meetings zonder uitwerking, onboarding via losse mails.' },
-                { label: 'Aanpak', text: 'AI voor meeting-transcriptie en samenvatting. Automatische onboarding flow. Koppelingen tussen systemen.' },
-                { label: 'Resultaat', text: 'Minder fouten, meer rust in het team. Processen draaien op het systeem, niet op mensen.' },
-              ].map((block, index) => (
-                <div key={index} className="border border-white/10 rounded-td p-6">
-                  <p className="text-tielo-orange text-xs font-bold uppercase tracking-widest mb-3">{block.label}</p>
-                  <p className="text-white/70 text-sm leading-relaxed">{block.text}</p>
-                </div>
-              ))}
-            </motion.div>
-
-            <motion.div
+            <motion.p
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="mt-8"
+              transition={{ delay: 0.1 }}
+              className="text-white/40 text-sm italic"
             >
-              <Link
-                href="/cases#case-batist"
-                className="inline-flex items-center gap-2 text-tielo-teal hover:text-white text-sm font-medium transition-colors duration-200"
-              >
-                Bekijk de volledige case
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
+              Binnenkort meer
+            </motion.p>
           </div>
         </div>
       </section>
