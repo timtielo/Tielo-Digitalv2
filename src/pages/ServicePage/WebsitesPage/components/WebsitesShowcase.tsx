@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const websites = [
@@ -43,66 +43,60 @@ const websites = [
     url: 'https://www.spechtbouwt.nl',
     logo: '/assets/spechttrans.png',
     nofollow: true
+  },
+  {
+    name: 'Bouw Kliniek',
+    url: 'https://www.bouwkliniek.nl',
+    logo: '/assets/bouwklinieklogo.png',
+    nofollow: true
   }
 ];
 
 export function WebsitesShowcase() {
+  const [isPaused, setIsPaused] = useState(false);
+
   return (
-    <section className="py-20 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-8 font-rubik">
-          Websites die we hebben gebouwd
-        </h2>
-        
-        <div className="relative max-w-4xl mx-auto">
-          {/* Gradient overlays */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
-          
-          {/* Scrolling container */}
-          <div className="overflow-hidden whitespace-nowrap py-8">
+    <section className="py-10 bg-white overflow-hidden border-y border-gray-100">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center gap-4 mb-5">
+          <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 whitespace-nowrap">Onze klanten</span>
+          <div className="flex-1 h-px bg-gray-100" />
+          <span className="text-xs text-gray-400 whitespace-nowrap">{websites.length} websites gebouwd</span>
+        </div>
+
+        <div className="relative">
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+          <div
+            className="overflow-hidden whitespace-nowrap py-2"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={() => setIsPaused(true)}
+            onTouchEnd={() => setIsPaused(false)}
+          >
             <motion.div
-              animate={{
-                x: [-100, -2500],
-              }}
+              animate={{ x: [-100, -2500] }}
               transition={{
-                duration: 45,
+                duration: isPaused ? 200 : 40,
                 repeat: Infinity,
-                ease: "linear"
+                ease: 'linear'
               }}
               className="inline-block"
             >
-              {websites.map((site, index) => (
+              {[...websites, ...websites].map((site, index) => (
                 <a
                   key={index}
                   href={site.url}
                   target="_blank"
-                  rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
-                  className="inline-block mx-6 hover:opacity-75 transition-all duration-300"
+                  rel="nofollow noopener noreferrer"
+                  className="inline-block mx-5 hover:opacity-60 transition-opacity duration-200 touch-manipulation"
                 >
-                  <div className="h-24 flex items-center justify-center">
+                  <div className="h-12 flex items-center justify-center">
                     <img
                       src={site.logo}
                       alt={site.name}
-                      className="h-full w-auto object-contain"
-                    />
-                  </div>
-                </a>
-              ))}
-              {/* Duplicate for seamless loop */}
-              {websites.map((site, index) => (
-                <a
-                  key={`duplicate-${index}`}
-                  href={site.url}
-                  target="_blank"
-                  rel={site.nofollow ? "nofollow noopener noreferrer" : "noopener noreferrer"}
-                  className="inline-block mx-6 hover:opacity-75 transition-all duration-300"
-                >
-                  <div className="h-24 flex items-center justify-center">
-                    <img
-                      src={site.logo}
-                      alt={site.name}
-                      className="h-full w-auto object-contain"
+                      className="h-full w-auto object-contain max-w-[120px]"
                     />
                   </div>
                 </a>
