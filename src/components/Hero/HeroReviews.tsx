@@ -38,6 +38,12 @@ const reviews = [
     role: 'i-Lizard',
     quote: 'Erg tevreden met Tim\'s persoonlijke benadering, zijn betrokkenheid, de kwaliteit en relevantie van het eindproduct, en de schappelijke ontwikkelings- en beheer-kosten.',
     rating: 5
+  },
+  {
+    name: 'Ömer Cetin',
+    role: 'Bouw Kliniek',
+    quote: 'Tim had mij benaderd via een handgeschreven kaartje. De website is netjes gemaakt, net zoals het logo. Aanrader.',
+    rating: 5
   }
 ];
 

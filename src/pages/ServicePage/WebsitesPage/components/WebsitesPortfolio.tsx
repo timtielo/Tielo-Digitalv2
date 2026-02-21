@@ -41,6 +41,12 @@ const testimonials: { name: string; company: string; quote: string; rating: numb
     company: 'i-Lizard',
     quote: "Tim introduceerde zichzelf middels een handgeschreven kaartje welke ik ontving via PostNL. Door het aantal positieve reviews op Werkspot te benoemen, en de mogelijkheid te benoemen meer \"los te komen\" van Werkspot, was ik meteen geïnteresseerd. Daarnaast deelde Tim een link naar een 1e opzet van een op maat gesneden website. Deze 1e opzet sloot meer dan verwacht aan op mijn wensen. Na een 1e persoonlijk contact, waarin er goed geluisterd werd naar mijn wensen, heeft Tim een op maat gesneden website aangeleverd waarin foto's, recensies, werkgebieden en motivatie duidelijk naar voren kwamen. Middels video-instructies werd aangegeven hoe ik de inhoud van mijn portfolio zelf kan aanpassen en mijn website up-to-date kan houden. Ik ben ook blij met de vertaalslag die Tim kon maken tussen mijn ideeën en wensen naar een \"marketing-proof\" web-ingang. Erg tevreden met Tim's persoonlijke benadering, zijn betrokkenheid, de kwaliteit en relevantie van het eindproduct, en de schappelijke ontwikkelings- en beheer-kosten.",
     rating: 5
+  },
+  {
+    name: 'Ömer Cetin',
+    company: 'Bouw Kliniek',
+    quote: "Tim heeft mijn website gemaakt voor mijn bouw bedrijf. Hij had mij benaderd via een handgeschreven briefje omdat ik actief ben op Werkspot.\n\nIn het begin was ik niet blij met de communicatie. Via telefoon was Tim niet altijd bereikbaar en voor mij is dat belangrijk. Ik hou van snel schakelen. Via WhatsApp kreeg ik wel altijd reactie en daar werd netjes op geantwoord. Nadat ik mijn mening heb gegeven, is de communicatie duidelijker gegaan.\n\nDe prijs was duidelijk. Geen verrassingen. Wat we hebben afgesproken, is zo gebleven. Dat vind ik belangrijk in zaken doen.\n\nDe website is netjes gemaakt, net zoals het logo. Ik kan zelf de foto's en projecten toevoegen en de website is goed persoonlijk. Hij denkt ook mee over bijvoorbeeld een Engelse versie en reviews verzamelen. Dat is goed. De website stond binnen 10 dagen na akkoord al online. Top.\n\nAanrader.",
+    rating: 5
   }
 ];
 
