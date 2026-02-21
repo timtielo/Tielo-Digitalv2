@@ -43,6 +43,12 @@ const websites = [
     url: 'https://www.spechtbouwt.nl',
     logo: '/assets/spechttrans.png',
     nofollow: true
+  },
+  {
+    name: 'Bouw Kliniek',
+    url: 'https://www.bouwkliniek.nl',
+    logo: '/assets/bouwklinieklogo.png',
+    nofollow: true
   }
 ];
 
