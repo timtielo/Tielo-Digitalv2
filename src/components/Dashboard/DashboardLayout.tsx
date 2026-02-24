@@ -16,7 +16,8 @@ import {
   Target,
   Home,
   ListTodo,
-  FileText
+  FileText,
+  Video
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -24,7 +25,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs';
+  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs' | 'videos';
 }
 
 interface DashboardModule {
@@ -49,6 +50,7 @@ const iconMap: Record<string, any> = {
   User,
   Shield,
   FileText,
+  Video,
 };
 
 export function DashboardLayout({ children, currentPage }: DashboardLayoutProps) {

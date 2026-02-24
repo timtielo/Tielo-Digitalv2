@@ -33,6 +33,7 @@ import { MissionControlPage } from '../pages/Dashboard/MissionControlPage';
 import { ProjectsManagementPage } from '../pages/Dashboard/ProjectsManagementPage';
 import { ProjectTasksManagementPage } from '../pages/Dashboard/ProjectTasksManagementPage';
 import { BlogsPage } from '../pages/Dashboard/BlogsPage';
+import { VideosPage } from '../pages/Dashboard/VideosPage';
 
 export interface Route {
   path: string;
@@ -58,6 +59,7 @@ export const routes: Route[] = [
   { path: '/dashboard/admin/projects/:projectId/tasks', component: ProjectTasksManagementPage, params: ['projectId'], layout: false },
   { path: '/dashboard/mcc', component: MissionControlPage, layout: false },
   { path: '/dashboard/blogs', component: BlogsPage, layout: false },
+  { path: '/dashboard/videos', component: VideosPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },
   { path: '/diensten', component: Diensten },
