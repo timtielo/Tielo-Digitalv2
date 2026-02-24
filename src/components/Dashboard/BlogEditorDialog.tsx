@@ -362,6 +362,21 @@ export function BlogEditorDialog({ post, onClose, onSave }: BlogEditorDialogProp
 
       showToast('Bericht gepubliceerd', 'success');
       onSave();
+
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) return;
+        fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-indexing`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ slug: postData.slug }),
+          }
+        ).catch(() => {});
+      });
     } catch (error: any) {
       console.error('Error publishing:', error);
       if (error.code === '23505') {
