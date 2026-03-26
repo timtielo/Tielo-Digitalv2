@@ -288,7 +288,7 @@ function MobilePhotosContent() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Fotos Mobiel Websites</h1>
-            <p className="text-gray-500 mt-1">Beheer de fotos die worden weergegeven in het telefoon-frame op je website. Fotos worden automatisch bijgesneden naar 450×800px (9:16).</p>
+            <p className="text-gray-500 mt-1">Beheer de fotos die worden weergegeven in het telefoon-frame op je website. Fotos worden automatisch bijgesneden naar 937×1937px (9:16).</p>
           </div>
           <Button onClick={openCreateDialog} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
@@ -393,7 +393,7 @@ function MobilePhotosContent() {
 
           <div className="space-y-4 pt-2">
             <div>
-              <Label>Afbeelding (9:16 — 450×800px)</Label>
+              <Label>Afbeelding (9:16 — 937×1937px)</Label>
               {previewUrl ? (
                 <div className="mt-2 flex flex-col items-center gap-2">
                   <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50" style={{ width: '112px', height: '200px' }}>
