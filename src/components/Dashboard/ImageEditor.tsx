@@ -19,8 +19,8 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  const targetWidth = aspectRatio === '9:16' ? 450 : 800;
-  const targetHeight = aspectRatio === '4:3' ? 600 : aspectRatio === '9:16' ? 800 : 450;
+  const targetWidth = aspectRatio === '9:16' ? 937 : 800;
+  const targetHeight = aspectRatio === '4:3' ? 600 : aspectRatio === '9:16' ? 1937 : 450;
 
   useEffect(() => {
     const img = new Image();
