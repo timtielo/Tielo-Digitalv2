@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 
 interface ImageEditorProps {
   imageFile: File;
-  aspectRatio: '4:3' | '16:9';
+  aspectRatio: '4:3' | '16:9' | '9:16';
   onSave: (blob: Blob) => void;
   onCancel: () => void;
 }
@@ -19,8 +19,8 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  const targetWidth = 800;
-  const targetHeight = aspectRatio === '4:3' ? 600 : 450;
+  const targetWidth = aspectRatio === '9:16' ? 937 : 800;
+  const targetHeight = aspectRatio === '4:3' ? 600 : aspectRatio === '9:16' ? 1937 : 450;
 
   useEffect(() => {
     const img = new Image();
@@ -196,11 +196,11 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
               <canvas
                 ref={canvasRef}
                 className="border-2 border-white/20 rounded-lg cursor-move"
-                style={{
-                  width: `${Math.min(targetWidth, 700)}px`,
-                  height: `${Math.min(targetHeight, targetHeight * (700 / targetWidth))}px`,
-                  maxWidth: '100%',
-                }}
+                style={
+                  aspectRatio === '9:16'
+                    ? { height: '480px', width: `${480 * (targetWidth / targetHeight)}px`, maxHeight: '60vh', maxWidth: '100%' }
+                    : { width: `${Math.min(targetWidth, 700)}px`, height: `${Math.min(targetHeight, targetHeight * (700 / targetWidth))}px`, maxWidth: '100%' }
+                }
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
