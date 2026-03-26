@@ -24,15 +24,15 @@ import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 
-interface MobilePhoto {
+interface HeroPhoneImage {
   id: string;
   user_id: string;
   image_url: string;
-  storage_path: string;
-  title: string;
-  display_order: number;
+  alt_text: string;
+  sort_order: number;
   active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -41,13 +41,13 @@ const ACCEPTED_EXTENSIONS = '.jpg,.jpeg,.png,.webp,.gif';
 function MobilePhotosContent() {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [photos, setPhotos] = useState<MobilePhoto[]>([]);
+  const [photos, setPhotos] = useState<HeroPhoneImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [imageEditorOpen, setImageEditorOpen] = useState(false);
-  const [editingPhoto, setEditingPhoto] = useState<MobilePhoto | null>(null);
-  const [deletingPhoto, setDeletingPhoto] = useState<MobilePhoto | null>(null);
+  const [editingPhoto, setEditingPhoto] = useState<HeroPhoneImage | null>(null);
+  const [deletingPhoto, setDeletingPhoto] = useState<HeroPhoneImage | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
@@ -58,8 +58,8 @@ function MobilePhotosContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    display_order: 0,
+    alt_text: '',
+    sort_order: 0,
     active: true,
   });
 
@@ -70,10 +70,10 @@ function MobilePhotosContent() {
   const fetchPhotos = async () => {
     try {
       const { data, error } = await supabase
-        .from('mobile_photos')
+        .from('hero_phone_images')
         .select('*')
         .eq('user_id', user?.id)
-        .order('display_order', { ascending: true });
+        .order('sort_order', { ascending: true });
 
       if (error) throw error;
       setPhotos(data || []);
@@ -89,9 +89,9 @@ function MobilePhotosContent() {
       showToast('Alleen JPG, PNG, WebP en GIF bestanden zijn toegestaan.', 'error');
       return;
     }
-    if (!formData.title) {
+    if (!formData.alt_text) {
       const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
-      setFormData(prev => ({ ...prev, title: nameWithoutExt }));
+      setFormData(prev => ({ ...prev, alt_text: nameWithoutExt }));
     }
     setPendingFile(file);
     setImageEditorOpen(true);
@@ -102,7 +102,7 @@ function MobilePhotosContent() {
     setDragOver(false);
     const file = e.dataTransfer.files[0];
     if (file) handleFileSelect(file);
-  }, [formData.title]);
+  }, [formData.alt_text]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -132,22 +132,22 @@ function MobilePhotosContent() {
     setPendingFile(null);
     setUploadProgress(null);
     setFormData({
-      title: '',
-      display_order: photos.length,
+      alt_text: '',
+      sort_order: photos.length,
       active: true,
     });
     setDialogOpen(true);
   };
 
-  const openEditDialog = (photo: MobilePhoto) => {
+  const openEditDialog = (photo: HeroPhoneImage) => {
     setEditingPhoto(photo);
     setEditedBlob(null);
     setPendingFile(null);
     setUploadProgress(null);
     setPreviewUrl(photo.image_url);
     setFormData({
-      title: photo.title,
-      display_order: photo.display_order,
+      alt_text: photo.alt_text,
+      sort_order: photo.sort_order,
       active: photo.active,
     });
     setDialogOpen(true);
@@ -164,16 +164,15 @@ function MobilePhotosContent() {
 
     try {
       let imageUrl = editingPhoto?.image_url || '';
-      let storagePath = editingPhoto?.storage_path || '';
+      let storagePath = '';
 
       if (editedBlob) {
-        const ext = 'jpg';
-        const fileName = `${user?.id}/${Date.now()}.${ext}`;
+        const fileName = `${user?.id}/${Date.now()}.jpg`;
 
         setUploadProgress(10);
 
         const { error: uploadError } = await supabase.storage
-          .from('mobile-photos')
+          .from('hero-images')
           .upload(fileName, editedBlob, { upsert: false, contentType: 'image/jpeg' });
 
         if (uploadError) throw uploadError;
@@ -181,42 +180,41 @@ function MobilePhotosContent() {
         setUploadProgress(80);
 
         const { data: urlData } = supabase.storage
-          .from('mobile-photos')
+          .from('hero-images')
           .getPublicUrl(fileName);
 
         imageUrl = urlData.publicUrl;
         storagePath = fileName;
 
-        if (editingPhoto?.storage_path) {
-          await supabase.storage.from('mobile-photos').remove([editingPhoto.storage_path]);
-        }
-
         setUploadProgress(100);
       }
 
       if (editingPhoto) {
+        const updatePayload: Record<string, unknown> = {
+          alt_text: formData.alt_text,
+          sort_order: formData.sort_order,
+          active: formData.active,
+          updated_at: new Date().toISOString(),
+        };
+        if (imageUrl && imageUrl !== editingPhoto.image_url) {
+          updatePayload.image_url = imageUrl;
+        }
+
         const { error } = await supabase
-          .from('mobile_photos')
-          .update({
-            title: formData.title,
-            display_order: formData.display_order,
-            active: formData.active,
-            image_url: imageUrl,
-            storage_path: storagePath,
-          })
+          .from('hero_phone_images')
+          .update(updatePayload)
           .eq('id', editingPhoto.id);
 
         if (error) throw error;
         showToast('Foto bijgewerkt', 'success');
       } else {
         const { error } = await supabase
-          .from('mobile_photos')
+          .from('hero_phone_images')
           .insert({
             user_id: user?.id,
             image_url: imageUrl,
-            storage_path: storagePath,
-            title: formData.title,
-            display_order: formData.display_order,
+            alt_text: formData.alt_text || 'Hero phone image',
+            sort_order: formData.sort_order,
             active: formData.active,
           });
 
@@ -238,11 +236,8 @@ function MobilePhotosContent() {
     if (!deletingPhoto) return;
     setDeleting(true);
     try {
-      if (deletingPhoto.storage_path) {
-        await supabase.storage.from('mobile-photos').remove([deletingPhoto.storage_path]);
-      }
       const { error } = await supabase
-        .from('mobile_photos')
+        .from('hero_phone_images')
         .delete()
         .eq('id', deletingPhoto.id);
 
@@ -258,11 +253,11 @@ function MobilePhotosContent() {
     }
   };
 
-  const toggleActive = async (photo: MobilePhoto) => {
+  const toggleActive = async (photo: HeroPhoneImage) => {
     try {
       const { error } = await supabase
-        .from('mobile_photos')
-        .update({ active: !photo.active })
+        .from('hero_phone_images')
+        .update({ active: !photo.active, updated_at: new Date().toISOString() })
         .eq('id', photo.id);
 
       if (error) throw error;
@@ -328,7 +323,7 @@ function MobilePhotosContent() {
                     <div className="relative aspect-[9/16] bg-gray-100">
                       <img
                         src={photo.image_url}
-                        alt={photo.title || 'Mobiele foto'}
+                        alt={photo.alt_text || 'Mobiele foto'}
                         className="w-full h-full object-cover"
                       />
                       {!photo.active && (
@@ -365,12 +360,12 @@ function MobilePhotosContent() {
                       </div>
                       <div className="absolute bottom-2 left-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <GripVertical className="w-4 h-4 text-white drop-shadow" />
-                        <span className="text-white text-xs drop-shadow font-medium">#{photo.display_order + 1}</span>
+                        <span className="text-white text-xs drop-shadow font-medium">#{photo.sort_order + 1}</span>
                       </div>
                     </div>
                     <div className="p-3">
                       <p className="text-sm font-medium text-gray-900 truncate">
-                        {photo.title || 'Naamloos'}
+                        {photo.alt_text || 'Naamloos'}
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
                         {photo.active ? 'Zichtbaar' : 'Verborgen'}
@@ -450,24 +445,24 @@ function MobilePhotosContent() {
             </div>
 
             <div>
-              <Label htmlFor="title">Titel (optioneel)</Label>
+              <Label htmlFor="alt_text">Titel (optioneel)</Label>
               <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                id="alt_text"
+                value={formData.alt_text}
+                onChange={(e) => setFormData(prev => ({ ...prev, alt_text: e.target.value }))}
                 placeholder="Bijv. Badkamer renovatie"
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="display_order">Volgorde</Label>
+              <Label htmlFor="sort_order">Volgorde</Label>
               <Input
-                id="display_order"
+                id="sort_order"
                 type="number"
                 min={0}
-                value={formData.display_order}
-                onChange={(e) => setFormData(prev => ({ ...prev, display_order: parseInt(e.target.value) || 0 }))}
+                value={formData.sort_order}
+                onChange={(e) => setFormData(prev => ({ ...prev, sort_order: parseInt(e.target.value) || 0 }))}
                 className="mt-1"
               />
             </div>
@@ -524,7 +519,7 @@ function MobilePhotosContent() {
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <p className="text-gray-600 text-sm">
-              Weet je zeker dat je <strong>{deletingPhoto?.title || 'deze foto'}</strong> wilt verwijderen? Dit kan niet ongedaan worden gemaakt.
+              Weet je zeker dat je <strong>{deletingPhoto?.alt_text || 'deze foto'}</strong> wilt verwijderen? Dit kan niet ongedaan worden gemaakt.
             </p>
             <div className="flex gap-3">
               <Button
