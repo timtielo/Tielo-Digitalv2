@@ -9,12 +9,12 @@ import {
   X,
   Eye,
   EyeOff,
-  AlertCircle,
   GripVertical,
   Image,
 } from 'lucide-react';
 import { ProtectedRoute } from '../../components/Dashboard/ProtectedRoute';
 import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
+import { ImageEditor } from '../../components/Dashboard/ImageEditor';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -35,8 +35,6 @@ interface MobilePhoto {
   created_at: string;
 }
 
-const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const ACCEPTED_EXTENSIONS = '.jpg,.jpeg,.png,.webp,.gif';
 
@@ -47,14 +45,15 @@ function MobilePhotosContent() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [imageEditorOpen, setImageEditorOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<MobilePhoto | null>(null);
   const [deletingPhoto, setDeletingPhoto] = useState<MobilePhoto | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [editedBlob, setEditedBlob] = useState<Blob | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,32 +84,17 @@ function MobilePhotosContent() {
     }
   };
 
-  const validateFile = (file: File): string | null => {
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      return 'Alleen JPG, PNG, WebP en GIF bestanden zijn toegestaan.';
-    }
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return `Bestand is te groot. Maximum is ${MAX_FILE_SIZE_MB}MB.`;
-    }
-    return null;
-  };
-
   const handleFileSelect = (file: File) => {
-    const error = validateFile(file);
-    if (error) {
-      setFileError(error);
-      setSelectedFile(null);
-      setPreviewUrl(null);
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      showToast('Alleen JPG, PNG, WebP en GIF bestanden zijn toegestaan.', 'error');
       return;
     }
-    setFileError(null);
-    setSelectedFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
     if (!formData.title) {
       const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
       setFormData(prev => ({ ...prev, title: nameWithoutExt }));
     }
+    setPendingFile(file);
+    setImageEditorOpen(true);
   };
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -127,11 +111,25 @@ function MobilePhotosContent() {
 
   const handleDragLeave = () => setDragOver(false);
 
+  const handleImageEditorSave = (blob: Blob) => {
+    setEditedBlob(blob);
+    const url = URL.createObjectURL(blob);
+    setPreviewUrl(url);
+    setImageEditorOpen(false);
+    setPendingFile(null);
+  };
+
+  const handleImageEditorCancel = () => {
+    setImageEditorOpen(false);
+    setPendingFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const openCreateDialog = () => {
     setEditingPhoto(null);
-    setSelectedFile(null);
+    setEditedBlob(null);
     setPreviewUrl(null);
-    setFileError(null);
+    setPendingFile(null);
     setUploadProgress(null);
     setFormData({
       title: '',
@@ -143,10 +141,10 @@ function MobilePhotosContent() {
 
   const openEditDialog = (photo: MobilePhoto) => {
     setEditingPhoto(photo);
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    setFileError(null);
+    setEditedBlob(null);
+    setPendingFile(null);
     setUploadProgress(null);
+    setPreviewUrl(photo.image_url);
     setFormData({
       title: photo.title,
       display_order: photo.display_order,
@@ -156,8 +154,8 @@ function MobilePhotosContent() {
   };
 
   const handleSave = async () => {
-    if (!editingPhoto && !selectedFile) {
-      setFileError('Selecteer een afbeelding om te uploaden.');
+    if (!editingPhoto && !editedBlob) {
+      showToast('Selecteer en bewerk een afbeelding om te uploaden.', 'error');
       return;
     }
 
@@ -168,15 +166,15 @@ function MobilePhotosContent() {
       let imageUrl = editingPhoto?.image_url || '';
       let storagePath = editingPhoto?.storage_path || '';
 
-      if (selectedFile) {
-        const ext = selectedFile.name.split('.').pop();
+      if (editedBlob) {
+        const ext = 'jpg';
         const fileName = `${user?.id}/${Date.now()}.${ext}`;
 
         setUploadProgress(10);
 
         const { error: uploadError } = await supabase.storage
           .from('mobile-photos')
-          .upload(fileName, selectedFile, { upsert: false });
+          .upload(fileName, editedBlob, { upsert: false, contentType: 'image/jpeg' });
 
         if (uploadError) throw uploadError;
 
@@ -290,7 +288,7 @@ function MobilePhotosContent() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Fotos Mobiel Websites</h1>
-            <p className="text-gray-500 mt-1">Beheer de fotos die worden weergegeven in het telefoon-frame op je website.</p>
+            <p className="text-gray-500 mt-1">Beheer de fotos die worden weergegeven in het telefoon-frame op je website. Fotos worden automatisch bijgesneden naar 450×800px (9:16).</p>
           </div>
           <Button onClick={openCreateDialog} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
@@ -395,19 +393,24 @@ function MobilePhotosContent() {
 
           <div className="space-y-4 pt-2">
             <div>
-              <Label>Afbeelding</Label>
-              {(previewUrl || editingPhoto?.image_url) ? (
-                <div className="mt-2 relative">
-                  <div className="relative aspect-[9/16] max-h-64 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 mx-auto" style={{ maxWidth: '144px' }}>
+              <Label>Afbeelding (9:16 — 450×800px)</Label>
+              {previewUrl ? (
+                <div className="mt-2 flex flex-col items-center gap-2">
+                  <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50" style={{ width: '112px', height: '200px' }}>
                     <img
-                      src={previewUrl || editingPhoto?.image_url}
+                      src={previewUrl}
                       alt="Voorvertoning"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <button
-                    onClick={() => { setSelectedFile(null); setPreviewUrl(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
-                    className="mt-2 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mx-auto"
+                    onClick={() => {
+                      setEditedBlob(null);
+                      setPreviewUrl(editingPhoto?.image_url || null);
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                      if (fileInputRef.current) fileInputRef.current.click();
+                    }}
+                    className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
                   >
                     <X className="w-3 h-3" /> Andere afbeelding kiezen
                   </button>
@@ -428,7 +431,7 @@ function MobilePhotosContent() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-700">Klik of sleep een afbeelding hier</p>
-                      <p className="text-xs text-gray-400 mt-0.5">JPG, PNG, WebP of GIF — max {MAX_FILE_SIZE_MB}MB</p>
+                      <p className="text-xs text-gray-400 mt-0.5">JPG, PNG of WebP — wordt bijgesneden naar 9:16</p>
                     </div>
                     <Button variant="outline" size="sm" className="mt-1 pointer-events-none">
                       <Upload className="w-3 h-3 mr-1.5" />
@@ -444,11 +447,6 @@ function MobilePhotosContent() {
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }}
               />
-              {fileError && (
-                <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5" /> {fileError}
-                </p>
-              )}
             </div>
 
             <div>
@@ -507,18 +505,10 @@ function MobilePhotosContent() {
             )}
 
             <div className="flex gap-3 pt-2">
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex-1"
-              >
+              <Button onClick={handleSave} disabled={saving} className="flex-1">
                 {saving ? 'Opslaan...' : editingPhoto ? 'Bijwerken' : 'Toevoegen'}
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => setDialogOpen(false)}
-                disabled={saving}
-              >
+              <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>
                 Annuleren
               </Button>
             </div>
@@ -557,6 +547,17 @@ function MobilePhotosContent() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AnimatePresence>
+        {imageEditorOpen && pendingFile && (
+          <ImageEditor
+            imageFile={pendingFile}
+            aspectRatio="9:16"
+            onSave={handleImageEditorSave}
+            onCancel={handleImageEditorCancel}
+          />
+        )}
+      </AnimatePresence>
     </DashboardLayout>
   );
 }
