@@ -240,7 +240,7 @@ export function QrToegang() {
 
       <div className="qr-page">
         <header className="qr-header">
-          <img src="/logo/tdwebwhite.svg" alt="Tielo Digital" className="qr-logo-img" />
+          <img src="/logo/favicon.svg" alt="Tielo Digital" className="qr-logo-img" />
         </header>
 
         <motion.div
