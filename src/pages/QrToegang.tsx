@@ -112,35 +112,15 @@ export function QrToegang() {
         .qr-header {
           display: flex;
           align-items: center;
-          gap: 10px;
+          justify-content: center;
           margin-bottom: 48px;
           margin-top: 8px;
         }
 
-        .qr-logo-box {
-          width: 36px;
-          height: 36px;
-          background-color: #e1491a;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 800;
-          font-size: 14px;
-          color: #fff;
-          letter-spacing: -0.5px;
-          flex-shrink: 0;
-        }
-
-        .qr-logo-text {
-          font-size: 15px;
-          font-weight: 700;
-          color: #fff;
-          letter-spacing: 0.2px;
-        }
-
-        .qr-logo-text span {
-          color: #e1491a;
+        .qr-logo-img {
+          height: 32px;
+          width: auto;
+          display: block;
         }
 
         .qr-card {
@@ -260,8 +240,7 @@ export function QrToegang() {
 
       <div className="qr-page">
         <header className="qr-header">
-          <div className="qr-logo-box">TD</div>
-          <span className="qr-logo-text">Tielo <span>Digital</span></span>
+          <img src="/logo/tdwebwhite.svg" alt="Tielo Digital" className="qr-logo-img" />
         </header>
 
         <motion.div
@@ -279,7 +258,7 @@ export function QrToegang() {
               ref={inputRef}
               className="qr-input"
               type="text"
-              placeholder="TD-360"
+              placeholder="360"
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               maxLength={12}
