@@ -35,6 +35,7 @@ import { ProjectTasksManagementPage } from '../pages/Dashboard/ProjectTasksManag
 import { BlogsPage } from '../pages/Dashboard/BlogsPage';
 import { VideosPage } from '../pages/Dashboard/VideosPage';
 import { MobilePhotosPage } from '../pages/Dashboard/MobilePhotosPage';
+import { QrToegang } from '../pages/QrToegang';
 
 export interface Route {
   path: string;
@@ -80,5 +81,6 @@ export const routes: Route[] = [
   { path: '/visitekaartje', component: BusinessCard },
   { path: '/privacy', component: Privacy },
   { path: '/terms', component: Terms },
-  { path: '/cookies', component: Cookies }
+  { path: '/cookies', component: Cookies },
+  { path: '/qr/toegang', component: QrToegang, layout: false }
 ];
