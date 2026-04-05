@@ -264,6 +264,7 @@ export function QrToegang() {
               maxLength={12}
               autoComplete="off"
               autoCorrect="off"
+              autoCapitalize="characters"
               spellCheck={false}
               disabled={loading}
             />
