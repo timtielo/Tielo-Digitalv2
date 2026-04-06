@@ -9,6 +9,7 @@ const FIELD_STATUS = 'fldSAkBEbhVoSGgFz';
 const FIELD_SCANNED_AT = 'fldKd6WLaKNWpFmmI';
 
 const API_KEY = import.meta.env.VITE_AIRTABLE_KEY;
+const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/to76kcepqx2pbbc7wtqkkvlxzx36scb5';
 
 interface AirtableRecord {
   id: string;
@@ -57,6 +58,19 @@ export function QrToegang() {
     meta.name = 'robots';
     meta.content = 'noindex, nofollow';
     document.head.appendChild(meta);
+
+    fetch(MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'qr_scan',
+        timestamp: new Date().toISOString(),
+        url: window.location.href,
+        code: c ? c.toUpperCase() : null,
+        userAgent: navigator.userAgent,
+      }),
+    }).catch(() => {});
+
     return () => { document.head.removeChild(meta); };
   }, []);
 
