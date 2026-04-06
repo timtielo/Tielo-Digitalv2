@@ -1,47 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AIRTABLE_BASE = 'appppVhjjG2Wl1fWN';
-const AIRTABLE_TABLE = 'tblcRhTIcKyu1h5l3';
-const FIELD_ACCESS_CODE = 'fldhRIQAfbm5sItXI';
-const FIELD_REDIRECT_URL = 'fldSf20ks1sp4O7oH';
-const FIELD_STATUS = 'fldSAkBEbhVoSGgFz';
-const FIELD_SCANNED_AT = 'fldKd6WLaKNWpFmmI';
-
-const API_KEY = import.meta.env.VITE_AIRTABLE_KEY;
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/to76kcepqx2pbbc7wtqkkvlxzx36scb5';
-
-interface AirtableRecord {
-  id: string;
-  fields: {
-    [key: string]: string | boolean | undefined;
-  };
-}
-
-async function lookupCode(code: string): Promise<AirtableRecord | null> {
-  const formula = encodeURIComponent(`{accessCode}="${code.toUpperCase()}"`);
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}?filterByFormula=${formula}`;
-
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${API_KEY}` },
-  });
-
-  if (!res.ok) throw new Error('Airtable request failed');
-  const data = await res.json();
-  return data.records?.[0] ?? null;
-}
-
-async function patchRecord(recordId: string, fields: Record<string, string>) {
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}/${recordId}`;
-  await fetch(url, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ fields }),
-  });
-}
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export function QrToegang() {
   const [code, setCode] = useState('');
@@ -59,18 +20,6 @@ export function QrToegang() {
     meta.content = 'noindex, nofollow';
     document.head.appendChild(meta);
 
-    fetch(MAKE_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'qr_scan',
-        timestamp: new Date().toISOString(),
-        url: window.location.href,
-        code: c ? c.toUpperCase() : null,
-        userAgent: navigator.userAgent,
-      }),
-    }).catch(() => {});
-
     return () => { document.head.removeChild(meta); };
   }, []);
 
@@ -82,22 +31,30 @@ export function QrToegang() {
     setError('');
 
     try {
-      const record = await lookupCode(code.trim());
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/qr-lookup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ code: code.trim().toUpperCase() }),
+      });
 
-      if (!record) {
+      const data = await res.json();
+
+      if (res.status === 404) {
         setError('Code niet herkend. Controleer de code op je kaartje.');
         setLoading(false);
         return;
       }
 
-      const redirectUrl = record.fields[FIELD_REDIRECT_URL] as string;
+      if (!res.ok || !data.redirectUrl) {
+        setError('Er is een fout opgetreden. Probeer het opnieuw.');
+        setLoading(false);
+        return;
+      }
 
-      await patchRecord(record.id, {
-        [FIELD_STATUS]: 'gescand',
-        [FIELD_SCANNED_AT]: new Date().toISOString(),
-      });
-
-      window.location.href = redirectUrl;
+      window.location.href = data.redirectUrl;
     } catch {
       setError('Er is een fout opgetreden. Probeer het opnieuw.');
       setLoading(false);
