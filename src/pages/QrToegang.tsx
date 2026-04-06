@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/to76kcepqx2pbbc7wtqkkvlxzx36scb5';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export function QrToegang() {
   const [code, setCode] = useState('');
@@ -19,18 +20,6 @@ export function QrToegang() {
     meta.content = 'noindex, nofollow';
     document.head.appendChild(meta);
 
-    fetch(MAKE_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'qr_page_visit',
-        timestamp: new Date().toISOString(),
-        url: window.location.href,
-        code: c ? c.toUpperCase() : null,
-        userAgent: navigator.userAgent,
-      }),
-    }).catch(() => {});
-
     return () => { document.head.removeChild(meta); };
   }, []);
 
@@ -42,27 +31,25 @@ export function QrToegang() {
     setError('');
 
     try {
-      const res = await fetch(MAKE_WEBHOOK_URL, {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/qr-lookup`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: 'qr_code_submit',
-          code: code.trim().toUpperCase(),
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ code: code.trim().toUpperCase() }),
       });
 
-      if (!res.ok) {
-        setError('Er is een fout opgetreden. Probeer het opnieuw.');
+      const data = await res.json();
+
+      if (res.status === 404) {
+        setError('Code niet herkend. Controleer de code op je kaartje.');
         setLoading(false);
         return;
       }
 
-      const data = await res.json();
-
-      if (!data || !data.redirectUrl) {
-        setError('Code niet herkend. Controleer de code op je kaartje.');
+      if (!res.ok || !data.redirectUrl) {
+        setError('Er is een fout opgetreden. Probeer het opnieuw.');
         setLoading(false);
         return;
       }
