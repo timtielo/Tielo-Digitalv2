@@ -8,9 +8,9 @@ const corsHeaders = {
 
 const AIRTABLE_BASE = "appppVhjjG2Wl1fWN";
 const AIRTABLE_TABLE = "tblcRhTIcKyu1h5l3";
-const FIELD_REDIRECT_URL = "fldSf20ks1sp4O7oH";
-const FIELD_STATUS = "fldSAkBEbhVoSGgFz";
-const FIELD_SCANNED_AT = "fldKd6WLaKNWpFmmI";
+const FIELD_REDIRECT_URL = "redirectUrl";
+const FIELD_STATUS = "status";
+const FIELD_SCANNED_AT = "scannedAt";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
