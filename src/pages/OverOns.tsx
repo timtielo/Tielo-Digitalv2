@@ -15,9 +15,9 @@ export function OverOns() {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="Over Ons - Tielo Digital | Websites voor Vakmensen"
-        description="Ik help vakmensen aan een eigen professionele online basis. Geen afhankelijkheid van Werkspot, maar eigen controle over je klanten."
-        keywords={['Over Tielo Digital', 'Websites vakmensen', 'Tim Tielkemeijer']}
+        title="Over Ons - Tielo Digital | Websites voor Vaklui"
+        description="Ik help vaklui aan een eigen professionele online basis. Geen afhankelijkheid van Werkspot, maar eigen controle over je klanten."
+        keywords={['Over Tielo Digital', 'Websites vaklui', 'Tim Tielkemeijer']}
         canonical="https://www.tielo-digital.nl/over-ons"
       />
 
@@ -58,7 +58,7 @@ export function OverOns() {
                   <span className="text-tielo-orange">Tim Tielkemeijer</span>.
                 </h1>
                 <p className="text-lg text-tielo-navy/70 leading-relaxed">
-                  Ik help vakmensen aan een sterke, professionele website.
+                  Ik help vaklui aan een sterke, professionele website.
                   <br />
                   Zodat je minder afhankelijk bent van platforms zoals Werkspot en meer controle krijgt over je eigen klanten.
                 </p>

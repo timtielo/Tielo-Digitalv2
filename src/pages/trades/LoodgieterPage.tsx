@@ -186,7 +186,7 @@ export function LoodgieterPage() {
               className="mt-10 p-6 bg-tielo-navy/5 rounded-td border-l-4 border-tielo-orange"
             >
               <p className="text-tielo-navy/70 leading-relaxed">
-                Ook voor andere vakmensen beschikbaar. Bekijk onze pagina's voor{' '}
+                Ook voor andere vaklui beschikbaar. Bekijk onze pagina's voor{' '}
                 <Link href="/diensten/websites/aannemer" className="text-tielo-orange hover:underline font-medium">
                   aannemers
                 </Link>

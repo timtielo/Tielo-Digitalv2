@@ -150,7 +150,7 @@ export function KlusbedrijfPage() {
                 <Link href="/diensten/websites/loodgieter" className="text-tielo-cream hover:underline font-medium">
                   loodgieters
                 </Link>
-                {' en andere vakmensen met hun online presentatie. Bekijk alle '}
+                {' en andere vaklui met hun online presentatie. Bekijk alle '}
                 <Link href="/diensten/websites" className="text-tielo-cream hover:underline font-medium">
                   website diensten
                 </Link>

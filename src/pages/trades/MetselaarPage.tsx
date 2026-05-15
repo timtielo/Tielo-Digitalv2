@@ -26,7 +26,7 @@ const idealFor = [
 const faqs = [
   {
     question: "Hoe vinden mensen een metselaar online?",
-    answer: "Meestal via Google op 'metselaar + regio' of via aannemers die online zoeken naar vakmensen."
+    answer: "Meestal via Google op 'metselaar + regio' of via aannemers die online zoeken naar vaklui."
   },
   {
     question: "Moet een metselaar een portfolio hebben?",

@@ -31,7 +31,7 @@ export function WebsitesHero() {
               <span className="text-tielo-orange">als vakman?</span>
             </h1>
             <p className="text-lg text-tielo-navy/70 mb-8 leading-relaxed max-w-2xl">
-              Ik bouw complete websites voor vakmensen. Professioneel ontwerp, Google vindbaar, WhatsApp integratie en alles geregeld. Binnen 2 weken live.
+              Ik bouw complete websites voor vaklui. Professioneel ontwerp, Google vindbaar, WhatsApp integratie en alles geregeld. Binnen 2 weken live.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10">
               <Link

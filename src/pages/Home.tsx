@@ -26,10 +26,10 @@ export function Home() {
   return (
     <>
       <SEO
-        title="Meer Klussen Zonder Werkspot | Website voor Vakmensen"
-        description="Ik maak simpele, sterke websites voor vakmensen die zelf controle willen over hun klanten. Binnen 2 weken live. Loodgieters, aannemers, elektriciens, schilders."
+        title="Meer Klussen Zonder Werkspot | Website voor Vaklui"
+        description="Ik maak simpele, sterke websites voor vaklui die zelf controle willen over hun klanten. Binnen 2 weken live. Loodgieters, aannemers, elektriciens, schilders."
         keywords={[
-          'Website vakmensen',
+          'Website vaklui',
           'Website loodgieter',
           'Website aannemer',
           'Website elektricien',

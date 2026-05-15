@@ -9,7 +9,7 @@ export function Cases() {
     <div className="min-h-screen bg-white">
       <SEO
         title="Cases | Tielo Digital"
-        description="Bekijk onze cases. Van situatie tot resultaat - zo helpen we vakmensen en bedrijven."
+        description="Bekijk onze cases. Van situatie tot resultaat - zo helpen we vaklui en bedrijven."
         keywords={['Cases', 'Succesverhalen', 'Portfolio', 'Tielo Digital']}
         canonical="https://www.tielo-digital.nl/cases"
       />

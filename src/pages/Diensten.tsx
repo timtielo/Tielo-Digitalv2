@@ -9,8 +9,8 @@ export function Diensten() {
     <div className="min-h-screen bg-white">
       <SEO
         title="Diensten - Websites & Maatwerk | Tielo Digital"
-        description="Ik doe twee dingen: websites voor vakmensen en maatwerk AI & automatisering voor groeiende bedrijven."
-        keywords={['Diensten', 'Websites vakmensen', 'Maatwerk automatisering', 'AI implementatie']}
+        description="Ik doe twee dingen: websites voor vaklui en maatwerk AI & automatisering voor groeiende bedrijven."
+        keywords={['Diensten', 'Websites vaklui', 'Maatwerk automatisering', 'AI implementatie']}
         canonical="https://www.tielo-digital.nl/diensten"
       />
 
@@ -30,7 +30,7 @@ export function Diensten() {
               Ik doe twee dingen
             </h1>
             <p className="text-lg text-tielo-navy/70 leading-relaxed max-w-2xl mx-auto">
-              Websites voor vakmensen (mijn focus) en maatwerk AI & automatisering voor groeiende bedrijven.
+              Websites voor vaklui (mijn focus) en maatwerk AI & automatisering voor groeiende bedrijven.
             </p>
           </motion.div>
         </div>
