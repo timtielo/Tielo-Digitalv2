@@ -85,6 +85,12 @@ const websites = [
     url: 'https://www.maartoen.nl',
     logo: 'https://www.maartoen.nl/logos/MAARTENLOGOCIRCLE.png',
     nofollow: true
+  },
+  {
+    name: 'Laminaat van Tol',
+    url: 'https://laminaatvantol.nl',
+    logo: 'https://www.laminaatvantol.nl/logo/SVGLogo.svg',
+    nofollow: true
   }
 ];
 
