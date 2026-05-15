@@ -49,6 +49,42 @@ const websites = [
     url: 'https://www.bouwkliniek.nl',
     logo: '/assets/bouwklinieklogo.png',
     nofollow: true
+  },
+  {
+    name: 'Rene Regelt Het',
+    url: 'https://www.reneregelthet.nl',
+    logo: 'https://www.reneregelthet.nl/circle.svg',
+    nofollow: true
+  },
+  {
+    name: 'Styp Techniek',
+    url: 'https://www.styptechniek.nl',
+    logo: 'https://www.styptechniek.nl/logo/logo_horizontal.svg',
+    nofollow: true
+  },
+  {
+    name: 'TurboXC',
+    url: 'https://www.turboxc.nl',
+    logo: 'https://www.turboxc.nl/logo/TurboXClogo.svg',
+    nofollow: true
+  },
+  {
+    name: 'Studio NieuweTijd',
+    url: 'https://studionieuwetijd.nl',
+    logo: 'https://studionieuwetijd.nl/wp-content/uploads/2024/01/Mask-Group-1.svg',
+    nofollow: true
+  },
+  {
+    name: 'Alliances Utrecht',
+    url: 'https://alliances-utrecht.nl',
+    logo: 'https://www.alliances-utrecht.nl/alliancesutrechtlogoblue.svg',
+    nofollow: true
+  },
+  {
+    name: 'MAARTEN',
+    url: 'https://www.maartoen.nl',
+    logo: 'https://www.maartoen.nl/logos/MAARTENLOGOCIRCLE.png',
+    nofollow: true
   }
 ];
 
