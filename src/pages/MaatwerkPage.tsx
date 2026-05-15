@@ -272,37 +272,6 @@ export function MaatwerkPage() {
         </div>
       </section>
 
-      {/* Case study */}
-      <section className="py-20 sm:py-28 bg-tielo-navy relative overflow-hidden">
-        <div className="absolute inset-0 td-striped opacity-20" />
-        <div className="container mx-auto px-4 sm:px-6 relative">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-4"
-            >
-              <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-3 block">
-                Resultaten in de praktijk
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                Batist Administratieve Dienstverlening
-              </h2>
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-white/40 text-sm italic"
-            >
-              Binnenkort meer
-            </motion.p>
-          </div>
-        </div>
-      </section>
-
       {/* For who */}
       <section className="py-20 sm:py-28 bg-tielo-offwhite relative overflow-hidden">
         <div className="absolute inset-0 td-micro-grid opacity-30" />

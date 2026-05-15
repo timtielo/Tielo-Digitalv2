@@ -75,7 +75,7 @@ export function ElektricienPage() {
             <div className="text-lg text-tielo-navy/70 leading-relaxed space-y-4">
               <p>Elektriciens werken steeds vaker aan complete installaties.</p>
               <p>Nieuwbouw, renovatie, groepenkasten, laadpalen, domotica.</p>
-              <p className="font-medium">Klanten zoeken online naar betrouwbare vakmensen met certificering en ervaring.</p>
+              <p className="font-medium">Klanten zoeken online naar betrouwbare vaklui met certificering en ervaring.</p>
               <p className="font-semibold text-tielo-navy">Een professionele website maakt dat verschil.</p>
             </div>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -253,7 +253,7 @@ export function ElektricienPage() {
                 <div className="text-center">
                   <p className="text-2xl font-bold text-tielo-navy">5.0</p>
                   <p className="text-sm text-tielo-navy/60 mt-1">
-                    13 reviews op Google
+                    17 reviews op Google
                   </p>
                 </div>
 

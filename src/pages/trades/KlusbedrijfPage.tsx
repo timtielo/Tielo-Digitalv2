@@ -150,7 +150,7 @@ export function KlusbedrijfPage() {
                 <Link href="/diensten/websites/loodgieter" className="text-tielo-cream hover:underline font-medium">
                   loodgieters
                 </Link>
-                {' en andere vakmensen met hun online presentatie. Bekijk alle '}
+                {' en andere vaklui met hun online presentatie. Bekijk alle '}
                 <Link href="/diensten/websites" className="text-tielo-cream hover:underline font-medium">
                   website diensten
                 </Link>
@@ -209,7 +209,7 @@ export function KlusbedrijfPage() {
                 <div className="text-center">
                   <p className="text-2xl font-bold text-tielo-navy">5.0</p>
                   <p className="text-sm text-tielo-navy/60 mt-1">
-                    13 reviews op Google
+                    17 reviews op Google
                   </p>
                 </div>
 

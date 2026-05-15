@@ -9,7 +9,7 @@ export function Cases() {
     <div className="min-h-screen bg-white">
       <SEO
         title="Cases | Tielo Digital"
-        description="Bekijk onze cases. Van situatie tot resultaat - zo helpen we vakmensen en bedrijven."
+        description="Bekijk onze cases. Van situatie tot resultaat - zo helpen we vaklui en bedrijven."
         keywords={['Cases', 'Succesverhalen', 'Portfolio', 'Tielo Digital']}
         canonical="https://www.tielo-digital.nl/cases"
       />
@@ -90,21 +90,6 @@ export function Cases() {
 
             {/* Case 2 */}
             <motion.div
-              id="case-batist"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mt-12 td-card p-8 shadow-sharp"
-            >
-              <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-4 block">
-                Case 2
-              </span>
-              <h2 className="text-2xl font-bold text-tielo-navy mb-1">Batist Administratieve Dienstverlening</h2>
-              <p className="text-tielo-navy/40 text-sm mt-4 italic">Binnenkort meer</p>
-            </motion.div>
-
-            {/* Case 3 */}
-            <motion.div
               id="case-gilde"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -112,7 +97,7 @@ export function Cases() {
               className="mt-12 td-card p-8 shadow-sharp"
             >
               <span className="text-[10px] uppercase font-bold tracking-widest text-tielo-orange mb-4 block">
-                Case 3
+                Case 2
               </span>
               <h2 className="text-2xl font-bold text-tielo-navy mb-1">Website & Leadgeneratie – 't Gilde Gevelwerken</h2>
               <p className="text-tielo-navy/50 text-sm mb-8">Zelfstandig gevelspecialist · Gevelreiniging & -renovatie</p>
