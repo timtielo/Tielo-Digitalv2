@@ -30,16 +30,16 @@ export function PricingCard() {
           >
             <div className="flex flex-col sm:flex-row justify-center gap-8 sm:gap-16 mb-8">
               <div>
-                <span className="text-4xl font-bold text-tielo-navy">&euro;975</span>
+                <span className="text-4xl font-bold text-tielo-navy">&euro;1.375</span>
                 <p className="text-tielo-navy/60 mt-1">eenmalig</p>
               </div>
               <div className="hidden sm:block w-px bg-gray-200" />
               <div>
-                <span className="text-4xl font-bold text-tielo-navy">&euro;165</span>
+                <span className="text-4xl font-bold text-tielo-navy">&euro;215</span>
                 <p className="text-tielo-navy/60 mt-1">per jaar</p>
               </div>
             </div>
-            <p className="text-tielo-navy/60">Geen verborgen kosten.</p>
+            <p className="text-tielo-navy/60">Geen verborgen kosten. Prijzen ex BTW.</p>
             <p className="text-tielo-navy/40 text-xs mt-4">*voor een standaard website voor een vakman. Neem contact op voor maatwerk.</p>
 
             <a

@@ -14,7 +14,7 @@ export function WebsitesPage() {
     <div className="min-h-screen">
       <SEO
         title="Website laten maken als vakman | Tielo Digital"
-        description="Complete website voor vakmensen. Professioneel ontwerp, Google vindbaar, WhatsApp integratie, reviews en hosting. Eenmalig €975, jaarlijks €165."
+        description="Complete website voor vakmensen. Professioneel ontwerp, Google vindbaar, WhatsApp integratie, reviews en hosting. Eenmalig €1.375, jaarlijks €215 (ex BTW)."
         keywords={[
           'Website vakman',
           'Website loodgieter',
