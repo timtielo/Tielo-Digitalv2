@@ -91,6 +91,12 @@ const websites = [
     url: 'https://laminaatvantol.nl',
     logo: 'https://www.laminaatvantol.nl/logo/SVGLogo.svg',
     nofollow: true
+  },
+  {
+    name: 'A-one Riolerings Diensten',
+    url: 'https://www.aonerd.nl',
+    logo: 'https://www.aonerd.nl/images/aonerd-trans.png',
+    nofollow: true
   }
 ];
 
