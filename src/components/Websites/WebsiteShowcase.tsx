@@ -97,6 +97,12 @@ const websites = [
     url: 'https://www.aonerd.nl',
     logo: 'https://www.aonerd.nl/images/aonerd-trans.png',
     nofollow: true
+  },
+  {
+    name: 'Klussenbedrijf KY',
+    url: 'https://klussenbedrijf-ky.nl',
+    logo: 'https://www.klussenbedrijf-ky.nl/logo/kyicon.svg',
+    nofollow: true
   }
 ];
 
