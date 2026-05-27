@@ -36,6 +36,7 @@ import { BlogsPage } from '../pages/Dashboard/BlogsPage';
 import { VideosPage } from '../pages/Dashboard/VideosPage';
 import { MobilePhotosPage } from '../pages/Dashboard/MobilePhotosPage';
 import { AnalyticsPage } from '../pages/Dashboard/AnalyticsPage';
+import { UtrechtPage } from '../pages/UtrechtPage';
 import { QrToegang } from '../pages/QrToegang';
 
 export interface Route {
@@ -77,6 +78,7 @@ export const routes: Route[] = [
   { path: '/diensten/websites/metselaar', component: MetselaarPage },
   { path: '/diensten/websites/:businessType/:slug', component: ShowcaseCompanyPage, params: ['businessType', 'slug'], layout: false },
   { path: '/diensten/maatwerk', component: MaatwerkPage },
+  { path: '/website-laten-maken-utrecht', component: UtrechtPage },
   { path: '/over-ons', component: OverOns },
   { path: '/cases', component: Cases },
   { path: '/contact', component: Contact },

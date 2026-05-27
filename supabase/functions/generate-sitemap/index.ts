@@ -101,6 +101,14 @@ Deno.serve(async (req: Request) => {
     <priority>0.8</priority>
   </url>
 
+  <!-- Location Pages -->
+  <url>
+    <loc>${baseUrl}/website-laten-maken-utrecht</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- Services Pages -->
   <url>
     <loc>${baseUrl}/diensten</loc>

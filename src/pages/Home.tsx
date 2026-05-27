@@ -26,16 +26,17 @@ export function Home() {
   return (
     <>
       <SEO
-        title="Meer Klussen Zonder Werkspot | Website voor Vaklui"
-        description="Ik maak simpele, sterke websites voor vaklui die zelf controle willen over hun klanten. Binnen 2 weken live. Loodgieters, aannemers, elektriciens, schilders."
+        title="Website Laten Maken voor Vakmensen | Loodgieter, Aannemer, Klusbedrijf"
+        description="Website laten maken voor loodgieters, aannemers, elektriciens en klusbedrijven. Domein, hosting en Google Business inbegrepen. Binnen 2 weken live."
         keywords={[
-          'Website vaklui',
-          'Website loodgieter',
-          'Website aannemer',
-          'Website elektricien',
-          'Website schilder',
-          'Website metselaar',
-          'Werkspot alternatief'
+          'website laten maken vakmensen',
+          'website loodgieter',
+          'website aannemer',
+          'website elektricien',
+          'website schilder',
+          'website metselaar',
+          'website klusbedrijf',
+          'werkspot alternatief'
         ]}
         canonical="https://www.tielo-digital.nl/"
       />

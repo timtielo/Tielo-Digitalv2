@@ -19,8 +19,8 @@ export function HeroContent() {
       </div>
 
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-tielo-navy tracking-tight leading-[1.15]">
-        Meer klussen{' '}
-        <span className="text-tielo-orange">zonder Werkspot</span>
+        Website laten maken{' '}
+        <span className="text-tielo-orange">voor vaklui</span>
       </h1>
 
       <p className="text-base sm:text-lg text-tielo-navy/70 mb-8 leading-relaxed max-w-xl">
