@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, LogIn, ChevronDown } from 'lucide-react';
 import { Link } from './Link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackEvent } from '../utils/analyticsTracker';
 
 const mainNavItems = [
   { name: 'Websites', path: '/diensten/websites' },
@@ -90,6 +91,7 @@ export function Header() {
                 key={item.name}
                 href={item.path}
                 className="text-tielo-navy font-medium hover:text-tielo-orange transition-colors focus:outline-none focus:ring-2 focus:ring-tielo-orange focus:ring-offset-2 rounded"
+                onClick={item.name === 'Contact' ? () => trackEvent('contact_nav_click', 'Contact', 'Navigatie') : undefined}
               >
                 {item.name}
               </Link>

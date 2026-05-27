@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
+import { trackEvent } from '../../utils/analyticsTracker';
 
 const WHATSAPP_URL = 'https://wa.me/31620948502?text=Hey%20Tim,';
 
@@ -34,6 +35,7 @@ export function ContactWidget() {
                  hover:bg-[#d85515] transition-all duration-300
                  hover:scale-110 active:scale-95 ring-4 ring-tielo-orange/20"
         aria-label="WhatsApp contact"
+        onClick={() => trackEvent('cta_primary_floating_click', 'WhatsApp floating', 'Floating box')}
       >
         <MessageCircle className="w-6 h-6 md:w-7 md:h-7" />
       </a>

@@ -6,13 +6,15 @@ interface LinkProps {
   className?: string;
   target?: string;
   rel?: string;
+  onClick?: () => void;
 }
 
-export function Link({ href, children, className = '', target, rel }: LinkProps) {
+export function Link({ href, children, className = '', target, rel, onClick }: LinkProps) {
   const isExternal = href.startsWith('http') || href.startsWith('mailto:');
   const isAnchor = href.startsWith('#');
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick?.();
     // Allow default behavior for external links, mailto links, and anchor links
     if (isExternal || isAnchor) {
       return;

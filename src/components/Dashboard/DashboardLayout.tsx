@@ -18,7 +18,8 @@ import {
   ListTodo,
   FileText,
   Video,
-  Smartphone
+  Smartphone,
+  BarChart2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -26,7 +27,7 @@ import { supabase } from '../../lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs' | 'videos' | 'mobile-photos';
+  currentPage: 'home' | 'tasks' | 'portfolio' | 'werkspot' | 'reviews' | 'leads' | 'profile' | 'admin' | 'mcc' | 'blogs' | 'videos' | 'mobile-photos' | 'analytics';
 }
 
 interface DashboardModule {
@@ -325,6 +326,20 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                         <span className="flex-1 text-left">Mission Control</span>
                         {currentPage === 'mcc' && <ChevronRight className="h-4 w-4 ml-auto" />}
                       </button>
+                      <button
+                        onClick={() => handleNavigation('/dashboard/analytics')}
+                        className={`
+                          w-full flex items-center gap-3 px-4 py-3.5 rounded-td text-sm font-bold transition-all duration-200
+                          ${currentPage === 'analytics'
+                            ? 'bg-tielo-orange text-white shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                          }
+                        `}
+                      >
+                        <BarChart2 className="h-4 w-4" />
+                        <span className="flex-1 text-left">Analytics</span>
+                        {currentPage === 'analytics' && <ChevronRight className="h-4 w-4 ml-auto" />}
+                      </button>
                     </>
                   )}
                 </>
@@ -397,11 +412,11 @@ export function DashboardLayout({ children, currentPage }: DashboardLayoutProps)
                 </button>
                 <ChevronRight className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
                 <span className="text-tielo-navy font-bold capitalize truncate">
-                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                  {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : currentPage === 'analytics' ? 'Analytics' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
                 </span>
               </div>
               <h2 className="text-lg md:text-2xl font-bold font-rubik text-tielo-navy truncate">
-                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
+                {currentPage === 'home' ? 'Home' : currentPage === 'tasks' ? 'Taken' : currentPage === 'admin' ? 'Admin' : currentPage === 'mcc' ? 'Mission Control' : currentPage === 'analytics' ? 'Analytics' : navigation.find(n => n.module_key === currentPage)?.display_name || currentPage}
               </h2>
             </div>
           </header>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { Link } from '../Link';
 import { WhatsAppButton } from '../common/WhatsAppButton';
+import { trackEvent } from '../../utils/analyticsTracker';
 
 export function HeroContent() {
   return (
@@ -27,13 +28,14 @@ export function HeroContent() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <WhatsAppButton>Kom in contact</WhatsAppButton>
+        <WhatsAppButton eventName="cta_primary_hero_click" buttonLocation="Hero">Kom in contact</WhatsAppButton>
         <Link
           href="/diensten/websites"
           className="bg-white border border-gray-300 text-tielo-navy px-6 py-3 rounded-td font-medium
                    hover:border-tielo-navy hover:bg-gray-50 transition-all duration-200
                    active:scale-[0.98] text-base
                    min-h-[48px] touch-manipulation inline-flex items-center justify-center"
+          onClick={() => trackEvent('cta_secondary_hero_click', 'Meer informatie', 'Hero')}
         >
           Meer informatie
         </Link>

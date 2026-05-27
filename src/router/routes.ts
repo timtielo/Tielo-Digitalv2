@@ -35,6 +35,7 @@ import { ProjectTasksManagementPage } from '../pages/Dashboard/ProjectTasksManag
 import { BlogsPage } from '../pages/Dashboard/BlogsPage';
 import { VideosPage } from '../pages/Dashboard/VideosPage';
 import { MobilePhotosPage } from '../pages/Dashboard/MobilePhotosPage';
+import { AnalyticsPage } from '../pages/Dashboard/AnalyticsPage';
 import { QrToegang } from '../pages/QrToegang';
 
 export interface Route {
@@ -63,6 +64,7 @@ export const routes: Route[] = [
   { path: '/dashboard/blogs', component: BlogsPage, layout: false },
   { path: '/dashboard/videos', component: VideosPage, layout: false },
   { path: '/dashboard/mobile-photos', component: MobilePhotosPage, layout: false },
+  { path: '/dashboard/analytics', component: AnalyticsPage, layout: false },
   { path: '/blog', component: Blog },
   { path: '/blog/:slug', component: BlogPost, params: ['slug'] },
   { path: '/diensten', component: Diensten },
