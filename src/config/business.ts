@@ -1,7 +1,7 @@
 export const BUSINESS_INFO = {
   name: 'Tielo Digital',
   legalName: 'Tielo Digital B.V.',
-  description: 'AI-gestuurde automatisering en digitale oplossingen voor bedrijven in Nederland. Gespecialiseerd in workflow automation, AI assistenten, website ontwikkeling en procesoptimalisatie.',
+  description: 'Website laten maken voor loodgieters, aannemers, elektriciens en klusbedrijven. Domein, hosting en Google Business inbegrepen. Binnen 2 weken live.',
   email: 'info@tielo-digital.nl',
   phone: '+31 6 20948502',
   address: {
@@ -21,7 +21,8 @@ export const BUSINESS_INFO = {
   founder: 'Tim Tielkemeijer',
   foundingDate: '2023',
   priceRange: '€€',
-  areaServed: ['Utrecht', 'Amsterdam', 'Rotterdam', 'Den Haag', 'Nederland'],
+  areaServed: ['Utrecht', 'Amsterdam', 'Nederland'],
+  serviceType: 'Webdesign voor vakmensen',
   serviceArea: {
     type: 'Country',
     name: 'Nederland'

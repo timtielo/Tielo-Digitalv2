@@ -67,6 +67,7 @@ export function LocalBusinessSchema({
         position: index + 1
       }))
     },
+    serviceType: BUSINESS_INFO.serviceType,
     founder: {
       '@type': 'Person',
       name: BUSINESS_INFO.founder
