@@ -1,7 +1,7 @@
 # Block subdomains from indexing
 https://meerimpactmarketing.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
 https://i-lizard.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
-https://dashboard.tielo-digital.nl/robots.txt /robots-subdomain.txt 200
+https://dashboard.tielo-digital.nl/robots.txt /robots-subdomain.txt 200!
 
 # Dynamic sitemap from Supabase Edge Function
 /sitemap.xml https://omdigostmkxeqgwscmpe.supabase.co/functions/v1/generate-sitemap 200
