@@ -1,5 +1,4 @@
 import React from 'react';
-import { GoogleTagManager } from '../Analytics/GoogleTagManager';
 import { BUSINESS_INFO } from '../../config/business';
 
 export interface SEOProps {
@@ -91,8 +90,6 @@ export function SEO({
       <meta name="ICBM" content={`${BUSINESS_INFO.coordinates.latitude}, ${BUSINESS_INFO.coordinates.longitude}`} />
 
       <link rel="canonical" href={fullCanonical} />
-
-      <GoogleTagManager />
     </>
   );
 }

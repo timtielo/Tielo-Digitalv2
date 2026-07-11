@@ -1,5 +1,4 @@
 import React from 'react';
-import { GoogleTagManager } from '../Analytics/GoogleTagManager';
 
 export interface SEOProps {
   title: string;
@@ -46,8 +45,6 @@ export function SEO({
       {ogImage && <meta name="twitter:image" content={ogImage} />}
       
       {canonical && <link rel="canonical" href={canonical} />}
-
-      <GoogleTagManager />
     </>
   );
 }
