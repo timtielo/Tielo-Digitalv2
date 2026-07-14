@@ -24,7 +24,7 @@ export function HeroContent() {
       </h1>
 
       <p className="text-base sm:text-lg text-tielo-navy/70 mb-8 leading-relaxed max-w-xl">
-        Meer klanten. Professioneel en duidelijk. Vaak binnen een maand terugverdiend.
+        Meer klanten. Professioneel en duidelijk. Vaak binnen enkele maanden terugverdiend.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
