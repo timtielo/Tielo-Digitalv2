@@ -10,7 +10,7 @@ import { Textarea } from '../../components/ui/Textarea';
 import { Select } from '../../components/ui/Select';
 import { Label } from '../../components/ui/Label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '../../components/ui/Dialog';
-import { ImageEditor } from '../../components/Dashboard/ImageEditor';
+import { ImageEditor, formatTarget, type EditorAspectRatio } from '../../components/Dashboard/ImageEditor';
 import { supabase } from '../../lib/supabase/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
@@ -51,7 +51,7 @@ function PortfolioContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [editingImage, setEditingImage] = useState<{ file: File; type: 'before' | 'after' } | null>(null);
-  const [aspectRatio, setAspectRatio] = useState<'4:3' | '16:9'>('4:3');
+  const [aspectRatio, setAspectRatio] = useState<EditorAspectRatio>('4:3');
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [csvData, setCsvData] = useState<CSVPortfolioRow[]>([]);
   const [csvErrors, setCsvErrors] = useState<{ row: number; message: string }[]>([]);
@@ -881,10 +881,11 @@ function PortfolioContent() {
               <Select
                 id="aspectRatio"
                 value={aspectRatio}
-                onChange={(e) => setAspectRatio(e.target.value as '4:3' | '16:9')}
+                onChange={(e) => setAspectRatio(e.target.value as EditorAspectRatio)}
               >
-                <option value="4:3">4:3 (800 × 600px) - Klassiek formaat</option>
-                <option value="16:9">16:9 (800 × 450px) - Widescreen formaat</option>
+                <option value="4:3">4:3 (1600 × 1200px) - Liggend, klassiek</option>
+                <option value="3:4">3:4 (1200 × 1600px) - Staand, zoals je telefoon</option>
+                <option value="16:9">16:9 (1600 × 900px) - Liggend, breed</option>
               </Select>
             </div>
 
@@ -942,7 +943,7 @@ function PortfolioContent() {
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <span className="text-sm text-gray-500">Upload foto</span>
                     <span className="text-xs text-gray-400 mt-1">
-                      {aspectRatio === '4:3' ? '800×600px (4:3)' : '800×450px (16:9)'}
+                      {formatTarget(aspectRatio)}
                     </span>
                     <input
                       type="file"
@@ -1012,7 +1013,7 @@ function PortfolioContent() {
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <span className="text-sm text-gray-500">Upload foto</span>
                     <span className="text-xs text-gray-400 mt-1">
-                      {aspectRatio === '4:3' ? '800×600px (4:3)' : '800×450px (16:9)'}
+                      {formatTarget(aspectRatio)}
                     </span>
                     <input
                       type="file"

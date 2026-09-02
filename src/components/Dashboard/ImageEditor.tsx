@@ -3,9 +3,33 @@ import { motion } from 'framer-motion';
 import { X, RotateCw, ZoomIn, ZoomOut, Move, Check } from 'lucide-react';
 import { Button } from '../ui/Button';
 
+export type EditorAspectRatio = '4:3' | '3:4' | '16:9' | '9:16';
+
+/**
+ * Doelformaat per beeldverhouding. Dit is het formaat waarin de foto wordt
+ * weggeschreven, dus wat hier staat is definitief: wat buiten het kader valt is
+ * daarna niet meer terug te halen.
+ *
+ * De breedte stond op 800. Dat is de helft van wat een telefoon of laptop met
+ * een 2x-scherm nodig heeft, waardoor elke projectfoto zichtbaar onscherp werd.
+ * 9:16 blijft ongemoeid: MobilePhotosPage rekent op precies dat formaat.
+ */
+export const EDITOR_TARGETS: Record<EditorAspectRatio, { width: number; height: number }> = {
+  '4:3': { width: 1600, height: 1200 },
+  '3:4': { width: 1200, height: 1600 },
+  '16:9': { width: 1600, height: 900 },
+  '9:16': { width: 937, height: 1937 },
+};
+
+/** Label voor de keuzelijst en de uploadvakken, uit dezelfde bron. */
+export function formatTarget(ratio: EditorAspectRatio): string {
+  const { width, height } = EDITOR_TARGETS[ratio];
+  return `${width}\u00d7${height}px (${ratio})`;
+}
+
 interface ImageEditorProps {
   imageFile: File;
-  aspectRatio: '4:3' | '16:9' | '9:16';
+  aspectRatio: EditorAspectRatio;
   onSave: (blob: Blob) => void;
   onCancel: () => void;
 }
@@ -19,8 +43,7 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  const targetWidth = aspectRatio === '9:16' ? 937 : 800;
-  const targetHeight = aspectRatio === '4:3' ? 600 : aspectRatio === '9:16' ? 1937 : 450;
+  const { width: targetWidth, height: targetHeight } = EDITOR_TARGETS[aspectRatio];
 
   useEffect(() => {
     const img = new Image();
@@ -197,7 +220,9 @@ export function ImageEditor({ imageFile, aspectRatio, onSave, onCancel }: ImageE
                 ref={canvasRef}
                 className="border-2 border-white/20 rounded-lg cursor-move"
                 style={
-                  aspectRatio === '9:16'
+                  // Staand: hoogte leidend, anders wordt de preview zo hoog dat
+                  // je binnen de editor moet scrollen om je eigen foto te zien.
+                  targetHeight > targetWidth
                     ? { height: '480px', width: `${480 * (targetWidth / targetHeight)}px`, maxHeight: '60vh', maxWidth: '100%' }
                     : { width: `${Math.min(targetWidth, 700)}px`, height: `${Math.min(targetHeight, targetHeight * (700 / targetWidth))}px`, maxWidth: '100%' }
                 }
