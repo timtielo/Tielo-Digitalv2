@@ -1,8 +1,39 @@
+# Wekelijkse dependency-PR's, gegroepeerd zodat het er een is en geen tien.
+#
+# Majors staan er bewust buiten. `npm update` steekt geen major over, en beide audits
+# (augustus en september 2026) hebben React 18 naar 19, Tailwind 3 naar 4 en TypeScript
+# 6 naar 7 bewust geparkeerd. Een major hoort een eigen moment te krijgen met een
+# migratiepad, geen automatische PR op een maandagochtend.
+#
+# De testlaag is Netlify: sinds 22-09-2026 bouwt elke PR een deploy preview op alle
+# gekoppelde sites. Een update die de build sloopt wordt dus rood voordat je merget.
+# GitHub zelf test niets; zonder die previews zou je hier blind mergen.
 version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Amsterdam"
+    open-pull-requests-limit: 3
     versioning-strategy: increase
+    groups:
+      minor-en-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "chore(ci)"
